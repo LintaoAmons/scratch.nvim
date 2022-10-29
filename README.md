@@ -23,7 +23,7 @@ require("scratch").setup {
 ### Check current Configuration
 
 ```lua
-require("scratch").checkConfig()
+:lua require("scratch").checkConfig()
 ```
 
 ### Keymappings
@@ -40,9 +40,7 @@ vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
 
 This function can print out your current configuration.
 
-```lua
-vim.keymap.set("n", "<M-C-n>", function() require("scratch").checkConfig() end)
-```
+I don't think you want to bind this to a shortcut, just use it in command mode to check the config
 
 ## My first nvim plugin
 
