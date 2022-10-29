@@ -1,28 +1,32 @@
-local config = require("config").config
 local M = {}
 
-M.setup = function(cfg)
-	config = vim.tbl_deep_extend("force", config, cfg)
-	vim.notify(vim.inspect(config))
+M.default_config = {
+	scratch_file_dir = vim.env.HOME .. "/scratch.nvim",
+	filetypes = { "json", "xml" },
+}
+
+M.setup = function(user_config)
+	M.config = vim.tbl_deep_extend("force", M.default_config, user_config or {})
+	vim.notify(vim.inspect(M.config))
 end
 
 M.initDir = function()
-	if vim.fn.isdirectory(config.scratch_file_dir) == 0 then
-		vim.fn.mkdir(config.scratch_file_dir, "p")
-		vim.notify(config.scratch_file_dir .. " created")
+	if vim.fn.isdirectory(M.config.scratch_file_dir) == 0 then
+		vim.fn.mkdir(M.config.scratch_file_dir, "p")
+		vim.notify(M.config.scratch_file_dir .. " created")
 	else
-		vim.notify(config.scratch_file_dir .. " already exists")
+		vim.notify(M.config.scratch_file_dir .. " already exists")
 	end
 end
 
 local function createOrOpenFile(ft)
 	local datetime = string.gsub(vim.fn.system("date +'%Y%m%d-%H%M%S'"), "\n", "")
-	local filename = config.scratch_file_dir .. "/" .. datetime .. "." .. ft
+	local filename = M.config.scratch_file_dir .. "/" .. datetime .. "." .. ft
 	vim.cmd(":e " .. filename)
 end
 
 local function selectFiletypeAndDo(func)
-	vim.ui.select(config.filetypes, {
+	vim.ui.select(M.config.filetypes, {
 		prompt = "Select filetype",
 		format_item = function(item)
 			return item
