@@ -3,9 +3,7 @@ local M = {}
 
 M.setup = function(cfg)
 	config = vim.tbl_deep_extend("force", config, cfg)
-	vim.inspect(config)
-	vim.notify(config.filetypes)
-	print(config)
+	vim.notify(vim.inspect(config))
 end
 
 M.initDir = function()
@@ -30,7 +28,7 @@ local function selectFiletypeAndDo(func)
 			return item
 		end,
 	}, function(choosedFt)
-		if string.len(choosedFt) ~= 0 then
+		if choosedFt then
 			func(choosedFt)
 		end
 	end)
