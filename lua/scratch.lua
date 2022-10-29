@@ -6,6 +6,7 @@ M.default_config = {
 }
 
 M.setup = function(user_config)
+	vim.notify("scratch setup called")
 	M.config = vim.tbl_deep_extend("force", M.default_config, user_config or {})
 	vim.notify(vim.inspect(M.config))
 end
@@ -41,5 +42,7 @@ end
 M.createOrOpenScratchFile = function()
 	selectFiletypeAndDo(createOrOpenFile)
 end
+
+M.setup()
 
 return M
