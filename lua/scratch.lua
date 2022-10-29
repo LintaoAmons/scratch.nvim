@@ -43,4 +43,6 @@ M.scratch = function()
 	selectFiletypeAndDo(createScratchFile)
 end
 
+M.setup()
+
 return M
