@@ -7,6 +7,8 @@ and use nvim's other goodies.
 - with `lsp`
 - with `michaelb/sniprun` or `metakirby5/codi.vim` to run scratch files
 
+![scratch](https://user-images.githubusercontent.com/95092244/198824640-5137fc7b-0ec5-4634-ac7f-c6042600a63a.gif)
+
 ## Configuration
 
 ### Default Configuration
@@ -28,10 +30,10 @@ require("scratch").checkConfig()
 
 No default keymappings, here's functions you can mapping to.
 
-#### scratch
+#### createOrOpenScratchFile
 
 ```lua
-vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
+vim.keymap.set("n", "<M-C-n>", function() require("scratch").createOrOpenScratchFile() end)
 ```
 
 #### checkConfig
