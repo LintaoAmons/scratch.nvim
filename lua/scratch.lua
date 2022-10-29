@@ -27,7 +27,9 @@ local function selectFiletypeAndDo(func)
 			return item
 		end,
 	}, function(choosedFt)
-		func(choosedFt)
+		if string.len(choosedFt) ~= 0 then
+			func(choosedFt)
+		end
 	end)
 end
 
