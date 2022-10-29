@@ -1,4 +1,6 @@
-local M = {
+local M = {}
+
+M.config = {
 	scratch_file_dir = vim.env.HOME .. "/scratch.nvim",
 	filetypes = { "json", "xml" },
 }

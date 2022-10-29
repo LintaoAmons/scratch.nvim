@@ -1,5 +1,9 @@
-local config = require("config")
+local config = require("config").config
 local M = {}
+
+M.setup = function(cfg)
+	config = vim.tbl_extend("force", config, cfg)
+end
 
 M.initDir = function()
 	if vim.fn.isdirectory(config.scratch_file_dir) == 0 then
