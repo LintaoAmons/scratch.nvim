@@ -6,8 +6,10 @@ M.default_config = {
 }
 
 M.setup = function(user_config)
-	vim.notify("scratch setup called")
 	M.config = vim.tbl_deep_extend("force", M.default_config, user_config or {})
+end
+
+M.checkConfig = function()
 	vim.notify(vim.inspect(M.config))
 end
 
