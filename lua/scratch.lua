@@ -10,6 +10,12 @@ M.initDir = function()
 	end
 end
 
+local function createOrOpenFile(ft)
+	local datetime = string.gsub(vim.fn.system("date +'%Y%m%d-%H%M%S'"), "\n", "")
+	local filename = M.scratch_file_dir .. "/" .. datetime .. "." .. ft
+	vim.cmd(":e " .. filename)
+end
+
 local function selectFiletypeAndDo(func)
 	vim.ui.select(config.filetypes, {
 		prompt = "Select filetype",
@@ -22,7 +28,7 @@ local function selectFiletypeAndDo(func)
 end
 
 M.createOrOpenScratchFile = function()
-	selectFiletypeAndDo(vim.notify)
+	selectFiletypeAndDo(createOrOpenFile)
 end
 
 return M
