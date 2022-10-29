@@ -13,7 +13,7 @@ and use nvim's other goodies.
 
 ```lua
 require("scratch").setup {
-	scratch_file_dir = vim.env.HOME .. "/scratch.nvim",  -- Where the scratch file will be saved
+	scratch_file_dir = vim.env.HOME .. "/scratch.nvim",  -- Where the scratch files will be saved
 	filetypes = { "json", "xml" }, -- filetypes to select from
 }
 ```
@@ -35,6 +35,8 @@ vim.keymap.set("n", "<M-C-n>", function() require("scratch").createOrOpenScratch
 ```
 
 #### checkConfig
+
+This function can print out your current configuration.
 
 ```lua
 vim.keymap.set("n", "<M-C-n>", function() require("scratch").checkConfig() end)
