@@ -28,10 +28,10 @@ require("scratch").checkConfig()
 
 No default keymappings, here's functions you can mapping to.
 
-#### createOrOpenScratchFile
+#### scratch
 
 ```lua
-vim.keymap.set("n", "<M-C-n>", function() require("scratch").createOrOpenScratchFile() end)
+vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
 ```
 
 #### checkConfig
