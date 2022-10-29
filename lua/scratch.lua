@@ -10,22 +10,19 @@ M.initDir = function()
 	end
 end
 
-local function selectFiletype()
-	local selectedFt = "md"
+local function selectFiletypeAndDo(func)
 	vim.ui.select(config.filetypes, {
 		prompt = "Select filetype",
 		format_item = function(item)
 			return item
 		end,
 	}, function(choice)
-		selectedFt = choice
+		func(choice)
 	end)
-	return selectedFt
 end
 
 M.createOrOpenScratchFile = function()
-	local ft = selectFiletype()
-	vim.notify(ft)
+	selectFiletypeAndDo(vim.notify)
 end
 
 return M
