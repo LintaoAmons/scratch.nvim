@@ -2,7 +2,10 @@ local config = require("config").config
 local M = {}
 
 M.setup = function(cfg)
-	config = vim.tbl_extend("force", config, cfg)
+	config = vim.tbl_deep_extend("force", config, cfg)
+	vim.inspect(config)
+	vim.notify(config.filetypes)
+	print(config)
 end
 
 M.initDir = function()
