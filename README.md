@@ -24,6 +24,22 @@ require("scratch").setup {
 require("scratch").checkConfig()
 ```
 
+### Keymappings
+
+No default keymappings, here's functions you can mapping to.
+
+#### createOrOpenScratchFile
+
+```lua
+vim.keymap.set("n", "<M-C-n>", function() require("scratch").createOrOpenScratchFile() end)
+```
+
+#### checkConfig
+
+```lua
+vim.keymap.set("n", "<M-C-n>", function() require("scratch").checkConfig() end)
+```
+
 ## My first nvim plugin
 
 Finally be able to do something
