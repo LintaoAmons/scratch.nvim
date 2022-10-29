@@ -16,9 +16,6 @@ end
 M.initDir = function()
 	if vim.fn.isdirectory(M.config.scratch_file_dir) == 0 then
 		vim.fn.mkdir(M.config.scratch_file_dir, "p")
-		vim.notify(M.config.scratch_file_dir .. " created")
-	else
-		vim.notify(M.config.scratch_file_dir .. " already exists")
 	end
 end
 
