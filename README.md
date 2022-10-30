@@ -3,8 +3,8 @@
 Just like IDEA's scratch files. You can create scratch file easily
 and use nvim's other goodies.
 
-- with `treesitter`
-- with `lsp`
+- with `treesitter` to have syntax highlighting
+- with `lsp` and `cmp` to have auto-cmp and other lsp goodies
 - with `michaelb/sniprun` or `metakirby5/codi.vim` to run scratch files
 ![scratch](https://user-images.githubusercontent.com/95092244/198858745-b3bc9982-e3e8-44fb-b690-7edca030235e.gif)
 
@@ -15,7 +15,7 @@ using your favorate plugin manager, for example packer
 ```lua
 use { 
 	"LintaoAmons/scratch.nvim",
-	tag = "v0.3.1" -- use tag for stability, or without this to have latest fixed and functions
+	-- tag = "v0.3.1" -- use tag for stability, or without this to have latest fixed and functions
 }
 ```
 
