@@ -1,7 +1,7 @@
 local M = {}
 
 M.default_config = {
-	scratch_file_dir = vim.env.HOME .. "/scratch.nvim",
+	scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",
 	filetypes = { "json", "xml", "go", "lua", "js", "py" },
 }
 
