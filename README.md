@@ -15,7 +15,7 @@ using your favorate plugin manager, for example packer
 ```lua
 use { 
 	"LintaoAmons/scratch.nvim",
-	tag = "v0.2.0" -- use tag for stability
+	tag = "v0.2.0" -- use tag for stability, or without this to have latest fixed and functions
 }
 ```
 
