@@ -71,5 +71,6 @@ Finally be able to do something
 
 ## Todo
 
+- [ ] create user command
 - [ ] fzf scratch file content and open
 - [ ] Template codes when create specific filetype(configurable) 
