@@ -15,14 +15,11 @@ using your favorate plugin manager, for example packer
 ```lua
 use { 
 	"LintaoAmons/scratch.nvim",
-	tag = "v0.2.0" -- use tag for stability, or without this to have latest fixed and functions
+	tag = "v0.3.1" -- use tag for stability, or without this to have latest fixed and functions
 }
 ```
 
 I will continue add some changes to main branch, so if you meet some issue due to new changes, you can just downgrade to your former version.
-
-> Warn: some path is hard coded, may encounter issues when using windows.
->       Can try to config the `scratch_file_dir`
 
 ## Configuration
 
@@ -54,6 +51,7 @@ vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
 ```
 
 #### scratchWithName
+> since `v0.3.0`
 
 This can create a new scratch file with user provided filename (But actually you can use `scratch` to create a file then rename the file)
 
@@ -85,3 +83,10 @@ Finally be able to do something
 - [ ] create user command
 - [ ] fzf scratch file content and open
 - [ ] Template codes when create specific filetype(configurable) 
+
+## Change Log
+
+### v0.3.0
+
+- Remove hardcoded path and set default dir to `cache`, thus I think windows can use this, thanks to #2 
+- Add `scratchWithName` function, though I may not use it but I think somebody may find it useful
