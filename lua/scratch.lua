@@ -19,10 +19,9 @@ M.initDir = function()
 	end
 end
 
-local function createScratchFile(ft)
+local function createScratchFile(ft, filename)
 	M.initDir()
-	local datetime = string.gsub(vim.fn.system("date +'%Y%m%d-%H%M%S'"), "\n", "")
-	local filename = M.config.scratch_file_dir .. "/" .. datetime .. "." .. ft
+	filename = filename or M.config.scratch_file_dir .. "/" .. os.date("%H%M%S-%y") .. "." .. ft
 	vim.cmd(":e " .. filename)
 end
 
@@ -41,6 +40,12 @@ end
 
 M.scratch = function()
 	selectFiletypeAndDo(createScratchFile)
+end
+
+M.scratchWithName = function()
+	vim.ui.input({ prompt = "Enter the file name" }, function(filename)
+		createScratchFile(nil, filename)
+	end)
 end
 
 local function getScratchFiles()
