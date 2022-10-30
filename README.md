@@ -21,6 +21,9 @@ use {
 
 I will continue add some changes to main branch, so if you meet some issue due to new changes, you can just downgrade to your former version.
 
+> Warn: some path is hard coded, may encounter issues when using windows.
+>       Can try to config the `scratch_file_dir`
+
 ## Configuration
 
 ### Default Configuration
