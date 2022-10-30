@@ -6,14 +6,14 @@ and use nvim's other goodies.
 - with `treesitter` to have syntax highlighting
 - with `lsp` and `cmp` to have auto-cmp and other lsp goodies
 - with `michaelb/sniprun` or `metakirby5/codi.vim` to run scratch files
-![scratch](https://user-images.githubusercontent.com/95092244/198858745-b3bc9982-e3e8-44fb-b690-7edca030235e.gif)
+  ![scratch](https://user-images.githubusercontent.com/95092244/198858745-b3bc9982-e3e8-44fb-b690-7edca030235e.gif)
 
 ## Install
 
 using your favorate plugin manager, for example packer
 
 ```lua
-use { 
+use {
 	"LintaoAmons/scratch.nvim",
 	-- tag = "v0.3.1" -- use tag for stability, or without this to have latest fixed and functions
 }
@@ -27,8 +27,8 @@ I will continue add some changes to main branch, so if you meet some issue due t
 
 ```lua
 require("scratch").setup {
-	scratch_file_dir = vim.env.HOME .. "/scratch.nvim",  -- Where the scratch files will be saved
-	filetypes = { "json", "xml", "go", "lua", "js", "py" }, -- filetypes to select from
+	scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",  -- Where the scratch files will be saved
+	filetypes = { "json", "xml", "go", "lua", "js", "py", "sh" },   -- filetypes to select from
 }
 ```
 
@@ -51,6 +51,7 @@ vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
 ```
 
 #### scratchWithName
+
 > since `v0.3.0`
 
 This can create a new scratch file with user provided filename (But actually you can use `scratch` to create a file then rename the file)
@@ -60,6 +61,7 @@ vim.keymap.set("n", "<M-C-m>", function() require("scratch").scratchWithName() e
 ```
 
 #### openScratch
+
 > since `v0.2.0`
 
 This can open an old scratch file in your config's `scratch_file_dir`
@@ -82,11 +84,11 @@ Finally be able to do something
 
 - [ ] create user command
 - [ ] fzf scratch file content and open
-- [ ] Template codes when create specific filetype(configurable) 
+- [ ] Template codes when create specific filetype(configurable)
 
 ## Change Log
 
 ### v0.3.0
 
-- Remove hardcoded path and set default dir to `cache`, thus I think windows can use this, thanks to #2 
+- Remove hardcoded path and set default dir to `cache`, thus I think windows can use this, thanks to [#2](https://github.com/LintaoAmons/scratch.nvim/issues/2)
 - Add `scratchWithName` function, though I may not use it but I think somebody may find it useful
