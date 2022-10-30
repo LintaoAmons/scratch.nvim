@@ -6,8 +6,7 @@ and use nvim's other goodies.
 - with `treesitter`
 - with `lsp`
 - with `michaelb/sniprun` or `metakirby5/codi.vim` to run scratch files
-
-![scratch](https://user-images.githubusercontent.com/95092244/198824640-5137fc7b-0ec5-4634-ac7f-c6042600a63a.gif)
+![scratch](https://user-images.githubusercontent.com/95092244/198858745-b3bc9982-e3e8-44fb-b690-7edca030235e.gif)
 
 ## Install
 
@@ -16,7 +15,7 @@ using your favorate plugin manager, for example packer
 ```lua
 use { 
 	"LintaoAmons/scratch.nvim",
-	tag = "v0.1.0" -- use tag for stability
+	tag = "v0.2.0" -- use tag for stability
 }
 ```
 
