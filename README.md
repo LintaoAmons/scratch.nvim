@@ -68,3 +68,8 @@ I don't think you want to bind this to a shortcut, just use it in command mode t
 ## My first nvim plugin
 
 Finally be able to do something
+
+## Todo
+
+- [ ] fzf scratch file content and open
+- [ ] Template codes when create specific filetype(configurable) 
