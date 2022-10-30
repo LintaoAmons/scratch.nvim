@@ -53,6 +53,14 @@ This can create a new scratch file in your config's `scratch_file_dir`
 vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
 ```
 
+#### scratchWithName
+
+This can create a new scratch file with user provided filename (But actually you can use `scratch` to create a file then rename the file)
+
+```lua
+vim.keymap.set("n", "<M-C-m>", function() require("scratch").scratchWithName() end)
+```
+
 #### openScratch
 > since `v0.2.0`
 
