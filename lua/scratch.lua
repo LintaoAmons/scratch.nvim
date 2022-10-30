@@ -21,8 +21,13 @@ end
 
 local function createScratchFile(ft, filename)
 	M.initDir()
-	filename = filename or M.config.scratch_file_dir .. "/" .. os.date("%H%M%S-%y") .. "." .. ft
-	vim.cmd(":e " .. filename)
+	local fullpath
+	if filename then
+		fullpath = M.config.scratch_file_dir .. "/" .. filename
+	else
+		fullpath = M.config.scratch_file_dir .. "/" .. os.date("%H%M%S-%y") .. "." .. ft
+	end
+	vim.cmd(":e " .. fullpath)
 end
 
 local function selectFiletypeAndDo(func)
