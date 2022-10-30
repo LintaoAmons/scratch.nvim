@@ -9,6 +9,19 @@ and use nvim's other goodies.
 
 ![scratch](https://user-images.githubusercontent.com/95092244/198824640-5137fc7b-0ec5-4634-ac7f-c6042600a63a.gif)
 
+## Install
+
+using your favorate plugin manager, for example packer
+
+```lua
+use { 
+	"LintaoAmons/scratch.nvim",
+	tag = "v0.1.0" -- use tag for stability
+}
+```
+
+I will continue add some changes to main branch, so if you meet some issue due to new changes, you can just downgrade to your former version.
+
 ## Configuration
 
 ### Default Configuration
@@ -26,14 +39,25 @@ require("scratch").setup {
 :lua require("scratch").checkConfig()
 ```
 
-### Keymappings
+### Keymappings | Functions
 
 No default keymappings, here's functions you can mapping to.
 
 #### scratch
 
+This can create a new scratch file in your config's `scratch_file_dir`
+
 ```lua
 vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
+```
+
+#### openScratch
+> since `v0.2.0`
+
+This can open an old scratch file in your config's `scratch_file_dir`
+
+```lua
+vim.keymap.set("n", "<M-C-o>", function() require("scratch").openScratch() end)
 ```
 
 #### checkConfig
