@@ -55,7 +55,7 @@ end
 
 M.openScratch = function()
 	vim.ui.select(getScratchFiles(), {
-		prompt = "Select filetype",
+		prompt = "Select old scratch files",
 		format_item = function(item)
 			return item
 		end,
