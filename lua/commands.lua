@@ -1,21 +1,21 @@
-local s = require("scratch")
+local api = require("api")
 
 local commands = {
 	{
 		name = "Scratch",
-		callback = s.scratch,
+		callback = api.scratch,
 	},
 	{
 		name = "OpenScratch",
-		callback = s.openScratch,
+		callback = api.openScratch,
 	},
 	{
 		name = "ScratchWithName",
-		callback = s.scratchWithName,
+		callback = api.scratchWithName,
 	},
 	{
 		name = "CheckConfig",
-		callback = s.checkConfig,
+		callback = api.checkConfig,
 	},
 }
 
