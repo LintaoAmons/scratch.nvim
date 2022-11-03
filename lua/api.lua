@@ -1,4 +1,4 @@
-local config = require("config")
+local config = require("config").config
 local M = {}
 
 M.checkConfig = function()
