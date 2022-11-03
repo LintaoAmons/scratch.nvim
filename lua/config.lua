@@ -6,6 +6,8 @@ M.default_config = {
 }
 
 M.setup = function(user_config)
+	print("Called setup")
+	print(vim.inspect(user_config))
 	M.config = vim.tbl_deep_extend("force", M.default_config, user_config or {})
 end
 
