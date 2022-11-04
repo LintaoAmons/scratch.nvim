@@ -6,7 +6,7 @@ local commands = {
 		callback = api.scratch,
 	},
 	{
-		name = "OpenScratch",
+		name = "ScratchOpen",
 		callback = api.openScratch,
 	},
 	{
@@ -14,7 +14,7 @@ local commands = {
 		callback = api.scratchWithName,
 	},
 	{
-		name = "CheckConfig",
+		name = "ScratchCheckConfig",
 		callback = api.checkConfig,
 	},
 }
