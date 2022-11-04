@@ -40,39 +40,46 @@ require("scratch").setup {
 :lua require("scratch").checkConfig()
 ```
 
-### Keymappings | Functions
+### Commands | Keymappings | Functions
 
 No default keymappings, here's functions you can mapping to.
 
-#### scratch
+#### Scratch
 
 This can create a new scratch file in your config's `scratch_file_dir`
 
 ```lua
+vim.keymap.set("n", "<M-C-n>", "<cmd>Scratch<cr>")
+-- or
 vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
+
 ```
 
-#### scratchWithName
+#### ScratchWithName
 
 > since `v0.3.0`
 
 This can create a new scratch file with user provided filename (But actually you can use `scratch` to create a file then rename the file)
 
 ```lua
+vim.keymap.set("n", "<M-C-n>", "<cmd>ScratchWithName<cr>")
+-- or
 vim.keymap.set("n", "<M-C-m>", function() require("scratch").scratchWithName() end)
 ```
 
-#### openScratch
+#### ScratchOpen
 
 > since `v0.2.0`
 
 This can open an old scratch file in your config's `scratch_file_dir`
 
 ```lua
+vim.keymap.set("n", "<M-C-o>", "<cmd>ScratchOpen<cr>")
+-- or
 vim.keymap.set("n", "<M-C-o>", function() require("scratch").openScratch() end)
 ```
 
-#### checkConfig
+#### ScratchCheckConfig
 
 This function can print out your current configuration.
 
