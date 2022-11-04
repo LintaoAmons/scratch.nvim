@@ -17,7 +17,7 @@ using your favorate plugin manager, for example packer
 ```lua
 use {
 	"LintaoAmons/scratch.nvim",
-	-- tag = "v0.3.1" -- use tag for stability, or without this to have latest fixed and functions
+	-- tag = "v0.3.w" -- use tag for stability, or without this to have latest fixed and functions
 }
 ```
 
@@ -91,11 +91,14 @@ Finally be able to do something
 
 ## Todo
 
-- [ ] create user command
 - [ ] fzf scratch file content and open
 - [ ] Template codes when create specific filetype(configurable)
+- [x] create user command
 
 ## Change Log
+
+### v0.3.2
+- Add user command and did some refactor
 
 ### v0.3.0
 
