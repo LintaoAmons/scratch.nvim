@@ -1,18 +1,20 @@
-local config = require("config").config
 local M = {}
 
-M.checkConfig = function()
-	vim.notify(vim.inspect(config))
-end
+local default_config = {
+	scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",
+	filetypes = { "json", "xml", "go", "lua", "js", "py", "sh" },
+}
 
-M.initDir = function()
+local config = default_config
+
+local initDir = function()
 	if vim.fn.isdirectory(config.scratch_file_dir) == 0 then
 		vim.fn.mkdir(config.scratch_file_dir, "p")
 	end
 end
 
 local function createScratchFile(ft, filename)
-	M.initDir()
+	initDir()
 	local fullpath
 	if filename then
 		fullpath = config.scratch_file_dir .. "/" .. filename
@@ -35,16 +37,6 @@ local function selectFiletypeAndDo(func)
 	end)
 end
 
-M.scratch = function()
-	selectFiletypeAndDo(createScratchFile)
-end
-
-M.scratchWithName = function()
-	vim.ui.input({ prompt = "Enter the file name" }, function(filename)
-		createScratchFile(nil, filename)
-	end)
-end
-
 local function getScratchFiles()
 	local res = {}
 	for k, v in vim.fs.dir(config.scratch_file_dir) do
@@ -53,6 +45,24 @@ local function getScratchFiles()
 		end
 	end
 	return res
+end
+
+M.setup = function(user_config)
+	config = vim.tbl_deep_extend("force", config, user_config or {})
+end
+
+M.checkConfig = function()
+	vim.notify(vim.inspect(config))
+end
+
+M.scratch = function()
+	selectFiletypeAndDo(createScratchFile)
+end
+
+M.scratchWithName = function()
+	vim.ui.input({ prompt = "Enter the file name" }, function(filename)
+		createScratchFile(nil, filename)
+	end)
 end
 
 M.openScratch = function()
