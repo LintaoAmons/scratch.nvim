@@ -62,7 +62,7 @@ vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
 This can create a new scratch file with user provided filename (But actually you can use `scratch` to create a file then rename the file)
 
 ```lua
-vim.keymap.set("n", "<M-C-n>", "<cmd>ScratchWithName<cr>")
+vim.keymap.set("n", "<M-C-m>", "<cmd>ScratchWithName<cr>")
 -- or
 vim.keymap.set("n", "<M-C-m>", function() require("scratch").scratchWithName() end)
 ```
