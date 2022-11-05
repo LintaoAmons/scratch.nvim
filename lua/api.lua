@@ -60,7 +60,7 @@ M.scratch = function()
 end
 
 M.scratchWithName = function()
-	vim.ui.input({ prompt = "Enter the file name" }, function(filename)
+	vim.ui.input({ prompt = "Enter the file name: " }, function(filename)
 		createScratchFile(nil, filename)
 	end)
 end
