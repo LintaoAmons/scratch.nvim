@@ -17,7 +17,7 @@ using your favorate plugin manager, for example packer
 ```lua
 use {
 	"LintaoAmons/scratch.nvim",
-	-- tag = "v0.3.2" -- use tag for stability, or without this to have latest fixed and functions
+	-- tag = "v0.4.0" -- use tag for stability, or without this to have latest fixed and functions
 }
 ```
 
@@ -79,6 +79,18 @@ vim.keymap.set("n", "<M-C-o>", "<cmd>ScratchOpen<cr>")
 vim.keymap.set("n", "<M-C-o>", function() require("scratch").openScratch() end)
 ```
 
+#### ScratchOpenFzf
+
+> since `v0.2.0`
+
+Fuzzy find the content of your scratch files and open
+
+```lua
+vim.keymap.set("n", "<M-C-o>", "<cmd>ScratchOpenFzf<cr>")
+-- or
+vim.keymap.set("n", "<M-C-o>", function() require("scratch").fzfScratch() end)
+```
+
 #### ScratchCheckConfig
 
 This function can print out your current configuration.
@@ -91,8 +103,8 @@ Finally be able to do something
 
 ## Todo
 
-- [ ] fzf scratch file content and open
 - [ ] Template codes when create specific filetype(configurable)
+- [x] fzf scratch file content and open
 - [x] create user command
 
 ## Change Log
