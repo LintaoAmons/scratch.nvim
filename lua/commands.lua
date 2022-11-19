@@ -10,6 +10,10 @@ local commands = {
 		callback = api.openScratch,
 	},
 	{
+		name = "ScratchOpenFzf",
+		callback = api.fzfScratch,
+	},
+	{
 		name = "ScratchWithName",
 		callback = api.scratchWithName,
 	},

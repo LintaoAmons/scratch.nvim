@@ -78,4 +78,8 @@ M.openScratch = function()
 	end)
 end
 
+M.fzfScratch = function ()
+	require("telescope.builtin").live_grep {cwd = config.scratch_file_dir}
+end
+
 return M
