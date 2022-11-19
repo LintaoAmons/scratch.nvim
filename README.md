@@ -81,7 +81,7 @@ vim.keymap.set("n", "<M-C-o>", function() require("scratch").openScratch() end)
 
 #### ScratchOpenFzf
 
-> since `v0.2.0`
+> since `v0.4.0`
 
 Fuzzy find the content of your scratch files and open
 
