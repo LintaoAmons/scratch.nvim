@@ -66,7 +66,14 @@ M.scratchWithName = function()
 end
 
 M.openScratch = function()
-	vim.ui.select(getScratchFiles(), {
+	local files = getScratchFiles()
+
+	-- sort the files by their last modified time in descending order
+	table.sort(files, function(a, b)
+		return vim.fn.getftime(config.scratch_file_dir .. "/" .. a) > vim.fn.getftime(config.scratch_file_dir .. "/" .. b)
+	end)
+
+	vim.ui.select(files, {
 		prompt = "Select old scratch files",
 		format_item = function(item)
 			return item
@@ -77,6 +84,19 @@ M.openScratch = function()
 		end
 	end)
 end
+
+-- M.openScratch = function()
+-- 	vim.ui.select(getScratchFiles(), {
+-- 		prompt = "Select old scratch files",
+-- 		format_item = function(item)
+-- 			return item
+-- 		end,
+-- 	}, function(chosenFile)
+-- 		if chosenFile then
+-- 			vim.cmd(":e " .. config.scratch_file_dir .. "/" .. chosenFile)
+-- 		end
+-- 	end)
+-- end
 
 M.fzfScratch = function ()
 	require("telescope.builtin").live_grep {cwd = config.scratch_file_dir}
