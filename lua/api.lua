@@ -2,7 +2,10 @@ local M = {}
 
 local default_config = {
     scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",
-    filetypes = {"json", "xml", "go", "lua", "js", "py", "sh"}
+    filetypes = {"json", "xml", "go", "lua", "js", "py", "sh"},
+    put_file_in_new_dir = {
+        go = "main"
+    }
 }
 
 local config = default_config
@@ -13,13 +16,37 @@ local initDir = function()
     end
 end
 
+local function is_key_in_dict(input, mydict)
+    for k, _ in pairs(mydict) do
+        if k == input then
+            return true
+        end
+    end
+    return false
+end
+
+local function is_in_list(item, mylist)
+    for _, str in ipairs(mylist) do
+        if str == item then
+            return true
+        end
+    end
+    return false
+end
+
 local function createScratchFile(ft, filename)
     initDir()
     local fullpath
     if filename then
         fullpath = config.scratch_file_dir .. "/" .. filename
     else
-        fullpath = config.scratch_file_dir .. "/" .. os.date("%H%M%S-%y%m%d") .. "." .. ft
+        if is_key_in_dict(ft, config.put_file_in_new_dir) then
+            local dirName = vim.trim(vim.fn.system('uuidgen'))
+            vim.fn.mkdir(config.scratch_file_dir .. "/" .. dirName, "p")
+            fullpath = config.scratch_file_dir .. "/" .. dirName .. "/" .. config.put_file_in_new_dir[ft] .. "." .. ft
+        else
+            fullpath = config.scratch_file_dir .. "/" .. os.date("%H%M%S-%y%m%d") .. "." .. ft
+        end
     end
     vim.cmd(":e " .. fullpath)
 end
