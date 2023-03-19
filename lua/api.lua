@@ -2,9 +2,11 @@ local M = {}
 
 local default_config = {
   scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",
-  filetypes = { "json", "xml", "go", "lua", "js", "py", "sh" },
-  filetypes_require_dir = {
+  filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
+  filetype_details = { -- you can have more control here
+    json = {}, -- not required to put this to `filetypes` table, even though you still can
     go = {
+      requireDir = true,
       filename = "main",
       content = { "package main", "", "func main() {", "  ", "}" },
       cursor = {
@@ -25,7 +27,7 @@ local function getFiletypes()
     end
   end
 
-  for ft, _ in pairs(config.filetypes_require_dir) do
+  for ft, _ in pairs(config.filetype_details) do
     if not vim.tbl_contains(combined_filetypes, ft) then
       table.insert(combined_filetypes, ft)
     end
@@ -44,17 +46,22 @@ local function write_lines_to_buffer(lines)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
 end
 
-local function is_key_in_dict(input, mydict)
-  for k, _ in pairs(mydict) do
-    if k == input then
-      return true
-    end
-  end
-  return false
+local function requiresDir(ft)
+  return config.filetype_details[ft] and config.filetype_details[ft].requireDir or false
 end
 
-local function require_new_dir(ft)
-  return is_key_in_dict(ft, config.filetypes_require_dir)
+local function hasDefaultContent(ft)
+  local details = default_config.filetype_details[ft]
+  return details and details.content and #details.content > 1
+end
+
+local function genFilename(ft)
+  return config.filetype_details[ft] and config.filetype_details[ft].filename or os.date("%H%M%S-%y%m%d")
+end
+
+local function hasCursorPosition(ft)
+  local details = default_config.filetype_details[ft]
+  return details and details.cursor and #details.cursor.location > 1
 end
 
 local function genFilepath(ft, filename)
@@ -62,13 +69,13 @@ local function genFilepath(ft, filename)
   if filename then
     fullpath = config.scratch_file_dir .. "/" .. filename
   else
-    if require_new_dir() then
+    if requiresDir(ft) then
       local dirName = vim.trim(vim.fn.system('uuidgen'))
       vim.fn.mkdir(config.scratch_file_dir .. "/" .. dirName, "p")
       fullpath = config.scratch_file_dir ..
-          "/" .. dirName .. "/" .. config.filetypes_require_dir[ft].filename .. "." .. ft
+          "/" .. dirName .. "/" .. genFilename(ft) .. "." .. ft
     else
-      fullpath = config.scratch_file_dir .. "/" .. os.date("%H%M%S-%y%m%d") .. "." .. ft
+      fullpath = config.scratch_file_dir .. "/" .. genFilename(ft) .. "." .. ft
     end
   end
   return fullpath
@@ -79,10 +86,15 @@ local function createScratchFile(ft, filename)
   local fullpath = genFilepath(ft, filename)
   vim.cmd(":e " .. fullpath)
 
-  write_lines_to_buffer(config.filetypes_require_dir.go.content)
-  vim.api.nvim_win_set_cursor(0, config.filetypes_require_dir.go.cursor.location)
-  if config.filetypes_require_dir.go.cursor.insert_mode then
-    vim.api.nvim_feedkeys('a', 'n', true)
+  if hasDefaultContent(ft) then
+    write_lines_to_buffer(config.filetype_details.go.content)
+  end
+
+  if hasCursorPosition(ft) then
+    vim.api.nvim_win_set_cursor(0, config.filetype_details.go.cursor.location)
+    if config.filetype_details.go.cursor.insert_mode then
+      vim.api.nvim_feedkeys('a', 'n', true)
+    end
   end
 end
 
