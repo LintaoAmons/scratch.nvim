@@ -29,7 +29,7 @@ I will continue add some changes to main branch, so if you meet some issue due t
 
 ```lua
 require("scratch").setup {
-	scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",  -- Where the scratch files will be saved
+  scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",  -- Where the scratch files will be saved
   filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
   filetype_details = { -- you can have more control here
     json = {}, -- not required to put this to `filetypes` table, even though you still can
