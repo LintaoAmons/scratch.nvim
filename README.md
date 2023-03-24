@@ -1,3 +1,5 @@
+**Breaking change**: the way to config the plugin have change to json, see the Configuration section for more information
+
 ## Create scratch file
 
 Help you to create tmp playground files, which can be found later, 
@@ -25,32 +27,19 @@ I will continue add some changes to main branch, so if you meet some issue due t
 
 ## Configuration
 
-### Default Configuration
-
-```lua
-require("scratch").setup {
-  scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",  -- Where the scratch files will be saved
-  filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
-  filetype_details = { -- you can have more control here
-    json = {}, -- not required to put this to `filetypes` table, even though you still can
-    go = {
-      requireDir = true,
-      filename = "main",
-      content = { "package main", "", "func main() {", "  ", "}" },
-      cursor = {
-        location = { 4, 2 },
-        insert_mode = true
-      }
-    },
-  }
-}
-```
-
 ### Check current Configuration
 
 ```lua
 :lua require("scratch").checkConfig()
 ```
+
+### Edit Configuration
+
+```lua
+:lua require("scratch").editConfig()
+```
+
+**Note**: Require restart nvim after change the config.
 
 ### Commands | Keymappings | Functions
 
@@ -105,6 +94,7 @@ I don't think you want to bind this to a shortcut, just use it in command mode t
 
 ## Todo
 
+- [ ] register the command automaticlly
 - [x] Template codes when create specific filetype(configurable)
 - [x] fzf scratch file content and open
 - [x] create user command
