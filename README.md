@@ -19,7 +19,7 @@ using your favorate plugin manager, for example packer
 ```lua
 use {
 	"LintaoAmons/scratch.nvim",
-	-- tag = "v0.5.0" -- use tag for stability, or without this to have latest fixed and functions
+	-- tag = "v0.6.1" -- use tag for stability, or without this to have latest fixed and functions
 }
 ```
 
@@ -94,7 +94,7 @@ I don't think you want to bind this to a shortcut, just use it in command mode t
 
 ## Todo
 
-- [ ] register the command automaticlly
+- [x] register the command automaticlly
 - [x] Template codes when create specific filetype(configurable)
 - [x] fzf scratch file content and open
 - [x] create user command
