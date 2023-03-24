@@ -41,11 +41,13 @@ I will continue add some changes to main branch, so if you meet some issue due t
 
 **Note**: Require restart nvim after change the config.
 
-### Commands | Keymappings | Functions
+![scratch_config](https://user-images.githubusercontent.com/95092244/227540633-d256fcda-1c80-4ea0-b416-bde872d52571.gif)
+
+## Commands | Keymappings | Functions
 
 No default keymappings, here's functions you can mapping to.
 
-#### Scratch
+### Scratch
 
 This can create a new scratch file in your config's `scratch_file_dir`
 
@@ -56,7 +58,7 @@ vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
 
 ```
 
-#### ScratchWithName
+### ScratchWithName
 
 This can create a new scratch file with user provided filename (But actually you can use `scratch` to create a file then rename the file)
 
@@ -66,7 +68,7 @@ vim.keymap.set("n", "<M-C-m>", "<cmd>ScratchWithName<cr>")
 vim.keymap.set("n", "<M-C-m>", function() require("scratch").scratchWithName() end)
 ```
 
-#### ScratchOpen
+### ScratchOpen
 
 This can open an old scratch file in your config's `scratch_file_dir`
 
@@ -76,7 +78,7 @@ vim.keymap.set("n", "<M-C-o>", "<cmd>ScratchOpen<cr>")
 vim.keymap.set("n", "<M-C-o>", function() require("scratch").openScratch() end)
 ```
 
-#### ScratchOpenFzf
+### ScratchOpenFzf
 
 Fuzzy find the content of your scratch files and open
 
@@ -86,7 +88,7 @@ vim.keymap.set("n", "<M-C-o>", "<cmd>ScratchOpenFzf<cr>")
 vim.keymap.set("n", "<M-C-o>", function() require("scratch").fzfScratch() end)
 ```
 
-#### ScratchCheckConfig
+### ScratchCheckConfig
 
 This function can print out your current configuration.
 
