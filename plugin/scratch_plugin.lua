@@ -29,6 +29,9 @@ local commands = {{
 }, {
     name = "ScratchCheckConfig",
     callback = scratch.checkConfig
+},{
+	name = "ScratchEditConfig",
+	callback = scratch.editConfig
 }}
 
 for _, v in ipairs(commands) do
