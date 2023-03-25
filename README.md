@@ -25,18 +25,23 @@ use {
 
 I will continue add some changes to main branch, so if you meet some issue due to new changes, you can just downgrade to your former version.
 
+- Here are major versions your can revert to:
+    - `v0.6.2`: config to jsonfile
+    - `v0.5.0`: add subdirectory
+    - `v0.4.0`: Add ScratchOpenFzf
+
 ## Configuration
 
 ### Check current Configuration
 
 ```lua
-:lua require("scratch").checkConfig()
+:ScratchCheckConfig
 ```
 
 ### Edit Configuration
 
 ```lua
-:lua require("scratch").editConfig()
+:ScratchEditConfig
 ```
 
 **Note**: Require restart nvim after change the config.
@@ -47,55 +52,48 @@ I will continue add some changes to main branch, so if you meet some issue due t
 
 No default keymappings, here's functions you can mapping to.
 
+All commands are started with `Scratch`, here is one example to add your keybinding to the commands.
+
+```lua
+vim.keymap.set("n", "<M-C-n>", "<cmd>Scratch<cr>")
+vim.keymap.set("n", "<M-C-o>", "<cmd>ScratchOpen<cr>")
+```
+
+Before `v0.6.2` you may need to map to the lua function. Checkout the specific git tag to check the README to the version you want. Here is one example to mapping lua function.
+
+```lua
+vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
+vim.keymap.set("n", "<M-C-o>", function() require("scratch").openScratch() end)
+```
+
 ### Scratch
 
 This can create a new scratch file in your config's `scratch_file_dir`
 
-```lua
-vim.keymap.set("n", "<M-C-n>", "<cmd>Scratch<cr>")
--- or
-vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
-
-```
-
 ### ScratchWithName
 
-This can create a new scratch file with user provided filename (But actually you can use `scratch` to create a file then rename the file)
-
-```lua
-vim.keymap.set("n", "<M-C-m>", "<cmd>ScratchWithName<cr>")
--- or
-vim.keymap.set("n", "<M-C-m>", function() require("scratch").scratchWithName() end)
-```
+This can create a new scratch file with user provided filename (respect the file extension you provided along with the filename)
 
 ### ScratchOpen
 
 This can open an old scratch file in your config's `scratch_file_dir`
 
-```lua
-vim.keymap.set("n", "<M-C-o>", "<cmd>ScratchOpen<cr>")
--- or
-vim.keymap.set("n", "<M-C-o>", function() require("scratch").openScratch() end)
-```
-
 ### ScratchOpenFzf
 
 Fuzzy find the content of your scratch files and open
 
-```lua
-vim.keymap.set("n", "<M-C-o>", "<cmd>ScratchOpenFzf<cr>")
--- or
-vim.keymap.set("n", "<M-C-o>", function() require("scratch").fzfScratch() end)
-```
-
 ### ScratchCheckConfig
 
-This function can print out your current configuration.
+This function can print out your current configuration. Let you rest assure that your custom configuration is taken effect.
 
-I don't think you want to bind this to a shortcut, just use it in command mode to check the config
+### ScratchEditConfig
+
+Open the configuration file and you can edit it to fit your needs. Require restart nvim to take effects.
 
 ## Todo
 
+- [ ] take effect right after user save the configuration.
+- [ ] move config.json to nvim's configuration folder
 - [x] register the command automaticlly
 - [x] Template codes when create specific filetype(configurable)
 - [x] fzf scratch file content and open
