@@ -3,6 +3,7 @@ local M = {}
 local CONFIG_FILE_PATH = vim.fn.stdpath("cache") .. "/scratch.nvim/" .. "configFilePath"
 
 local default_config = {
+    scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",
     filetypes = {"xml", "go", "lua", "js", "py", "sh"}, -- you can simply put filetype here
     filetype_details = { -- you can have more control here
         json = {}, -- not required to put this to `filetypes` table, even though you still can
@@ -23,6 +24,7 @@ local function getConfigFilePath()
     local file = io.open(CONFIG_FILE_PATH, "r")
     local filepath = file:read("*all")
     file:close()
+    -- print("getConfigFilePath: " .. filepath)
 
     return filepath
 end
@@ -48,9 +50,11 @@ local function validate_abspath(path)
         return false
     end
 
-    -- Check path must be file type
-    if vim.fn.isdirectory(path) == 1 then
-        return false
+    -- if already exist check if it's a file
+    if vim.fn.filereadable(path) == 1 then
+        if vim.fn.isdirectory(path) == 1 then
+            return false
+        end
     end
 
     -- If all checks pass, return true
@@ -60,14 +64,14 @@ end
 local function initProcess()
     print("start init Process")
     -- ask user to input the abspath of scratch file dir
-    local scratch_file_dir = vim.fn.input("Please input the abspath of scratch file dir: ")
-    if validate_abspath(scratch_file_dir) == false then
-        print("invalid path. Path must be absolute and must be a file type not directory")
+    local configFilePath = vim.fn.input("Where you want to put your configuration file (abspath): ")
+    if validate_abspath(configFilePath) == false then
+        print("invalid path. Path must be abspath and must be file type")
         return
     end
     -- write the scratch_file_dir into CONFIG_FILE_PATH file
     local file = io.open(CONFIG_FILE_PATH, "w")
-    file:write(scratch_file_dir)
+    file:write(configFilePath)
     file:close()
     -- write default_config into user defined config file
     local configFilePath = getConfigFilePath()
