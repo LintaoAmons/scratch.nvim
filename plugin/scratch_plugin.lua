@@ -17,22 +17,22 @@ local config = require("config")
 
 local commands = {{
     name = "Scratch",
-    callback = scratch.scratch
+    callback = config.initConfigInterceptor(scratch.scratch)
 }, {
     name = "ScratchOpen",
-    callback = scratch.openScratch
+    callback = config.initConfigInterceptor(scratch.openScratch)
 }, {
     name = "ScratchOpenFzf",
-    callback = scratch.fzfScratch
+    callback = config.initConfigInterceptor(scratch.fzfScratch)
 }, {
     name = "ScratchWithName",
-    callback = scratch.scratchWithName
+    callback = config.initConfigInterceptor(scratch.scratchWithName)
 }, {
     name = "ScratchCheckConfig",
-    callback = config.checkConfig
-},{
-	name = "ScratchEditConfig",
-	callback = config.editConfig
+    callback = config.initConfigInterceptor(config.checkConfig)
+}, {
+    name = "ScratchEditConfig",
+    callback = config.initConfigInterceptor(config.editConfig)
 }}
 
 for _, v in ipairs(commands) do
