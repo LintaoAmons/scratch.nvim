@@ -12,7 +12,8 @@ vim.g.loaded_scratch = 1
 -- create any global command that does not depend on user setup
 -- usually it is better to define most commands/mappings in the setup function
 -- Be careful to not overuse this file!
-local scratch = require("scratch")
+local scratch = require("scratch_file")
+local config = require("config")
 
 local commands = {{
     name = "Scratch",
@@ -28,12 +29,14 @@ local commands = {{
     callback = scratch.scratchWithName
 }, {
     name = "ScratchCheckConfig",
-    callback = scratch.checkConfig
+    callback = config.checkConfig
 },{
 	name = "ScratchEditConfig",
-	callback = scratch.editConfig
+	callback = config.editConfig
 }}
 
 for _, v in ipairs(commands) do
+    print(v.name)
+    print(v.callback)
     vim.api.nvim_create_user_command(v.name, v.callback, {})
 end
