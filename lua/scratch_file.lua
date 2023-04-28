@@ -85,7 +85,7 @@ end
 
 local function selectFiletypeAndDo(func)
     local filetypes = getFiletypes()
-    print(vim.inspect(filetypes))
+    -- print(vim.inspect(filetypes))
 
     vim.ui.select(filetypes, {
         prompt = "Select filetype",

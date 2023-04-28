@@ -33,6 +33,9 @@ local commands = {{
 }, {
     name = "ScratchEditConfig",
     callback = config.initConfigInterceptor(config.editConfig)
+}, {
+    name = "ScratchInitConfig",
+    callback = config.initConfig
 }}
 
 for _, v in ipairs(commands) do

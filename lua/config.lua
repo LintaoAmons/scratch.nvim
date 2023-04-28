@@ -131,4 +131,8 @@ function M.initConfigInterceptor(fn)
     return withInterceptor
 end
 
+function M.initConfig()
+    initProcess()
+end
+
 return M
