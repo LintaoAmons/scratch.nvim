@@ -19,18 +19,30 @@ using your favorate plugin manager, for example packer
 ```lua
 use {
 	"LintaoAmons/scratch.nvim",
-	-- tag = "v0.6.1" -- use tag for stability, or without this to have latest fixed and functions
+	-- tag = "v0.7.0" -- use tag for stability, or without this to have latest fixed and functions
 }
 ```
 
 I will continue add some changes to main branch, so if you meet some issue due to new changes, you can just downgrade to your former version.
 
 - Here are major versions your can revert to:
-    - `v0.6.2`: config to jsonfile
+    - `v0.7.0`: config to jsonfile
     - `v0.5.0`: add subdirectory
     - `v0.4.0`: Add ScratchOpenFzf
 
 ## Configuration
+
+### Init Configuration
+
+- When you first time use the plugin, it will trigger the initProcess and you can choose where to put your configuration file, and this allows you:
+  - Put your configuration anywhere you want and can be tracked along with your other configuration with git
+  - Have multiple configuration, and switch the configuration by change the configuration filepath with this command
+
+```lua
+:ScratchInitConfig
+```
+
+- note: this is triggered automaticlly at the first time you try to use Scrach's commands, and can be manually called to change the configuration file path
 
 ### Check current Configuration
 
