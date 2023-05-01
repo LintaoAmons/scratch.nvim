@@ -39,7 +39,5 @@ local commands = {{
 }}
 
 for _, v in ipairs(commands) do
-    print(v.name)
-    print(v.callback)
     vim.api.nvim_create_user_command(v.name, v.callback, {})
 end
