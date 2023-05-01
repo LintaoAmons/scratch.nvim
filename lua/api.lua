@@ -1,6 +1,7 @@
 local M = {}
 
-local configFilePath = vim.fn.stdpath("cache") .. "/scratch.nvim/" .. "config.json"
+local configDir      = vim.fn.stdpath("cache") .. "/scratch.nvim/"
+local configFilePath = configDir .. "config.json"
 
 local default_config = {
     scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",
@@ -19,8 +20,16 @@ local default_config = {
     }
 }
 
+-- Create the config directory if not exist.
+local initConfigDir = function()
+    if vim.fn.isdirectory(configDir) == 0 then
+        vim.fn.mkdir(configDir, "p")
+    end
+end
+
 -- Read json file and parse to dictionary
 local function getConfig()
+    initConfigDir()
     -- write file if the file is not exist
     if vim.fn.filereadable(configFilePath) == 0 then
         local file = io.open(configFilePath, "w")
@@ -45,12 +54,12 @@ local function getScratchFileDir()
     end
 end
 
+
 local initDir = function()
     if vim.fn.isdirectory(getScratchFileDir()) == 0 then
         vim.fn.mkdir(getScratchFileDir(), "p")
     end
 end
-
 
 -- open the config write in nvim current buffer
 local function editConfig()
