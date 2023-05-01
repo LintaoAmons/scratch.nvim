@@ -62,11 +62,18 @@ local function validate_abspath(path)
 end
 
 local function initProcess()
-    print("start init Process")
+    -- if CONFIG_FILE_PATH file exist, call getConfigFilePath
+    local defaultConfigFilePath = vim.fn.stdpath("cache") .. "/scratch.nvim/config.json"
+    local currentConfigFilePath = defaultConfigFilePath
+    if vim.fn.filereadable(CONFIG_FILE_PATH) == 1 then
+        currentConfigFilePath = getConfigFilePath()
+    end
+
     -- ask user to input the abspath of scratch file dir
-    local configFilePath = vim.fn.input("Where you want to put your configuration file (abspath): ")
+    local configFilePath = vim.fn.input("Where you want to put your configuration file (abspath): ",
+        currentConfigFilePath)
     if validate_abspath(configFilePath) == false then
-        print("invalid path. Path must be abspath and must be file type")
+        vim.notify("invalid path. Path must be abspath and must be file type")
         return
     end
     -- write the scratch_file_dir into CONFIG_FILE_PATH file
@@ -80,7 +87,7 @@ local function initProcess()
     local file = io.open(configFilePath, "w")
     file:write(vim.fn.json_encode(default_config))
     file:close()
-    print("init Process done")
+    vim.notify("Init done, your config file will be at " .. configFilePath)
 end
 
 -- Read json file and parse to dictionary
