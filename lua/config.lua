@@ -1,6 +1,6 @@
 local M = {}
 
-local CONFIG_FILE_PATH = vim.fn.stdpath("cache") .. "/scratch.nvim/" .. "configFilePath"
+local CONFIG_FILE_PATH = vim.fn.stdpath("cache") .. "/scratch2.nvim/" .. "configFilePath"
 
 local default_config = {
     scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",
@@ -77,6 +77,10 @@ local function initProcess()
         return
     end
     -- write the scratch_file_dir into CONFIG_FILE_PATH file
+    local dir_path = vim.fn.fnamemodify(CONFIG_FILE_PATH, ":h")
+    if vim.fn.isdirectory(dir_path) == 0 then
+        vim.fn.mkdir(dir_path, "p")
+    end
     local file = io.open(CONFIG_FILE_PATH, "w")
     file:write(configFilePath)
     file:close()
