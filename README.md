@@ -3,7 +3,7 @@
 ## Create scratch file
 
 Help you to create tmp playground files, which can be found later, 
-with one stroke and without worrying about what's the filename and where to put it.
+with one stroke and without worrying about what the filename should be and where to put it.
 
 - With other nvim's goodies.
   - with `treesitter` to have syntax highlighting
@@ -19,14 +19,14 @@ using your favorate plugin manager, for example packer
 ```lua
 use {
 	"LintaoAmons/scratch.nvim",
-	-- tag = "v0.7.0" -- use tag for stability, or without this to have latest fixed and functions
+	-- tag = "v0.7.1" -- use tag for stability, or without this to have latest fixed and functions
 }
 ```
 
 I will continue add some changes to main branch, so if you meet some issue due to new changes, you can just downgrade to your former version.
 
 - Here are major versions your can revert to:
-    - `v0.7.0`: config to jsonfile
+    - `v0.7.1`: config to jsonfile
     - `v0.5.0`: add subdirectory
     - `v0.4.0`: Add ScratchOpenFzf
     - Find other tags at https://github.com/LintaoAmons/scratch.nvim/tags
