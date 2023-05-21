@@ -14,13 +14,15 @@ with one stroke and without worrying about what the filename should be and where
 
 ## Install
 
-using your favorate plugin manager, for example packer
+using your favorate plugin manager, for example [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
-use {
-	"LintaoAmons/scratch.nvim",
-	-- tag = "v0.7.1" -- use tag for stability, or without this to have latest fixed and functions
-}
+  {
+    "LintaoAmons/scratch.nvim",
+    event = 'VimEnter',
+    -- tag = "v0.7.1" -- use tag for stability, or without this to have latest fixed and functions
+  }
+
 ```
 
 I will continue add some changes to main branch, so if you meet some issue due to new changes, you can just downgrade to your former version.
@@ -32,6 +34,11 @@ I will continue add some changes to main branch, so if you meet some issue due t
     - Find other tags at https://github.com/LintaoAmons/scratch.nvim/tags
 
 ## Configuration
+
+Just install and use the commands it provides. You can search commands with `Scratch` prefix by telescope or fzflua
+
+<details>
+<summary>Click to know more about config</summary>
 
 ### Init Configuration
 
@@ -58,6 +65,10 @@ I will continue add some changes to main branch, so if you meet some issue due t
 **Note**: Require restart nvim after change the config.
 
 ![scratch_config](https://user-images.githubusercontent.com/95092244/227540633-d256fcda-1c80-4ea0-b416-bde872d52571.gif)
+
+</details>
+
+
 
 ## Commands | Keymappings | Functions
 
