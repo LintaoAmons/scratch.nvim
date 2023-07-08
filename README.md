@@ -62,9 +62,9 @@ Just install and use the commands it provides. You can search commands with `Scr
 :ScratchEditConfig
 ```
 
-**Note**: Require restart nvim after change the config.
+**Note**: Don't need require restart nvim after change the config.
 
-![scratch_config](https://user-images.githubusercontent.com/95092244/227540633-d256fcda-1c80-4ea0-b416-bde872d52571.gif)
+![show](https://github.com/LintaoAmons/scratch.nvim/assets/95092244/8e3fe968-91a5-4e86-a34e-84f9274b3355)
 
 </details>
 
