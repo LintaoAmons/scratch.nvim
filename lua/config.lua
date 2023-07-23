@@ -22,6 +22,25 @@ local default_config = {
 				insert_mode = true,
 			},
 		},
+		["gp.md"] = {
+			cursor = {
+				location = { 11, 2 },
+				insert_mode = true,
+			},
+			content = {
+				"# topic: ?",
+				'- model: {"top_p":1,"temperature":0.7,"model":"gpt-3.5-turbo-16k"}',
+				"- file: 2023-07-23_19-11-31.009.md",
+				"- role: You are a general AI assistant.",
+				"",
+				"Write your queries after 🗨:. Run :GpChatRespond to generate response.",
+				"",
+				"---",
+				"",
+				"🗨:",
+				"",
+			},
+		},
 	},
 }
 
