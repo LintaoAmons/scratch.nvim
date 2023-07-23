@@ -1,5 +1,3 @@
-**Breaking change**: the way to config the plugin have change to json, see the Configuration section for more information
-
 ## Create scratch file
 
 Help you to create tmp playground files, which can be found later, 
@@ -39,6 +37,9 @@ Just install and use the commands it provides. You can search commands with `Scr
 
 <details>
 <summary>Click to know more about config</summary>
+
+The way to config this plugin is a little difference(simpler) with other nvim plugin.
+You can use `ScratchEditConfig` to edit the config and the config will take effect immediately
 
 ### Init Configuration
 
@@ -114,8 +115,9 @@ Open the configuration file and you can edit it to fit your needs. Require resta
 
 ## Todo
 
-- [ ] take effect right after user save the configuration.
-- [ ] move config.json to nvim's configuration folder
+- [ ] scratch a file based on visual selection
+- [x] take effect right after user save the configuration.
+- [x] move config.json to nvim's configuration folder
 - [x] register the command automaticlly
 - [x] Template codes when create specific filetype(configurable)
 - [x] fzf scratch file content and open
