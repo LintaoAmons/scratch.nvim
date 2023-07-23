@@ -3,13 +3,13 @@ local M = {}
 -- CONFIG_FILE_PATH act like a flag to check if user already init the plugin or not
 -- inside only contains the info about the path where user put there's config json content
 local CONFIG_FILE_FLAG_PATH = vim.fn.stdpath("cache") .. "/scratch.nvim/" .. "configFilePath"
-local DEFAULT_CONFIG_PATH = vim.fn.stdpath("config") .. "/scratch.nvim"
+local DEFAULT_CONFIG_PATH = vim.fn.stdpath("config") .. "/scratch_config.json"
 local logErr = function(msg)
 	vim.notify(msg, vim.log.levels.ERROR, { title = "easy-commands.nvim" })
 end
 
 local default_config = {
-	scratch_file_dir = DEFAULT_CONFIG_PATH,
+	scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",
 	filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
 	filetype_details = { -- you can have more control here
 		json = {}, -- not required to put this to `filetypes` table, even though you still can
@@ -30,7 +30,6 @@ local function getConfigFilePath()
 	local file = io.open(CONFIG_FILE_FLAG_PATH, "r")
 	local filepath = file:read("*all")
 	file:close()
-	-- print("getConfigFilePath: " .. filepath)
 
 	return filepath
 end
@@ -118,7 +117,8 @@ local function readConfigFile()
 	return vim.fn.json_decode(json_data)
 end
 
--- Expose getConfig function
+---comment
+---@return {}
 function M.getConfig()
 	return readConfigFile()
 end

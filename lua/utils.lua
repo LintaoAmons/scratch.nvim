@@ -2,8 +2,6 @@ local M = {}
 
 -- Initialize the scratch file directory if it does not exist
 function M.initDir(scratch_file_dir)
-	vim.print(scratch_file_dir)
-	vim.print(vim.fn.isdirectory(scratch_file_dir))
 	if vim.fn.filereadable(scratch_file_dir) == 0 then
 		vim.fn.mkdir(scratch_file_dir, "p")
 	else
