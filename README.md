@@ -26,9 +26,9 @@ using your favorate plugin manager, for example [lazy.nvim](https://github.com/f
 I will continue add some changes to main branch, so if you meet some issue due to new changes, you can just downgrade to your former version.
 
 - Here are major versions your can revert to:
+  - `v0.8.0`: Allow group type of file in specific subdir
   - `v0.7.1`: config to jsonfile
   - `v0.5.0`: add subdirectory
-  - `v0.4.0`: Add ScratchOpenFzf
   - Find other tags at https://github.com/LintaoAmons/scratch.nvim/tags
 
 ## Configuration
