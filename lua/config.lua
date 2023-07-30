@@ -13,10 +13,10 @@ local default_config = {
 	filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
 	filetype_details = { -- or, you can have more control here
 		json = {}, -- empty table is fine
-    ["yaml"] = {},
-    ["k8s.yaml"] = { -- you can have different postfix
-      subdir = "learn-k8s" -- and put this in a specific subdir 
-    },
+		["yaml"] = {},
+		["k8s.yaml"] = { -- you can have different postfix
+			subdir = "learn-k8s", -- and put this in a specific subdir
+		},
 		go = {
 			requireDir = true, -- true if each scratch file requires a new directory
 			filename = "main", -- the filename of the scratch file in the new directory
@@ -146,6 +146,20 @@ end
 function M.getConfig()
 	return readConfigFile()
 end
+
+-- TODO: convert to a struct and add type
+function M.getConfigRequiresDir(ft)
+	local config_data = M.getConfig()
+	return config_data.filetype_details[ft] and config_data.filetype_details[ft].requireDir or false
+end
+
+---@param ft string
+---@return string
+function M.getConfigFilename(ft)
+  local config_data = M.getConfig()
+  return config_data.filetype_details[ft] and config_data.filetype_details[ft].filename or tostring(os.date("%H%M%S-%y%m%d"))
+end
+
 
 -- Expose editConfig function
 function M.editConfig()
