@@ -34,15 +34,16 @@ end
 ---@param ft string
 function M.createScratchFileByType(ft)
 	local config_data = config.getConfig()
-	local scratch_file_dir = config_data.scratch_file_dir
-	utils.initDir(scratch_file_dir)
+	local parentDir = config_data.scratch_file_dir
+	utils.initDir(parentDir)
 
-	-- if config_data.subdir ~= nil then
-	-- utils.initDir(scratch_file_dir)
-	-- end
+	local subdir = config.getConfigSubDir(ft)
+	if subdir ~= nil then
+		parentDir = parentDir .. "/" .. subdir
+		utils.initDir(parentDir)
+	end
 
-	local fullpath =
-		utils.genFilepath(ft, config.getConfigFilename(ft), scratch_file_dir, config.getConfigRequiresDir(ft))
+	local fullpath = utils.genFilepath(ft, config.getConfigFilename(ft), parentDir, config.getConfigRequiresDir(ft))
 	vim.cmd(":e " .. fullpath)
 
 	if hasDefaultContent(ft) then

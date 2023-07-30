@@ -34,16 +34,16 @@ end
 --- generate abs filepath
 ---@param ft string
 ---@param filename string
----@param scratch_file_dir string
+---@param parentDir string
 ---@param requiresDir boolean
 ---@return string
-function M.genFilepath(ft, filename, scratch_file_dir, requiresDir)
+function M.genFilepath(ft, filename, parentDir, requiresDir)
 	if requiresDir then
 		local dirName = vim.trim(vim.fn.system("uuidgen"))
-		vim.fn.mkdir(scratch_file_dir .. "/" .. dirName, "p")
-		return scratch_file_dir .. "/" .. dirName .. "/" .. filename .. "." .. ft
+		vim.fn.mkdir(parentDir .. "/" .. dirName, "p")
+		return parentDir .. "/" .. dirName .. "/" .. filename .. "." .. ft
 	else
-		return scratch_file_dir .. "/" .. filename .. "." .. ft
+		return parentDir .. "/" .. filename .. "." .. ft
 	end
 end
 

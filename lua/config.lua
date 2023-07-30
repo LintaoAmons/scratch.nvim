@@ -156,10 +156,17 @@ end
 ---@param ft string
 ---@return string
 function M.getConfigFilename(ft)
-  local config_data = M.getConfig()
-  return config_data.filetype_details[ft] and config_data.filetype_details[ft].filename or tostring(os.date("%H%M%S-%y%m%d"))
+	local config_data = M.getConfig()
+	return config_data.filetype_details[ft] and config_data.filetype_details[ft].filename
+		or tostring(os.date("%H%M%S-%y%m%d"))
 end
 
+---@param ft string
+---@return string | nil
+function M.getConfigSubDir(ft)
+	local config_data = M.getConfig()
+	return config_data.filetype_details[ft] and config_data.filetype_details[ft].subdir
+end
 
 -- Expose editConfig function
 function M.editConfig()
