@@ -1,6 +1,6 @@
 local M = {}
-local config = require("config")
-local utils = require("utils")
+local config = require("scratch.config")
+local utils = require("scratch.utils")
 
 local function write_lines_to_buffer(lines)
 	local bufnr = vim.api.nvim_get_current_buf()
