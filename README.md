@@ -33,9 +33,11 @@ I will continue add some changes to main branch, so if you meet some issue due t
 
 ## Configuration
 
-Just install and use the commands it provides.
+No need to config at the very begining, just install and use the commands it provides.
 
 You can search commands with `Scratch` prefix by telescope or fzflua
+
+You can use `ScratchEditConfig` to edit the config once some new type popup your mind and the config will take effect immediately
 
 Here's default config after you inited the plugin
 
@@ -162,6 +164,7 @@ Open the configuration file and you can edit it to fit your needs. Require resta
 
 ## Todo
 
+- [ ] local shortcuts.
 - [ ] scratch a file based on visual selection
 - [x] group type of file into it's own specific subdir
 - [x] take effect right after user save the configuration.
