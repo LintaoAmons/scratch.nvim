@@ -47,4 +47,27 @@ function M.genFilepath(ft, filename, parentDir, requiresDir)
 	end
 end
 
+---@param localKey Scratch.LocalKey
+function M.setLocalKeybindings(localKeys)
+	for _, localKey in ipairs(localKeys) do
+		vim.keymap.set(localKey.modes, localKey.key, localKey.cmd, {
+			noremap = true,
+			silent = true,
+			nowait = true,
+			buffer = vim.api.nvim_get_current_buf(),
+		})
+	end
+end
+
+---@param substr string
+---@return boolean
+function M.filenameContains(substr)
+	local s = vim.fn.expand("%:t")
+	if string.find(s, substr) then
+		return true
+	else
+		return false
+	end
+end
+
 return M

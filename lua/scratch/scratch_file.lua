@@ -31,6 +31,19 @@ function M.createScratchFileByName(filename)
 	vim.cmd(":e " .. fullpath)
 end
 
+local function registerLocalKey()
+	local localKeys = config.getLocalKeys()
+	if localKeys and #localKeys > 0 then
+		for _, key in ipairs(localKeys) do
+			for _, namePattern in ipairs(key.filenameContains) do
+				if utils.filenameContains(namePattern) then
+					utils.setLocalKeybindings(key.LocalKeys)
+				end
+			end
+		end
+	end
+end
+
 ---@param ft string
 function M.createScratchFileByType(ft)
 	local config_data = config.getConfig()
@@ -45,6 +58,8 @@ function M.createScratchFileByType(ft)
 
 	local fullpath = utils.genFilepath(ft, config.getConfigFilename(ft), parentDir, config.getConfigRequiresDir(ft))
 	vim.cmd(":e " .. fullpath)
+
+	registerLocalKey()
 
 	if hasDefaultContent(ft) then
 		write_lines_to_buffer(config_data.filetype_details[ft].content)
@@ -131,6 +146,7 @@ function M.openScratch()
 	}, function(chosenFile)
 		if chosenFile then
 			vim.cmd(":e " .. scratch_file_dir .. "/" .. chosenFile)
+			registerLocalKey()
 		end
 	end)
 end

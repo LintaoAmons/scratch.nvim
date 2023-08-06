@@ -8,6 +8,20 @@ local logErr = function(msg)
 	vim.notify(msg, vim.log.levels.ERROR, { title = "easy-commands.nvim" })
 end
 
+---@alias mode
+---| '"n"'
+---| '"i"'
+---| '"v"'
+
+---@class Scratch.LocalKey
+---@field cmd string
+---@field key string
+---@field modes mode[]
+
+---@class Scratch.LocalKeyConfig
+---@field filenameContains string[] as long as the filename contains any one of the string in the list
+---@field LocalKeys Scratch.LocalKey[]
+
 local default_config = {
 	scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",
 	filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
@@ -44,6 +58,19 @@ local default_config = {
 				"",
 				"🗨:",
 				"",
+			},
+		},
+	},
+	---@type Scratch.LocalKeyConfig[]
+	localKeys = {
+		{
+			filenameContains = { "gp" },
+			LocalKeys = {
+				{
+					cmd = "<CMD>GpResponse<CR>",
+					key = "<C-k>k",
+					modes = { "n", "i", "v" },
+				},
 			},
 		},
 	},
@@ -166,6 +193,12 @@ end
 function M.getConfigSubDir(ft)
 	local config_data = M.getConfig()
 	return config_data.filetype_details[ft] and config_data.filetype_details[ft].subdir
+end
+
+---@return Scratch.LocalKeyConfig[] | nil
+function M.getLocalKeys()
+	local config_data = M.getConfig()
+	return config_data.localKeys
 end
 
 -- Expose editConfig function

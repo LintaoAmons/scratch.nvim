@@ -41,6 +41,8 @@ You can use `ScratchEditConfig` to edit the config once some new type popup your
 
 Here's default config after you inited the plugin
 
+NOTE: you can't have comment in your config, since only plain json supported right now
+
 ```jsonc
 {
   "filetypes": ["xml", "go", "lua", "js", "py", "sh"], // you can simply put filetype here
@@ -82,7 +84,19 @@ Here's default config after you inited the plugin
         ""
       ]
     }
-  }
+  },
+  "localKeys": [ // local keymapping for specific type of file
+    {
+      "filenameContains": ["gp"],
+      "LocalKeys": [
+        {
+          "cmd": "<CMD>GpChatRespond<CR>",
+          "key": "<C-k>k",
+          "modes": ["n", "i", "v"]
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -164,7 +178,7 @@ Open the configuration file and you can edit it to fit your needs. Require resta
 
 ## Todo
 
-- [ ] local shortcuts.
+- [x] local shortcuts.
 - [ ] scratch a file based on visual selection
 - [x] group type of file into it's own specific subdir
 - [x] take effect right after user save the configuration.
