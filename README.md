@@ -176,6 +176,18 @@ This function can print out your current configuration. Let you rest assure that
 
 Open the configuration file and you can edit it to fit your needs. Require restart nvim to take effects.
 
+### Functions
+
+functions can be required from scratch, check `./lua/scratch/init.lua` to get the functions you can use
+
+## Jump to scratch file from terminal
+
+```sh
+nvim -c 'lua require("scratch").scratchByType("md")'
+```
+
+> NOTE: you can't lazyload the plugin if you want make the `scratch` plugin accessible at the init of nvim
+
 ## Todo
 
 - [x] local shortcuts.
