@@ -56,7 +56,7 @@ function M.createScratchFileByType(ft)
 		utils.initDir(parentDir)
 	end
 
-	local fullpath = utils.genFilepath(ft, config.getConfigFilename(ft), parentDir, config.getConfigRequiresDir(ft))
+	local fullpath = utils.genFilepath(config.getConfigFilename(ft), parentDir, config.getConfigRequiresDir(ft))
 	vim.cmd(":e " .. fullpath)
 
 	registerLocalKey()

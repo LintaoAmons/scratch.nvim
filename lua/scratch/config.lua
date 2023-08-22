@@ -185,7 +185,7 @@ end
 function M.getConfigFilename(ft)
 	local config_data = M.getConfig()
 	return config_data.filetype_details[ft] and config_data.filetype_details[ft].filename
-		or tostring(os.date("%y-%m-%d_%H-%M-%S"))
+		or tostring(os.date("%y-%m-%d_%H-%M-%S")) .. "." .. ft
 end
 
 ---@param ft string
