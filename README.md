@@ -85,7 +85,8 @@ NOTE: you can't have comment in your config, since only plain json supported rig
       ]
     }
   },
-  "localKeys": [ // local keymapping for specific type of file
+  "localKeys": [
+    // local keymapping for specific type of file
     {
       "filenameContains": ["gp"],
       "LocalKeys": [
@@ -190,6 +191,7 @@ nvim -c 'lua require("scratch").scratchByType("md")'
 
 ## Todo
 
+- [ ] refactor: init_intercepter to the checkInit method to allow range commands like scratchPad
 - [x] local shortcuts.
 - [ ] scratch a file based on visual selection
 - [x] group type of file into it's own specific subdir

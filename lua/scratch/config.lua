@@ -117,6 +117,12 @@ local function validate_abspath(path)
 	return true
 end
 
+M.checkInit = function()
+	print(vim.fn.filereadable(CONFIG_FILE_FLAG_PATH) == 1)
+	print(validate_abspath(getConfigFilePath()))
+	return vim.fn.filereadable(CONFIG_FILE_FLAG_PATH) == 1 and validate_abspath(getConfigFilePath())
+end
+
 ---Init the plugin
 ---@param force boolean
 local function initProcess(force)
@@ -213,8 +219,8 @@ end
 function M.initConfigInterceptor(fn)
 	local function withInterceptor()
 		if vim.fn.filereadable(CONFIG_FILE_FLAG_PATH) == 0 then
-			vim.notify("here")
-			vim.notify(CONFIG_FILE_FLAG_PATH)
+			-- vim.notify("here")
+			-- vim.notify(CONFIG_FILE_FLAG_PATH)
 			initProcess(false)
 		else
 			if validate_abspath(getConfigFilePath()) then

@@ -24,6 +24,10 @@ local commands = {
 		name = "ScratchOpen",
 		callback = config.initConfigInterceptor(scratch.openScratch),
 	},
+	-- {
+	--   name = "ScratchPad",
+	--   callback = config.initConfigInterceptor(scratch.scratchPad)
+	-- },
 	{
 		name = "ScratchOpenFzf",
 		callback = config.initConfigInterceptor(scratch.fzfScratch),
@@ -45,6 +49,15 @@ local commands = {
 		callback = config.initConfig,
 	},
 }
+
+vim.api.nvim_create_user_command("ScratchPad", function(args)
+	vim.print(args)
+	if args.range > 0 then
+		scratch.scratchPad("v", args.line1, args.line2)
+	else
+		scratch.scratchPad("n")
+	end
+end, { range = true })
 
 for _, v in ipairs(commands) do
 	vim.api.nvim_create_user_command(v.name, v.callback, {})

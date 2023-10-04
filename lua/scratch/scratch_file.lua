@@ -116,6 +116,32 @@ local function getScratchFiles()
 	return res
 end
 
+function M.scratchPad(mode, startLine, endLine)
+	if not config.checkInit() then
+		config.initConfig()
+	end
+
+	local content = { "================ " .. os.date("%Y-%m-%d %H:%M:%S") .. " ================", "" }
+	if mode == "v" then
+		local lines = vim.fn.getline(startLine, endLine)
+
+		vim.print(lines)
+		for i = 1, #lines do
+			table.insert(content, lines[i])
+		end
+	end
+	table.insert(content, "")
+
+	local config_data = config.getConfig()
+	-- TODO: config the pad path
+	local padPath = config_data.pad_path or config_data.scratch_file_dir .. "/scratchPad.md"
+	-- TODO: config: pad open in split or current window or float window
+	vim.cmd("vsplit " .. padPath)
+	vim.api.nvim_win_set_cursor(0, { 1, 0 })
+
+	vim.api.nvim_put(content, "", false, true)
+end
+
 function M.scratch()
 	selectFiletypeAndDo(M.createScratchFileByType)
 end
