@@ -1,7 +1,8 @@
 ## Create scratch file
 
-Help you to create tmp playground files, which can be found later,
-with one stroke and without worrying about what the filename should be and where to put it.
+Create temporary playground files
+effortlessly. Find them later without
+worrying about filenames or locations
 
 - With other nvim's goodies.
   - with `treesitter` to have syntax highlighting
