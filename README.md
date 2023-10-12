@@ -9,7 +9,8 @@ worrying about filenames or locations
   - with `lsp` and `cmp` to have auto-cmp, auto-format and other lsp goodies
   - with `michaelb/sniprun` or `metakirby5/codi.vim` to run scratch file
 
-![Video](https://github.com/LintaoAmons/scratch.nvim/assets/95092244/95c76c7d-4ba7-4b44-b4d7-0df4310ffbcf)
+[Scratch Intro](https://github.com/LintaoAmons/scratch.nvim/assets/95092244/c1adff70-c8c5-4594-80e3-18d3e6b24d7a)
+
 
 ## Install
 
