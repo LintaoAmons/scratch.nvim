@@ -51,7 +51,6 @@ local commands = {
 }
 
 vim.api.nvim_create_user_command("ScratchPad", function(args)
-	vim.print(args)
 	if args.range > 0 then
 		scratch.scratchPad("v", args.line1, args.line2)
 	else

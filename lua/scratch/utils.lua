@@ -82,7 +82,6 @@ function M.getSelectedText()
 	local _, csrow, cscol, _ = unpack(vim.fn.getpos("'<"))
 	local _, cerow, cecol, _ = unpack(vim.fn.getpos("'>"))
 
-	vim.print(csrow, cscol, cerow, cecol)
 	local lines = vim.fn.getline(csrow, cerow)
 	local n = table_length(lines)
 	if n <= 0 then

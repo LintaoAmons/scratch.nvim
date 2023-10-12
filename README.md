@@ -16,25 +16,16 @@ worrying about filenames or locations
 using your favorate plugin manager, for example [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
-  {
-    "LintaoAmons/scratch.nvim",
-    event = 'VimEnter',
-    -- tag = "v0.7.1" -- use tag for stability, or without this to have latest fixed and functions
-  }
-
+{
+  "LintaoAmons/scratch.nvim",
+  event = 'VimEnter',
+}
 ```
 
-I will continue add some changes to main branch, so if you meet some issue due to new changes, you can just downgrade to your former version.
-
-- Here are major versions your can revert to:
-  - `v0.8.0`: Allow group type of file in specific subdir
-  - `v0.7.1`: config to jsonfile
-  - `v0.5.0`: add subdirectory
-  - Find other tags at https://github.com/LintaoAmons/scratch.nvim/tags
 
 ## Configuration
 
-No need to config at the very begining, just install and use the commands it provides.
+No need to config at the very begining, just install and explore.
 
 You can search commands with `Scratch` prefix by telescope or fzflua
 
@@ -177,6 +168,11 @@ This function can print out your current configuration. Let you rest assure that
 ### ScratchEditConfig
 
 Open the configuration file and you can edit it to fit your needs. Require restart nvim to take effects.
+
+### ScratchPad
+
+A file where you can continuously record information.
+
 
 ### Functions
 

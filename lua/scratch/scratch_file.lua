@@ -121,15 +121,18 @@ function M.scratchPad(mode, startLine, endLine)
 		config.initConfig()
 	end
 
-	local content = { "================ " .. os.date("%Y-%m-%d %H:%M:%S") .. " ================", "" }
+	local absPath = vim.fn.expand("%:p")
+
+	local content =
+		{ "================ " .. os.date("%Y-%m-%d %H:%M:%S") .. " | " .. absPath .. " ================", "" }
 	if mode == "v" then
 		local lines = vim.fn.getline(startLine, endLine)
 
-		vim.print(lines)
 		for i = 1, #lines do
 			table.insert(content, lines[i])
 		end
 	end
+	table.insert(content, "")
 	table.insert(content, "")
 
 	local config_data = config.getConfig()

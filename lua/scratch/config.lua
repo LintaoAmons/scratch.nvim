@@ -118,8 +118,6 @@ local function validate_abspath(path)
 end
 
 M.checkInit = function()
-	print(vim.fn.filereadable(CONFIG_FILE_FLAG_PATH) == 1)
-	print(validate_abspath(getConfigFilePath()))
 	return vim.fn.filereadable(CONFIG_FILE_FLAG_PATH) == 1 and validate_abspath(getConfigFilePath())
 end
 
