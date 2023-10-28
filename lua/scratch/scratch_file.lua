@@ -28,7 +28,7 @@ function M.createScratchFileByName(filename)
 	utils.initDir(scratch_file_dir)
 
 	local fullpath = scratch_file_dir .. "/" .. filename
-	vim.cmd(":e " .. fullpath)
+	vim.api.nvim_command(config_data.window_pos .. fullpath)
 end
 
 local function registerLocalKey()
@@ -57,7 +57,7 @@ function M.createScratchFileByType(ft)
 	end
 
 	local fullpath = utils.genFilepath(config.getConfigFilename(ft), parentDir, config.getConfigRequiresDir(ft))
-	vim.cmd(":e " .. fullpath)
+	vim.api.nvim_command(config_data.window_pos .. fullpath)
 
 	registerLocalKey()
 
@@ -139,7 +139,7 @@ function M.scratchPad(mode, startLine, endLine)
 	-- TODO: config the pad path
 	local padPath = config_data.pad_path or config_data.scratch_file_dir .. "/scratchPad.md"
 	-- TODO: config: pad open in split or current window or float window
-	vim.cmd("vsplit " .. padPath)
+	vim.api.nvim_command(config_data.window_pos .. padPath)
 	vim.api.nvim_win_set_cursor(0, { 1, 0 })
 
 	vim.api.nvim_put(content, "", false, true)
@@ -174,7 +174,7 @@ function M.openScratch()
 		end,
 	}, function(chosenFile)
 		if chosenFile then
-			vim.cmd(":e " .. scratch_file_dir .. "/" .. chosenFile)
+			vim.api.nvim_command(config_data.window_pos .. scratch_file_dir .. "/" .. chosenFile)
 			registerLocalKey()
 		end
 	end)
