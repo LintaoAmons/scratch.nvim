@@ -39,6 +39,7 @@ NOTE: you can't have comment in your config, since only plain json supported rig
 ```jsonc
 {
   "filetypes": ["xml", "go", "lua", "js", "py", "sh"], // you can simply put filetype here
+	"window_cmd": "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'. Can use rightbelow or topleft etc. as modifier
   "scratch_file_dir": "/you_home_path/.cache/nvim/scratch.nvim",
   "filetype_details": {
     "go": {
