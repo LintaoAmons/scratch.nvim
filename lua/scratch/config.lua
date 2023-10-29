@@ -24,7 +24,7 @@ end
 
 local default_config = {
 	scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",
-	window_pos = "edit", -- 'vsplit' | 'split' | 'edit'
+	window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
 	filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
 	filetype_details = { -- or, you can have more control here
 		json = {}, -- empty table is fine
