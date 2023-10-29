@@ -26,10 +26,13 @@ using your favorate plugin manager, for example [lazy.nvim](https://github.com/f
 
 ## Configuration
 
-No need to config at the very begining, just install and explore.
+No need to config at the very begining, just install and explore the commands start with `Scratch`.
 
-You can search commands with `Scratch` prefix by telescope or fzflua
-
+<details>
+<summary>Click to know more about config</summary>
+  
+The way to config this plugin is a little difference(simpler) with other nvim plugin.
+  
 You can use `ScratchEditConfig` to edit the config once some new type popup your mind and the config will take effect immediately
 
 Here's default config after you inited the plugin
@@ -95,12 +98,6 @@ NOTE: you can't have comment in your config, since only plain json supported rig
 }
 ```
 
-<details>
-<summary>Click to know more about config</summary>
-
-The way to config this plugin is a little difference(simpler) with other nvim plugin.
-You can use `ScratchEditConfig` to edit the config and the config will take effect immediately
-
 ### Init Configuration
 
 - This is triggered automaticlly at the first time you try to use Scrach's commands, and can be manually called to change the configuration file path, and this allows you:
@@ -140,13 +137,6 @@ vim.keymap.set("n", "<M-C-n>", "<cmd>Scratch<cr>")
 vim.keymap.set("n", "<M-C-o>", "<cmd>ScratchOpen<cr>")
 ```
 
-Before `v0.6.2` you may need to map to the lua function. Checkout the specific git tag to check the README to the version you want. Here is one example to mapping lua function.
-
-```lua
-vim.keymap.set("n", "<M-C-n>", function() require("scratch").scratch() end)
-vim.keymap.set("n", "<M-C-o>", function() require("scratch").openScratch() end)
-```
-
 ### Scratch
 
 This can create a new scratch file in your config's `scratch_file_dir`
@@ -174,7 +164,6 @@ Open the configuration file and you can edit it to fit your needs. Require resta
 ### ScratchPad
 
 A file where you can continuously record information.
-
 
 ### Functions
 
