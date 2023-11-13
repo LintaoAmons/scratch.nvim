@@ -159,7 +159,7 @@ This function can print out your current configuration. Let you rest assure that
 
 ### ScratchEditConfig
 
-Open the configuration file and you can edit it to fit your needs. Require restart nvim to take effects.
+Open the configuration file and you can edit it to fit your needs. No need to restart nvim to take effects.
 
 ### ScratchPad
 
