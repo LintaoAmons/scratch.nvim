@@ -1,9 +1,10 @@
+local slash = require("scratch.utils").Slash()
 local M = {}
 
 -- CONFIG_FILE_PATH act like a flag to check if user already init the plugin or not
 -- inside only contains the info about the path where user put there's config json content
-local CONFIG_FILE_FLAG_PATH = vim.fn.stdpath("cache") .. "/scratch.nvim/" .. "configFilePath"
-local DEFAULT_CONFIG_PATH = vim.fn.stdpath("config") .. "/scratch_config.json"
+local CONFIG_FILE_FLAG_PATH = vim.fn.stdpath("cache") .. slash .. "scratch.nvim".. slash .. "configFilePath"
+local DEFAULT_CONFIG_PATH = vim.fn.stdpath("config") .. slash .. "scratch_config.json"
 local logErr = function(msg)
 	vim.notify(msg, vim.log.levels.ERROR, { title = "easy-commands.nvim" })
 end
@@ -23,7 +24,7 @@ end
 ---@field LocalKeys Scratch.LocalKey[]
 
 local default_config = {
-	scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim",
+	scratch_file_dir = vim.fn.stdpath("cache") .. slash .. "scratch.nvim",
 	window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
 	filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
 	filetype_details = { -- or, you can have more control here
@@ -87,23 +88,22 @@ local function getConfigFilePath()
 end
 
 local function validate_abspath(path)
-	-- Check if path starts with a forward slash
-	if string.sub(path, 1, 1) ~= "/" then
-		return false
-	end
-
 	-- Check if path contains any invalid characters
-	if string.match(path, "[^%w/%.%-%_]+") then
+	local valid_chars = "[^%w/%.%-%_]+"
+	if vim.fn.has("win32") == 1 then
+    	valid_chars = "[^%w%.:%\\%-%_]+"
+	end
+	if string.match(path, valid_chars) then
 		return false
 	end
 
 	-- Check if path ends with a forward slash
-	if string.sub(path, -1) == "/" then
+	if string.sub(path, -1) == slash then
 		return false
 	end
 
 	-- Check if path contains any double forward slashes
-	if string.match(path, "//") then
+	if string.match(path, slash .. slash) then
 		return false
 	end
 

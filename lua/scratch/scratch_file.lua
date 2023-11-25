@@ -1,6 +1,7 @@
 local M = {}
 local config = require("scratch.config")
 local utils = require("scratch.utils")
+local slash = require("scratch.utils").Slash()
 
 local function editFile(fullpath)
   local config_data = config.getConfig()
@@ -33,7 +34,7 @@ function M.createScratchFileByName(filename)
   local scratch_file_dir = config_data.scratch_file_dir
   utils.initDir(scratch_file_dir)
 
-  local fullpath = scratch_file_dir .. "/" .. filename
+  local fullpath = scratch_file_dir .. slash .. filename
   editFile(fullpath)
 end
 
@@ -58,7 +59,7 @@ function M.createScratchFileByType(ft)
 
   local subdir = config.getConfigSubDir(ft)
   if subdir ~= nil then
-    parentDir = parentDir .. "/" .. subdir
+    parentDir = parentDir .. slash .. subdir
     utils.initDir(parentDir)
   end
 
@@ -143,7 +144,7 @@ function M.scratchPad(mode, startLine, endLine)
 
   local config_data = config.getConfig()
   -- TODO: config the pad path
-  local padPath = config_data.pad_path or config_data.scratch_file_dir .. "/scratchPad.md"
+  local padPath = config_data.pad_path or config_data.scratch_file_dir .. slash .. "scratchPad.md"
   -- TODO: config: pad open in split or current window or float window
   editFile(padPath)
   vim.api.nvim_win_set_cursor(0, { 1, 0 })
@@ -170,7 +171,7 @@ function M.openScratch()
 
   -- sort the files by their last modified time in descending order
   table.sort(files, function(a, b)
-    return vim.fn.getftime(scratch_file_dir .. "/" .. a) > vim.fn.getftime(scratch_file_dir .. "/" .. b)
+    return vim.fn.getftime(scratch_file_dir .. slash .. a) > vim.fn.getftime(scratch_file_dir .. slash .. b)
   end)
 
   vim.ui.select(files, {
@@ -180,7 +181,7 @@ function M.openScratch()
     end,
   }, function(chosenFile)
     if chosenFile then
-      editFile(scratch_file_dir .. "/" .. chosenFile)
+      editFile(scratch_file_dir .. slash .. chosenFile)
       registerLocalKey()
     end
   end)

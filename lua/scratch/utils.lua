@@ -1,5 +1,15 @@
 local M = {}
 
+function M.Slash()
+    local slash = "/"
+    if vim.fn.has("win32") == 1 then
+        slash = "\\"
+    end
+    return slash
+end
+
+local slash = M.Slash()
+
 -- Initialize the scratch file directory if it does not exist
 function M.initDir(scratch_file_dir)
 	if vim.fn.filereadable(scratch_file_dir) == 0 then
@@ -17,7 +27,7 @@ function M.listDirectoryRecursive(directory)
 	local dir_list = vim.fn.readdir(directory)
 
 	for _, file in ipairs(dir_list) do
-		local path = directory .. "/" .. file
+		local path = directory .. slash .. file
 		if vim.fn.isdirectory(path) == 1 and file ~= "." and file ~= ".." then
 			local subfiles = M.listDirectoryRecursive(path)
 			for _, subfile in ipairs(subfiles) do
@@ -39,10 +49,10 @@ end
 function M.genFilepath(filename, parentDir, requiresDir)
 	if requiresDir then
 		local dirName = vim.trim(vim.fn.system("uuidgen"))
-		vim.fn.mkdir(parentDir .. "/" .. dirName, "p")
-		return parentDir .. "/" .. dirName .. "/" .. filename
+		vim.fn.mkdir(parentDir .. slash .. dirName, "p")
+		return parentDir .. slash .. dirName .. slash .. filename
 	else
-		return parentDir .. "/" .. filename
+		return parentDir .. slash .. filename
 	end
 end
 
