@@ -180,5 +180,7 @@ nvim -c 'lua require("scratch").scratchByType("md")'
 ## Contribution
 
 Ask me anything about the codebase if you want to contribute~
+
 Find some tasks to do in the [issues](https://github.com/LintaoAmons/scratch.nvim/issues)~
+
 Thanks everyone who helped with this plugin~
