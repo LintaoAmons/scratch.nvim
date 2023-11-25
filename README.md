@@ -177,15 +177,8 @@ nvim -c 'lua require("scratch").scratchByType("md")'
 
 > NOTE: you can't lazyload the plugin if you want make the `scratch` plugin accessible at the init of nvim
 
-## Todo
+## Contribution
 
-- [ ] refactor: init_intercepter to the checkInit method to allow range commands like scratchPad
-- [x] local shortcuts.
-- [ ] scratch a file based on visual selection
-- [x] group type of file into it's own specific subdir
-- [x] take effect right after user save the configuration.
-- [x] move config.json to nvim's configuration folder
-- [x] register the command automaticlly
-- [x] Template codes when create specific filetype(configurable)
-- [x] fzf scratch file content and open
-- [x] create user command
+Ask me anything about the codebase if you want to contribute~
+Find some tasks to do in the [issues](https://github.com/LintaoAmons/scratch.nvim/issues)~
+Thanks everyone who helped with this plugin~
