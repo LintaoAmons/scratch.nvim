@@ -19,7 +19,7 @@ using your favorate plugin manager, for example [lazy.nvim](https://github.com/f
 ```lua
 {
   "LintaoAmons/scratch.nvim",
-  event = 'VimEnter',
+  event = "VeryLazy",
 }
 ```
 
