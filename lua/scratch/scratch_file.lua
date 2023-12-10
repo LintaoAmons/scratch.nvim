@@ -192,10 +192,35 @@ function M.openScratch()
 end
 
 function M.fzfScratch()
+  local status, tp = pcall(require, "telescope.builtin")
+  if not status then
+    vim.notify("ScrachOpenFzf needs telescope.nvim")
+    return
+  end
+  --
   local config_data = config.getConfig()
   local scratch_file_dir = config_data.scratch_file_dir
-  require("telescope.builtin").live_grep({
+  local action_state = require("telescope.actions.state")
+
+  local function delete_item(name)
+    vim.fn.system({ "rm", "-rf", scratch_file_dir .. utils.Slash() .. name })
+    vim.notify("delete file " .. name)
+  end
+
+  tp.find_files({
     cwd = scratch_file_dir,
+    attach_mappings = function(prompt_bufnr, map)
+      local picker = action_state.get_current_picker(prompt_bufnr)
+      map("n", "dd", function()
+        picker:delete_selection(function(s)
+          delete_item(s[1])
+          -- vim.print(s)
+          return true
+        end)
+      end)
+
+      return true
+    end,
   })
 end
 
