@@ -1,7 +1,7 @@
 local M = {}
 local config = require("scratch.config")
-local utils = require("scratch.utils")
 local slash = require("scratch.utils").Slash()
+local utils = require("scratch.utils")
 
 local function editFile(fullpath)
   local config_data = config.getConfig()
@@ -17,15 +17,15 @@ end
 local function hasDefaultContent(ft)
   local config_data = config.getConfig()
   return config_data.filetype_details[ft]
-      and config_data.filetype_details[ft].content
-      and #config_data.filetype_details[ft].content > 0
+    and config_data.filetype_details[ft].content
+    and #config_data.filetype_details[ft].content > 0
 end
 
 local function hasCursorPosition(ft)
   local config_data = config.getConfig()
   return config_data.filetype_details[ft]
-      and config_data.filetype_details[ft].cursor
-      and #config_data.filetype_details[ft].cursor.location > 0
+    and config_data.filetype_details[ft].cursor
+    and #config_data.filetype_details[ft].cursor.location > 0
 end
 
 ---@param filename string
@@ -63,7 +63,8 @@ function M.createScratchFileByType(ft)
     utils.initDir(parentDir)
   end
 
-  local fullpath = utils.genFilepath(config.getConfigFilename(ft), parentDir, config.getConfigRequiresDir(ft))
+  local fullpath =
+    utils.genFilepath(config.getConfigFilename(ft), parentDir, config.getConfigRequiresDir(ft))
   editFile(fullpath)
 
   registerLocalKey()
@@ -130,8 +131,10 @@ function M.scratchPad(mode, startLine, endLine)
 
   local absPath = vim.fn.expand("%:p")
 
-  local content =
-  { "================ " .. os.date("%Y-%m-%d %H:%M:%S") .. " | " .. absPath .. " ================", "" }
+  local content = {
+    "================ " .. os.date("%Y-%m-%d %H:%M:%S") .. " | " .. absPath .. " ================",
+    "",
+  }
   if mode == "v" then
     local lines = vim.fn.getline(startLine, endLine)
 
@@ -171,7 +174,8 @@ function M.openScratch()
 
   -- sort the files by their last modified time in descending order
   table.sort(files, function(a, b)
-    return vim.fn.getftime(scratch_file_dir .. slash .. a) > vim.fn.getftime(scratch_file_dir .. slash .. b)
+    return vim.fn.getftime(scratch_file_dir .. slash .. a)
+      > vim.fn.getftime(scratch_file_dir .. slash .. b)
   end)
 
   vim.ui.select(files, {
