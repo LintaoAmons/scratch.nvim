@@ -202,21 +202,45 @@ function M.fzfScratch()
   local scratch_file_dir = config_data.scratch_file_dir
   local action_state = require("telescope.actions.state")
 
-  local function delete_item(name)
-    vim.fn.system({ "rm", "-rf", scratch_file_dir .. utils.Slash() .. name })
-    vim.notify("delete file " .. name)
+  -- if telescope loaded, plenary loaded.
+  local job = require("plenary.job")
+
+  local function delete_item(picker)
+    picker:delete_selection(function(s)
+      local path = vim.fn.split(s[1], utils.Slash())
+      -- delete the first dir/file entry
+      local delete_item_name = path[1]
+      local cmd = { "rm", "-rf", scratch_file_dir .. utils.Slash() .. delete_item_name }
+      local ret = true
+      job
+        :new({
+          command = cmd[1],
+          args = vim.list_slice(cmd, 2, #cmd),
+          on_exit = function(_, exit_code)
+            if exit_code ~= 0 then
+              ret = false
+              return
+            end
+          end,
+        })
+        :sync()
+
+      if ret then
+        vim.notify("Scratch: delete " .. s[1] .. " successfully", vim.log.levels.INFO)
+      else
+        vim.notify("Scratch: delete " .. s[1] .. " failed", vim.log.levels.ERROR)
+      end
+
+      return ret
+    end)
   end
 
   tp.find_files({
     cwd = scratch_file_dir,
     attach_mappings = function(prompt_bufnr, map)
-      local picker = action_state.get_current_picker(prompt_bufnr)
       map("n", "dd", function()
-        picker:delete_selection(function(s)
-          delete_item(s[1])
-          -- vim.print(s)
-          return true
-        end)
+        local picker = action_state.get_current_picker(prompt_bufnr)
+        delete_item(picker)
       end)
 
       return true
