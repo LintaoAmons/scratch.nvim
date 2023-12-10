@@ -137,33 +137,15 @@ vim.keymap.set("n", "<M-C-n>", "<cmd>Scratch<cr>")
 vim.keymap.set("n", "<M-C-o>", "<cmd>ScratchOpen<cr>")
 ```
 
-### Scratch
-
-This can create a new scratch file in your config's `scratch_file_dir`
-
-### ScratchWithName
-
-This can create a new scratch file with user provided filename (respect the file extension you provided along with the filename)
-
-### ScratchOpen
-
-This can open an old scratch file in your config's `scratch_file_dir`
-
-### ScratchOpenFzf
-
-Fuzzy find the content of your scratch files and open
-
-### ScratchCheckConfig
-
-This function can print out your current configuration. Let you rest assure that your custom configuration is taken effect.
-
-### ScratchEditConfig
-
-Open the configuration file and you can edit it to fit your needs. No need to restart nvim to take effects.
-
-### ScratchPad
-
-A file where you can continuously record information.
+| Command            | Description                                                                                                           |
+|--------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `Scratch`          | Creates a new scratch file in the specified `scratch_file_dir` directory in your configuration.                       |
+| `ScratchWithName`  | Allows the creation of a new scratch file with a user-specified filename, including the file extension.               |
+| `ScratchOpen`      | Opens an existing scratch file from the `scratch_file_dir`.                                                           |
+| `ScratchOpenFzf`   | Uses fuzzy finding to search through the contents of scratch files and open a selected file.                          |
+| `ScratchCheckConfig` | Prints the current configuration to confirm that custom settings are active.                                         |
+| `ScratchEditConfig` | Opens the configuration file for editing, with changes taking effect without needing to restart Neovim.              |
+| `ScratchPad`       | A specific file designed for continuous information recording, likely acting as an ongoing note-taking or log file.   |
 
 ### Functions
 
