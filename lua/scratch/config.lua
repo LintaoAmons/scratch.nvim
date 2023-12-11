@@ -27,7 +27,7 @@ end
 ---@field filenameContains string[] as long as the filename contains any one of the string in the list
 ---@field LocalKeys Scratch.LocalKey[]
 
--- TODO: allow Lua configuration at the same time
+-- TODO: #21 allow Lua configuration at the same time
 local default_config = {
   scratch_file_dir = vim.fn.stdpath("cache") .. slash .. "scratch.nvim",
   window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
