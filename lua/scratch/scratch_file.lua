@@ -167,7 +167,28 @@ function M.scratchWithName()
   end)
 end
 
-function M.openScratch()
+local function open_scratch_telescope()
+  local status, telescope_builtin = pcall(require, "telescope.builtin")
+  if not status then
+    vim.notify(
+      'ScrachOpenFzf needs telescope.nvim or you can add `"use_telescope: false"` into your config file'
+    )
+    return
+  end
+
+  telescope_builtin.find_files({
+    cwd = config.getConfig().scratch_file_dir,
+    attach_mappings = function(prompt_bufnr, map)
+      map("n", "dd", function()
+        require("scratch.telescope_actions").delete_item(prompt_bufnr)
+      end)
+
+      return true
+    end,
+  })
+end
+
+local function open_scratch_vim_ui()
   local files = getScratchFiles()
   local config_data = config.getConfig()
   local scratch_file_dir = config_data.scratch_file_dir
@@ -191,23 +212,13 @@ function M.openScratch()
   end)
 end
 
-function M.fzfScratch()
-  local status, tp = pcall(require, "telescope.builtin")
-  if not status then
-    vim.notify("ScrachOpenFzf needs telescope.nvim")
-    return
+function M.openScratch()
+  print(config.get_use_telescope())
+  if config.get_use_telescope() then
+    open_scratch_telescope()
+  else
+    open_scratch_vim_ui()
   end
-
-  tp.find_files({
-    cwd = config.getConfig().scratch_file_dir,
-    attach_mappings = function(prompt_bufnr, map)
-      map("n", "dd", function()
-        require("scratch.telescope_actions").delete_item(prompt_bufnr)
-      end)
-
-      return true
-    end,
-  })
 end
 
 return M
