@@ -48,6 +48,7 @@ local function delete_recursive(i, cur, paths)
   end
 end
 
+-- TODO: register buffer local key
 function M.delete_item(prompt_bufnr)
   local picker = action_state.get_current_picker(prompt_bufnr)
   picker:delete_selection(function(s)

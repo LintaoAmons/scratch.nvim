@@ -179,6 +179,7 @@ local function open_scratch_telescope()
   telescope_builtin.find_files({
     cwd = config.getConfig().scratch_file_dir,
     attach_mappings = function(prompt_bufnr, map)
+      -- TODO: user can customise keybinding
       map("n", "dd", function()
         require("scratch.telescope_actions").delete_item(prompt_bufnr)
       end)
