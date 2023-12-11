@@ -27,9 +27,11 @@ end
 ---@field filenameContains string[] as long as the filename contains any one of the string in the list
 ---@field LocalKeys Scratch.LocalKey[]
 
+-- TODO: allow Lua configuration at the same time
 local default_config = {
   scratch_file_dir = vim.fn.stdpath("cache") .. slash .. "scratch.nvim",
   window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
+  use_telescope = true,
   filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
   filetype_details = { -- or, you can have more control here
     json = {}, -- empty table is fine
@@ -208,6 +210,12 @@ end
 function M.getLocalKeys()
   local config_data = M.getConfig()
   return config_data.localKeys
+end
+
+---@return boolean
+function M.get_use_telescope()
+  local config_data = M.getConfig()
+  return config_data.use_telescope or false
 end
 
 -- Expose editConfig function
