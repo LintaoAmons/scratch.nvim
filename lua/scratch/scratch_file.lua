@@ -222,4 +222,12 @@ function M.openScratch()
   end
 end
 
+function M.fzfScratch()
+  local config_data = config.getConfig()
+  local scratch_file_dir = config_data.scratch_file_dir
+  require("telescope.builtin").live_grep({
+    cwd = scratch_file_dir,
+  })
+end
+
 return M
