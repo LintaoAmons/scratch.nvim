@@ -159,10 +159,12 @@ nvim -c 'lua require("scratch").scratchByType("md")'
 
 > NOTE: you can't lazyload the plugin if you want make the `scratch` plugin accessible at the init of nvim
 
-## Contribution
+## CONTRIBUTING
 
-Ask me anything about the codebase if you want to contribute~
+Ask me anything about the codebase if you want to contribute~ You can contact with me by drop me an email or [telegram](https://t.me/+ssgpiHyY9580ZWFl)
 
 Find some tasks to do in the [issues](https://github.com/LintaoAmons/scratch.nvim/issues)~
+
+And I will put TODOs inside the code with the issue numbers
 
 Thanks everyone who helped with this plugin~
