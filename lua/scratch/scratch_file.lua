@@ -214,7 +214,6 @@ local function open_scratch_vim_ui()
 end
 
 function M.openScratch()
-  print(config.get_use_telescope())
   if config.get_use_telescope() then
     open_scratch_telescope()
   else
