@@ -2,6 +2,7 @@ local M = {}
 local config = require("scratch.config")
 local slash = require("scratch.utils").Slash()
 local utils = require("scratch.utils")
+local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
 
 local function editFile(fullpath)
   local config_data = config.getConfig()
@@ -170,10 +171,9 @@ function M.scratchWithName()
 end
 
 local function open_scratch_telescope()
-  local status, telescope_builtin = pcall(require, "telescope.builtin")
-  if not status then
+  if not telescope_status then
     vim.notify(
-      'ScrachOpenFzf needs telescope.nvim or you can add `"use_telescope: false"` into your config file'
+      'ScrachOpen needs telescope.nvim or you can just add `"use_telescope: false"` into your config file ot use native select ui'
     )
     return
   end
@@ -224,9 +224,14 @@ function M.openScratch()
 end
 
 function M.fzfScratch()
+  if not telescope_status then
+    vim.notify("ScrachOpenFzf needs telescope.nvim")
+    return
+  end
+
   local config_data = config.getConfig()
   local scratch_file_dir = config_data.scratch_file_dir
-  require("telescope.builtin").live_grep({
+  telescope_builtin.live_grep({
     cwd = scratch_file_dir,
   })
 end
