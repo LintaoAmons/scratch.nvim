@@ -25,11 +25,6 @@ function M.delete_item(prompt_bufnr)
   local picker = action_state.get_current_picker(prompt_bufnr)
   picker:delete_selection(function(s)
     local file_name = s[1]
-    -- INFO: currently just protect configFilePath from being removed
-    if file_name == "configFilePath" then
-      vim.notify("[scratch.nvim] configFilePath cannot be removed", vim.log.levels.WARN)
-      return false
-    end
     local config_data = config.getConfig()
     local scratch_file_dir = config_data.scratch_file_dir
     local p = Path:new({ scratch_file_dir, file_name, sep = utils.Slash() })

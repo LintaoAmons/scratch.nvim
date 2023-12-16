@@ -3,11 +3,7 @@ local M = {}
 
 -- CONFIG_FILE_PATH act like a flag to check if user already init the plugin or not
 -- inside only contains the info about the path where user put there's config json content
-local CONFIG_FILE_FLAG_PATH = vim.fn.stdpath("cache")
-  .. slash
-  .. "scratch.nvim"
-  .. slash
-  .. "configFilePath"
+local CONFIG_FILE_FLAG_PATH = vim.fn.stdpath("cache") .. slash .. "scratch.nvim.config_file_path"
 local DEFAULT_CONFIG_PATH = vim.fn.stdpath("config") .. slash .. "scratch_config.json"
 local logErr = function(msg)
   vim.notify(msg, vim.log.levels.ERROR, { title = "easy-commands.nvim" })
