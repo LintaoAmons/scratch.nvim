@@ -6,7 +6,7 @@ local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
 
 local expandPath = function(filepath)
   -- replace ~ with home-directory.
-  return filepath:gsub("^~", vim.env.HOME)
+  return vim.fs.normalize(filepath)
 end
 
 local function editFile(fullpath)
