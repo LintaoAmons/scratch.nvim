@@ -171,4 +171,6 @@ Thanks everyone who helped with this plugin~
 
 ## FIND MORE UESR FRIENDLY PLUGIN MADE BY ME
 
-- [easy-commands: A collection of intuitive, easily searchable,and ready-to-use commands.](https://github.com/LintaoAmons/easy-commands.nvim)
+- [scratch.nvim](https://github.com/LintaoAmons/scratch.nvim)
+- [easy-commands](https://github.com/LintaoAmons/easy-commands.nvim)
+- [cd-project](https://github.com/LintaoAmons/cd-project.nvim)
