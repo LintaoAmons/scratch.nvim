@@ -167,8 +167,8 @@ Find some tasks to do in the [issues](https://github.com/LintaoAmons/scratch.nvi
 
 And I will put TODOs inside the code with the issue numbers
 
+Thanks everyone who helped with this plugin~
+
 ## FIND MORE UESR FRIENDLY PLUGIN MADE BY ME
 
 - [easy-commands: A collection of intuitive, easily searchable,and ready-to-use commands.](https://github.com/LintaoAmons/easy-commands.nvim)
-
-Thanks everyone who helped with this plugin~
