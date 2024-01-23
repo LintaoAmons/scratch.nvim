@@ -169,7 +169,7 @@ And I will put TODOs inside the code with the issue numbers
 
 Thanks everyone who helped with this plugin~
 
-## FIND MORE UESR FRIENDLY PLUGIN MADE BY ME
+## FIND MORE UESR FRIENDLY PLUGINS MADE BY ME
 
 - [scratch.nvim](https://github.com/LintaoAmons/scratch.nvim)
 - [easy-commands](https://github.com/LintaoAmons/easy-commands.nvim)
