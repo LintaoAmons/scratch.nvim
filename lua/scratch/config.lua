@@ -182,7 +182,9 @@ end
 ---comment
 ---@return {}
 function M.getConfig()
-  return readConfigFile()
+  local config = readConfigFile()
+  config.scratch_file_dir = vim.fs.normalize(config.scratch_file_dir)
+  return config
 end
 
 -- TODO: convert to a struct and add type

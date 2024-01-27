@@ -4,11 +4,6 @@ local slash = require("scratch.utils").Slash()
 local utils = require("scratch.utils")
 local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
 
-local expandPath = function(filepath)
-  -- replace ~ with home-directory.
-  return vim.fs.normalize(filepath)
-end
-
 local function editFile(fullpath)
   local config_data = config.getConfig()
   local cmd = config_data.window_cmd or "edit"
@@ -37,7 +32,7 @@ end
 ---@param filename string
 function M.createScratchFileByName(filename)
   local config_data = config.getConfig()
-  local scratch_file_dir = expandPath(config_data.scratch_file_dir)
+  local scratch_file_dir = config_data.scratch_file_dir
   utils.initDir(scratch_file_dir)
 
   local fullpath = scratch_file_dir .. slash .. filename
@@ -60,7 +55,7 @@ end
 ---@param ft string
 function M.createScratchFileByType(ft)
   local config_data = config.getConfig()
-  local parentDir = expandPath(config_data.scratch_file_dir)
+  local parentDir = config_data.scratch_file_dir
   utils.initDir(parentDir)
 
   local subdir = config.getConfigSubDir(ft)
@@ -121,7 +116,7 @@ end
 
 local function getScratchFiles()
   local config_data = config.getConfig()
-  local scratch_file_dir = expandPath(config_data.scratch_file_dir)
+  local scratch_file_dir = config_data.scratch_file_dir
   local res = {}
   res = utils.listDirectoryRecursive(scratch_file_dir)
   for i, str in ipairs(res) do
@@ -153,7 +148,7 @@ function M.scratchPad(mode, startLine, endLine)
 
   local config_data = config.getConfig()
   -- TODO: config the pad path
-  local padPath = config_data.pad_path or expandPath(config_data.scratch_file_dir) .. slash .. "scratchPad.md"
+  local padPath = config_data.pad_path or config_data.scratch_file_dir .. slash .. "scratchPad.md"
   -- TODO: config: pad open in split or current window or float window
   editFile(padPath)
   vim.api.nvim_win_set_cursor(0, { 1, 0 })
@@ -184,7 +179,7 @@ local function open_scratch_telescope()
   end
 
   telescope_builtin.find_files({
-    cwd = expandPath(config.getConfig().scratch_file_dir),
+    cwd = config.getConfig().scratch_file_dir,
     attach_mappings = function(prompt_bufnr, map)
       -- TODO: user can customise keybinding
       map("n", "dd", function()
@@ -199,7 +194,7 @@ end
 local function open_scratch_vim_ui()
   local files = getScratchFiles()
   local config_data = config.getConfig()
-  local scratch_file_dir = expandPath(config_data.scratch_file_dir)
+  local scratch_file_dir = config_data.scratch_file_dir
 
   -- sort the files by their last modified time in descending order
   table.sort(files, function(a, b)
@@ -235,7 +230,7 @@ function M.fzfScratch()
   end
 
   local config_data = config.getConfig()
-  local scratch_file_dir = expandPath(config_data.scratch_file_dir)
+  local scratch_file_dir = config_data.scratch_file_dir
   telescope_builtin.live_grep({
     cwd = scratch_file_dir,
   })
