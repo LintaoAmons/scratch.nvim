@@ -29,7 +29,7 @@ end
 
 -- TODO: #21 allow Lua configuration at the same time
 local default_config = {
-  scratch_file_dir = vim.fn.stdpath("cache"):gsub(vim.env.HOME, '~') .. slash .. "scratch.nvim",
+  scratch_file_dir = vim.fn.stdpath("cache") .. slash .. "scratch.nvim",
   window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
   use_telescope = true,
   filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
