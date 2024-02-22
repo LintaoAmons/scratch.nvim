@@ -161,16 +161,14 @@ nvim -c 'lua require("scratch").scratchByType("md")'
 
 ## CONTRIBUTING
 
-Ask me anything about the codebase if you want to contribute~ You can contact with me by drop me an email or [telegram](https://t.me/+ssgpiHyY9580ZWFl)
+Don't hesitate to ask me anything about the codebase if you want to contribute.
 
-Find some tasks to do in the [issues](https://github.com/LintaoAmons/scratch.nvim/issues)~
+You can contact with me by drop me an email or [telegram](https://t.me/+ssgpiHyY9580ZWFl)
 
-And I will put TODOs inside the code with the issue numbers
-
-Thanks everyone who helped with this plugin~
-
-## FIND MORE UESR FRIENDLY PLUGINS MADE BY ME
+## FIND MORE USER FRIENDLY PLUGINS MADE BY ME
 
 - [scratch.nvim](https://github.com/LintaoAmons/scratch.nvim)
-- [easy-commands](https://github.com/LintaoAmons/easy-commands.nvim)
-- [cd-project](https://github.com/LintaoAmons/cd-project.nvim)
+- [easy-commands.nvim](https://github.com/LintaoAmons/easy-commands.nvim)
+- [cd-project.nvim](https://github.com/LintaoAmons/cd-project.nvim)
+- [bookmarks.nvim](https://github.com/LintaoAmons/bookmarks.nvim)
+- [plugin-template.nvim](https://github.com/LintaoAmons/plugin-template.nvim)
