@@ -1,13 +1,14 @@
+❗️Changes may affect your after `v0.13.2`: the plugin may ask you to init again after update the plugin
+
 ## Create scratch file
 
 Create temporary playground files
 effortlessly. Find them later without
 worrying about filenames or locations
 
-- With other nvim's goodies.
-  - with `treesitter` to have syntax highlighting
-  - with `lsp` and `cmp` to have auto-cmp, auto-format and other lsp goodies
-  - with `michaelb/sniprun` or `metakirby5/codi.vim` to run scratch file
+- with `treesitter` to have syntax highlighting
+- with `lsp` and `cmp` to have auto-cmp, auto-format and other lsp goodies
+- with `michaelb/sniprun` or `metakirby5/codi.vim` to run scratch file
 
 [Scratch Intro](https://github.com/LintaoAmons/scratch.nvim/assets/95092244/c1adff70-c8c5-4594-80e3-18d3e6b24d7a)
 
