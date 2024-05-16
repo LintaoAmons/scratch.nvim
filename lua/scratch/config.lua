@@ -158,9 +158,15 @@ local function initProcess(force)
   file:write(configFilePath)
   file:close()
 
+  -- check if config already exists
+  if vim.fn.filereadable(configFilePath) == 1 then
+    -- NOTE: Maybe add a check that config is valid here
+    vim.notify("Init done, found existing config at " .. configFilePath)
+    return
+  end
+
   -- write default_config into user defined config file
   -- create file and dir of the path is not exist
-
   vim.fn.mkdir(vim.fn.fnamemodify(configFilePath, ":h"), "p")
   file = io.open(configFilePath, "w")
   file:write(vim.fn.json_encode(default_config))
