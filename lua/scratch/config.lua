@@ -128,6 +128,27 @@ M.checkInit = function()
   return vim.fn.filereadable(CONFIG_FILE_FLAG_PATH) == 1 and validate_abspath(getConfigFilePath())
 end
 
+---@param configFilePath string
+local function writeConfig(configFilePath)
+  -- write the scratch_file_dir into CONFIG_FILE_PATH file
+  local dir_path = vim.fn.fnamemodify(CONFIG_FILE_FLAG_PATH, ":h")
+  if vim.fn.isdirectory(dir_path) == 0 then
+    vim.fn.mkdir(dir_path, "p")
+  end
+
+  local file = io.open(CONFIG_FILE_FLAG_PATH, "w")
+  file:write(configFilePath)
+  file:close()
+
+  -- write default_config into user defined config file
+  -- create file and dir of the path is not exist
+  vim.fn.mkdir(vim.fn.fnamemodify(configFilePath, ":h"), "p")
+  file = io.open(configFilePath, "w")
+  file:write(vim.fn.json_encode(default_config))
+  file:close()
+  vim.notify("Init done, your config file will be at " .. configFilePath)
+end
+
 ---Init the plugin
 ---@param force boolean
 local function initProcess(force)
@@ -148,30 +169,20 @@ local function initProcess(force)
     return
   end
 
-  -- write the scratch_file_dir into CONFIG_FILE_PATH file
-  local dir_path = vim.fn.fnamemodify(CONFIG_FILE_FLAG_PATH, ":h")
-  if vim.fn.isdirectory(dir_path) == 0 then
-    vim.fn.mkdir(dir_path, "p")
-  end
-
-  local file = io.open(CONFIG_FILE_FLAG_PATH, "w")
-  file:write(configFilePath)
-  file:close()
-
   -- check if config already exists
   if vim.fn.filereadable(configFilePath) == 1 then
-    -- NOTE: Maybe add a check that config is valid here
-    vim.notify("Init done, found existing config at " .. configFilePath)
-    return
+    vim.ui.input({
+      prompt = "Found existing config at " .. configFilePath .. ".\n Do you want overwrite it?(Yes/No)",
+    }, function(input)
+      if input == "Yes" then
+        writeConfig(configFilePath)
+      else
+        vim.notify("Init process aborted: found existing config")
+      end
+    end)
+  else
+    writeConfig(configFilePath)
   end
-
-  -- write default_config into user defined config file
-  -- create file and dir of the path is not exist
-  vim.fn.mkdir(vim.fn.fnamemodify(configFilePath, ":h"), "p")
-  file = io.open(configFilePath, "w")
-  file:write(vim.fn.json_encode(default_config))
-  file:close()
-  vim.notify("Init done, your config file will be at " .. configFilePath)
 end
 
 -- Read json file and parse to dictionary
