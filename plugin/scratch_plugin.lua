@@ -12,52 +12,15 @@ vim.g.loaded_scratch = 1
 -- create any global command that does not depend on user setup
 -- usually it is better to define most commands/mappings in the setup function
 -- Be careful to not overuse this file!
-local config = require("scratch.config")
-local scratch = require("scratch.scratch_file")
 
-local commands = {
-  {
-    name = "Scratch",
-    callback = config.initConfigInterceptor(scratch.scratch),
-  },
-  {
-    name = "ScratchOpen",
-    callback = config.initConfigInterceptor(scratch.openScratch),
-  },
-  -- {
-  --   name = "ScratchPad",
-  --   callback = config.initConfigInterceptor(scratch.scratchPad)
-  -- },
-  {
-    name = "ScratchOpenFzf",
-    callback = config.initConfigInterceptor(scratch.fzfScratch),
-  },
-  {
-    name = "ScratchWithName",
-    callback = config.initConfigInterceptor(scratch.scratchWithName),
-  },
-  {
-    name = "ScratchCheckConfig",
-    callback = config.initConfigInterceptor(config.checkConfig),
-  },
-  {
-    name = "ScratchEditConfig",
-    callback = config.initConfigInterceptor(config.editConfig),
-  },
-  {
-    name = "ScratchInitConfig",
-    callback = config.initConfig,
-  },
-}
+-- TODO: remove those requires
+local scratch_api = require("scratch.scratch_file")
 
-vim.api.nvim_create_user_command("ScratchPad", function(args)
-  if args.range > 0 then
-    scratch.scratchPad("v", args.line1, args.line2)
-  else
-    scratch.scratchPad("n")
-  end
-end, { range = true })
+local scratch_main = require("scratch")
+scratch_main.setup()
 
-for _, v in ipairs(commands) do
-  vim.api.nvim_create_user_command(v.name, v.callback, {})
-end
+vim.api.nvim_create_user_command("Scratch", scratch_api.scratch, {})
+vim.api.nvim_create_user_command("ScratchOpen", scratch_api.openScratch, {})
+vim.api.nvim_create_user_command("ScratchOpenFzf", scratch_api.fzfScratch, {})
+vim.api.nvim_create_user_command("ScratchWithName", scratch_api.scratchWithName, {})
+vim.api.nvim_create_user_command("ScratchEditConfig", scratch_main.editConfig, {})

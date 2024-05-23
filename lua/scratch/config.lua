@@ -1,17 +1,4 @@
 local slash = require("scratch.utils").Slash()
-local M = {}
-
--- CONFIG_FILE_PATH act like a flag to check if user already init the plugin or not
--- inside only contains the info about the path where user put there's config json content
-local CONFIG_FILE_FLAG_PATH = vim.fn.stdpath("cache")
-  .. slash
-  .. "scratch.nvim"
-  .. slash
-  .. "configFilePath"
-local DEFAULT_CONFIG_PATH = vim.fn.stdpath("config") .. slash .. "scratch_config.json"
-local logErr = function(msg)
-  vim.notify(msg, vim.log.levels.ERROR, { title = "easy-commands.nvim" })
-end
 
 ---@alias mode
 ---| '"n"'
@@ -26,13 +13,36 @@ end
 ---@class Scratch.LocalKeyConfig
 ---@field filenameContains string[] as long as the filename contains any one of the string in the list
 ---@field LocalKeys Scratch.LocalKey[]
+--
+---@class Scratch.Cursor
+---@field location number[]
+---@field insert_mode boolean
 
--- TODO: #21 allow Lua configuration at the same time
+---@class Scratch.FiletypeDetail
+---@field filename? string
+---@field requireDir? boolean -- TODO: conbine requireDir and subdir into one table
+---@field subdir? string
+---@field content? string[]
+---@field cursor? Scratch.Cursor
+--
+---@class Scratch.FiletypeDetails
+---@field [string] Scratch.FiletypeDetail
+
+---@class Scratch.LuaSetupConfig
+---@field json_config_path string
+
+---@class Scratch.Config
+---@field scratch_file_dir string
+---@field filetypes string[]
+---@field window_cmd  string
+---@field use_telescope boolean
+---@field filetype_details Scratch.FiletypeDetails
+---@field localKeys Scratch.LocalKeyConfig[]
 local default_config = {
   scratch_file_dir = vim.fn.stdpath("cache") .. slash .. "scratch.nvim",
+  filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
   window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
   use_telescope = true,
-  filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
   filetype_details = { -- or, you can have more control here
     json = {}, -- empty table is fine
     ["yaml"] = {},
@@ -48,28 +58,7 @@ local default_config = {
         insert_mode = true,
       },
     },
-    ["gp.md"] = {
-      cursor = {
-        location = { 12, 2 },
-        insert_mode = true,
-      },
-      content = {
-        "# topic: ?",
-        "",
-        '- model: {"top_p":1,"temperature":0.7,"model":"gpt-3.5-turbo-16k"}',
-        "- file: placeholder",
-        "- role: You are a general AI assistant.",
-        "",
-        "Write your queries after 🗨:. Run :GpChatRespond to generate response.",
-        "",
-        "---",
-        "",
-        "🗨:",
-        "",
-      },
-    },
   },
-  ---@type Scratch.LocalKeyConfig[]
   localKeys = {
     {
       filenameContains = { "gp" },
@@ -84,50 +73,27 @@ local default_config = {
   },
 }
 
-local function getConfigFilePath()
-  -- read CONFIG_FILE_PATH content as the filepath and return
-  local file = io.open(CONFIG_FILE_FLAG_PATH, "r")
-  local filepath = file:read("*all")
-  file:close()
-
-  return filepath
+local function editConfig()
+  vim.cmd(":e " .. vim.g.scratch_json_config_path)
 end
 
-local function validate_abspath(path)
-  -- Check if path contains any invalid characters
-  local valid_chars = "[^%w/%.%-%_]+"
-  if vim.fn.has("win32") == 1 then
-    valid_chars = "[^%w%.:%\\%-%_]+"
-  end
-  if string.match(path, valid_chars) then
-    return false
-  end
-
-  -- Check if path ends with a forward slash
-  if string.sub(path, -1) == slash then
-    return false
-  end
-
-  -- Check if path contains any double forward slashes
-  if string.match(path, slash .. slash) then
-    return false
-  end
-
-  -- if already exist check if it's a file
-  if vim.fn.filereadable(path) == 1 then
-    if vim.fn.isdirectory(path) == 1 then
-      return false
-    end
-  end
-
-  -- If all checks pass, return true
-  return true
+---@return Scratch.Config
+local function get_config()
+  local json_config = require("scratch.json").read_or_init_json_file(vim.g.scratch_json_config_path)
+  vim.g.scratch_config = vim.tbl_deep_extend("force", vim.g.scratch_config, json_config)
+    or require("scratch.utils").log_err("Error when tring to get configuration")
+  return vim.g.scratch_config
 end
 
-M.checkInit = function()
-  return vim.fn.filereadable(CONFIG_FILE_FLAG_PATH) == 1 and validate_abspath(getConfigFilePath())
+vim.g.scratch_config = default_config
+
+---@param user_config? Scratch.LuaSetupConfig
+local function setup(user_config)
+  vim.g.scratch_json_config_path = user_config and user_config.json_config_path
+    or vim.fn.stdpath("config") .. slash .. "scratch_config.json"
 end
 
+<<<<<<< Updated upstream
 ---Init the plugin
 ---@param force boolean
 local function initProcess(force)
@@ -252,3 +218,10 @@ function M.initConfig()
 end
 
 return M
+=======
+return {
+  setup = setup,
+  editConfig = editConfig,
+  get_config = get_config,
+}
+>>>>>>> Stashed changes

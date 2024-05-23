@@ -5,8 +5,7 @@ local utils = require("scratch.utils")
 local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
 
 local function editFile(fullpath)
-  local config_data = config.getConfig()
-  local cmd = config_data.window_cmd or "edit"
+  local cmd = config.get_config().window_cmd or "edit"
   vim.api.nvim_command(cmd .. " " .. fullpath)
 end
 
@@ -16,14 +15,14 @@ local function write_lines_to_buffer(lines)
 end
 
 local function hasDefaultContent(ft)
-  local config_data = config.getConfig()
+  local config_data = config.get_config()
   return config_data.filetype_details[ft]
     and config_data.filetype_details[ft].content
     and #config_data.filetype_details[ft].content > 0
 end
 
 local function hasCursorPosition(ft)
-  local config_data = config.getConfig()
+  local config_data = config.get_config()
   return config_data.filetype_details[ft]
     and config_data.filetype_details[ft].cursor
     and #config_data.filetype_details[ft].cursor.location > 0
@@ -31,7 +30,7 @@ end
 
 ---@param filename string
 function M.createScratchFileByName(filename)
-  local config_data = config.getConfig()
+  local config_data = config.get_config()
   local scratch_file_dir = config_data.scratch_file_dir
   utils.initDir(scratch_file_dir)
 
@@ -40,7 +39,7 @@ function M.createScratchFileByName(filename)
 end
 
 local function registerLocalKey()
-  local localKeys = config.getLocalKeys()
+  local localKeys = config.get_config().localKeys
   if localKeys and #localKeys > 0 then
     for _, key in ipairs(localKeys) do
       for _, namePattern in ipairs(key.filenameContains) do
@@ -53,19 +52,33 @@ local function registerLocalKey()
 end
 
 ---@param ft string
+---@return string
+local function getConfigFilename(ft)
+  local config_data = config.get_config()
+  return config_data.filetype_details[ft] and config_data.filetype_details[ft].filename
+    or tostring(os.date("%y-%m-%d_%H-%M-%S")) .. "." .. ft
+end
+
+---@param ft string
+---@return boolean
+local function does_require_dir(ft)
+  local config_data = config.get_config()
+  return config_data.filetype_details[ft] and config_data.filetype_details[ft].requireDir or false
+end
+
+---@param ft string
 function M.createScratchFileByType(ft)
-  local config_data = config.getConfig()
+  local config_data = config.get_config()
   local parentDir = config_data.scratch_file_dir
   utils.initDir(parentDir)
 
-  local subdir = config.getConfigSubDir(ft)
+  local subdir = config_data.filetype_details[ft] and config_data.filetype_details[ft].subdir
   if subdir ~= nil then
     parentDir = parentDir .. slash .. subdir
     utils.initDir(parentDir)
   end
 
-  local fullpath =
-    utils.genFilepath(config.getConfigFilename(ft), parentDir, config.getConfigRequiresDir(ft))
+  local fullpath = utils.genFilepath(getConfigFilename(ft), parentDir, does_require_dir(ft))
   editFile(fullpath)
 
   registerLocalKey()
@@ -82,8 +95,9 @@ function M.createScratchFileByType(ft)
   end
 end
 
-local function getFiletypes()
-  local config_data = config.getConfig()
+---@return string[]
+local function get_all_filetypes()
+  local config_data = config.get_config()
   local combined_filetypes = {}
   for _, ft in ipairs(config_data.filetypes) do
     if not vim.tbl_contains(combined_filetypes, ft) then
@@ -99,8 +113,8 @@ local function getFiletypes()
   return combined_filetypes
 end
 
-local function selectFiletypeAndDo(func)
-  local filetypes = getFiletypes()
+local function select_filetype_then_do(func)
+  local filetypes = get_all_filetypes()
 
   vim.ui.select(filetypes, {
     prompt = "Select filetype",
@@ -114,8 +128,8 @@ local function selectFiletypeAndDo(func)
   end)
 end
 
-local function getScratchFiles()
-  local config_data = config.getConfig()
+local function get_scratch_files()
+  local config_data = config.get_config()
   local scratch_file_dir = config_data.scratch_file_dir
   local res = {}
   res = utils.listDirectoryRecursive(scratch_file_dir)
@@ -125,39 +139,8 @@ local function getScratchFiles()
   return res
 end
 
-function M.scratchPad(mode, startLine, endLine)
-  if not config.checkInit() then
-    config.initConfig()
-  end
-
-  local absPath = vim.fn.expand("%:p")
-
-  local content = {
-    "================ " .. os.date("%Y-%m-%d %H:%M:%S") .. " | " .. absPath .. " ================",
-    "",
-  }
-  if mode == "v" then
-    local lines = vim.fn.getline(startLine, endLine)
-
-    for i = 1, #lines do
-      table.insert(content, lines[i])
-    end
-  end
-  table.insert(content, "")
-  table.insert(content, "")
-
-  local config_data = config.getConfig()
-  -- TODO: config the pad path
-  local padPath = config_data.pad_path or config_data.scratch_file_dir .. slash .. "scratchPad.md"
-  -- TODO: config: pad open in split or current window or float window
-  editFile(padPath)
-  vim.api.nvim_win_set_cursor(0, { 1, 0 })
-
-  vim.api.nvim_put(content, "", false, true)
-end
-
 function M.scratch()
-  selectFiletypeAndDo(M.createScratchFileByType)
+  select_filetype_then_do(M.createScratchFileByType)
 end
 
 function M.scratchWithName()
@@ -171,6 +154,8 @@ function M.scratchWithName()
 end
 
 local function open_scratch_telescope()
+  local config_data = config.get_config()
+
   if not telescope_status then
     vim.notify(
       'ScrachOpen needs telescope.nvim or you can just add `"use_telescope: false"` into your config file ot use native select ui'
@@ -179,7 +164,7 @@ local function open_scratch_telescope()
   end
 
   telescope_builtin.find_files({
-    cwd = config.getConfig().scratch_file_dir,
+    cwd = config_data.scratch_file_dir,
     attach_mappings = function(prompt_bufnr, map)
       -- TODO: user can customise keybinding
       map("n", "dd", function()
@@ -192,8 +177,9 @@ local function open_scratch_telescope()
 end
 
 local function open_scratch_vim_ui()
-  local files = getScratchFiles()
-  local config_data = config.getConfig()
+  local files = get_scratch_files()
+  local config_data = config.get_config()
+
   local scratch_file_dir = config_data.scratch_file_dir
 
   -- sort the files by their last modified time in descending order
@@ -216,7 +202,9 @@ local function open_scratch_vim_ui()
 end
 
 function M.openScratch()
-  if config.get_use_telescope() then
+  local config_data = config.get_config()
+
+  if config_data.use_telescope then
     open_scratch_telescope()
   else
     open_scratch_vim_ui()
@@ -224,15 +212,14 @@ function M.openScratch()
 end
 
 function M.fzfScratch()
+  local config_data = config.get_config()
   if not telescope_status then
     vim.notify("ScrachOpenFzf needs telescope.nvim")
     return
   end
 
-  local config_data = config.getConfig()
-  local scratch_file_dir = config_data.scratch_file_dir
   telescope_builtin.live_grep({
-    cwd = scratch_file_dir,
+    cwd = config_data.scratch_file_dir,
   })
 end
 
