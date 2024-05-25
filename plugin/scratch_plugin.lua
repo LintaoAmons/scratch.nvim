@@ -61,3 +61,15 @@ end, { range = true })
 for _, v in ipairs(commands) do
   vim.api.nvim_create_user_command(v.name, v.callback, {})
 end
+
+vim.notify(
+  [[There's a new patch comming, which has a thorough overhaul of the config module and will cause breaking changes.
+Please use tag to pin the version if you don't want to modify your current configuration.
+To get ride of this warning, also pin your version to v0.13.2]],
+  "warning",
+  {
+    title = "My scratch.nvim",
+    timeout = 8000,
+    urgency = "low",
+  }
+)

@@ -1,3 +1,8 @@
+> [!WARNING]
+> There's a new patch comming, which has a thorough overhaul of the config module and will cause breaking changes.
+> Please use tag to pin the version if you don't want to modify your current configuration
+> If you want to try it now, you can switch to `config-refacor` branch or pr `37`
+
 ## Create scratch file
 
 Create temporary playground files
@@ -19,6 +24,7 @@ using your favorate plugin manager, for example [lazy.nvim](https://github.com/f
 ```lua
 {
   "LintaoAmons/scratch.nvim",
+  tags = "v0.13.2",
   event = "VeryLazy",
 }
 ```
