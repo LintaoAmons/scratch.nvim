@@ -26,7 +26,7 @@ using your favorate plugin manager, for example [lazy.nvim](https://github.com/f
 ```lua
 {
   "LintaoAmons/scratch.nvim",
-  tags = "v0.13.2",
+  tag = "v0.13.2",
   event = "VeryLazy",
 }
 ```
