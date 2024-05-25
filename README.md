@@ -3,6 +3,8 @@
 > 
 > Please use tag to pin the version if you don't want to modify your current configuration
 > 
+> To get ride of the warning, also pin your version to v0.13.2
+>
 > If you want to try it now, you can switch to `config-refacor` branch or pr `37`
 
 ## Create scratch file

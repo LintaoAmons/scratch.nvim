@@ -68,7 +68,7 @@ Please use tag to pin the version if you don't want to modify your current confi
 To get ride of this warning, also pin your version to v0.13.2]],
   "warning",
   {
-    title = "My scratch.nvim",
+    title = "Scratch.nvim",
     timeout = 8000,
     urgency = "low",
   }
