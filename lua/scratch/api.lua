@@ -98,13 +98,13 @@ end
 local function get_all_filetypes()
   local config_data = vim.g.scratch_config
   local combined_filetypes = {}
-  for _, ft in ipairs(config_data.filetypes) do
+  for _, ft in ipairs(config_data.filetypes or {}) do
     if not vim.tbl_contains(combined_filetypes, ft) then
       table.insert(combined_filetypes, ft)
     end
   end
 
-  for ft, _ in pairs(config_data.filetype_details) do
+  for ft, _ in pairs(config_data.filetype_details or {}) do
     if not vim.tbl_contains(combined_filetypes, ft) then
       table.insert(combined_filetypes, ft)
     end
