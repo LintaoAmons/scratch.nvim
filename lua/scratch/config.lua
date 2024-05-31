@@ -40,6 +40,8 @@ local default_config = {
   filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
   window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
   use_telescope = true,
+  filetype_details = {},
+  localKeys = {},
 }
 
 vim.g.scratch_config = default_config
