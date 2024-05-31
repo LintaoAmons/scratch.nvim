@@ -37,36 +37,9 @@ local slash = require("scratch.utils").Slash()
 ---@field localKeys Scratch.LocalKeyConfig[]
 local default_config = {
   scratch_file_dir = vim.fn.stdpath("cache") .. slash .. "scratch.nvim", -- where your scratch files will be put
-  filetypes = { "xml", "go", "lua", "js", "py", "sh" }, -- you can simply put filetype here
+  filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
   window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
   use_telescope = true,
-  filetype_details = { -- or, you can have more control here
-    json = {}, -- empty table is fine
-    ["k8s.yaml"] = { -- you can have different postfix
-      subdir = "learn-k8s", -- and put this in a specific subdir
-    },
-    go = {
-      requireDir = true, -- true if each scratch file requires a new directory
-      filename = "main", -- the filename of the scratch file in the new directory
-      content = { "package main", "", "func main() {", "  ", "}" },
-      cursor = {
-        location = { 4, 2 },
-        insert_mode = true,
-      },
-    },
-  },
-  localKeys = {
-    {
-      filenameContains = { "sh" },
-      LocalKeys = {
-        {
-          cmd = "<CMD>RunShellCurrentLine<CR>",
-          key = "<C-r>",
-          modes = { "n", "i", "v" },
-        },
-      },
-    },
-  },
 }
 
 vim.g.scratch_config = default_config
