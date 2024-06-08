@@ -1,8 +1,3 @@
-if vim.fn.has("nvim-0.7.0") == 0 then
-  vim.api.nvim_err_writeln("scratch requires at least nvim-0.7.0.1")
-  return
-end
-
 -- make sure this file is loaded only once
 if vim.g.loaded_scratch == 1 then
   return
@@ -12,64 +7,14 @@ vim.g.loaded_scratch = 1
 -- create any global command that does not depend on user setup
 -- usually it is better to define most commands/mappings in the setup function
 -- Be careful to not overuse this file!
-local config = require("scratch.config")
-local scratch = require("scratch.scratch_file")
 
-local commands = {
-  {
-    name = "Scratch",
-    callback = config.initConfigInterceptor(scratch.scratch),
-  },
-  {
-    name = "ScratchOpen",
-    callback = config.initConfigInterceptor(scratch.openScratch),
-  },
-  -- {
-  --   name = "ScratchPad",
-  --   callback = config.initConfigInterceptor(scratch.scratchPad)
-  -- },
-  {
-    name = "ScratchOpenFzf",
-    callback = config.initConfigInterceptor(scratch.fzfScratch),
-  },
-  {
-    name = "ScratchWithName",
-    callback = config.initConfigInterceptor(scratch.scratchWithName),
-  },
-  {
-    name = "ScratchCheckConfig",
-    callback = config.initConfigInterceptor(config.checkConfig),
-  },
-  {
-    name = "ScratchEditConfig",
-    callback = config.initConfigInterceptor(config.editConfig),
-  },
-  {
-    name = "ScratchInitConfig",
-    callback = config.initConfig,
-  },
-}
+-- TODO: remove those requires
+local scratch_api = require("scratch.api")
 
-vim.api.nvim_create_user_command("ScratchPad", function(args)
-  if args.range > 0 then
-    scratch.scratchPad("v", args.line1, args.line2)
-  else
-    scratch.scratchPad("n")
-  end
-end, { range = true })
+local scratch_main = require("scratch")
+scratch_main.setup()
 
-for _, v in ipairs(commands) do
-  vim.api.nvim_create_user_command(v.name, v.callback, {})
-end
-
-vim.notify(
-  [[The breaking change patch will be merged into main branch next Saturday night.
-Please use tag to pin the version if you don't want to modify your current configuration.
-To get ride of this warning, also pin your version to v0.13.2]],
-  "warning",
-  {
-    title = "Scratch.nvim",
-    timeout = 8000,
-    urgency = "low",
-  }
-)
+vim.api.nvim_create_user_command("Scratch", scratch_api.scratch, {})
+vim.api.nvim_create_user_command("ScratchOpen", scratch_api.openScratch, {})
+vim.api.nvim_create_user_command("ScratchOpenFzf", scratch_api.fzfScratch, {})
+vim.api.nvim_create_user_command("ScratchWithName", scratch_api.scratchWithName, {})

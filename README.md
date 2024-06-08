@@ -1,13 +1,6 @@
-> [!WARNING]
-> There's a new patch comming, which has a thorough overhaul of the config module and will cause breaking changes.
->
-> The patch will be merged into main branch next Saturday night
-> 
-> Please use tag to pin the version if you don't want to modify your current configuration
-> 
-> To get ride of the warning, also pin your version to v0.13.2
->
-> If you want to try it now, you can switch to `config-refacor` branch or pr `37`
+> Breaking Change!: use setup function instead of json config.
+> If you meet any issue, you can use tag to downgrade to previous version, like `v0.13.2`
+
 
 ## Create scratch file
 
@@ -25,124 +18,87 @@ worrying about filenames or locations
 
 ## Install
 
-using your favorate plugin manager, for example [lazy.nvim](https://github.com/folke/lazy.nvim)
+use your favorite plugin manager, for example [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 {
   "LintaoAmons/scratch.nvim",
-  tag = "v0.13.2",
+  tag = "v1.0.0",
   event = "VeryLazy",
 }
 ```
 
-
 ## Configuration
 
-No need to config at the very begining, just install and explore the commands start with `Scratch`.
+No configuration is required; it can be used out of the box. Simply install it and explore the commands that start with 'Scratch'.
 
 <details>
-<summary>Click to know more about config</summary>
+<summary>Detailed Configuration</summary>
   
-The way to config this plugin is a little difference(simpler) with other nvim plugin.
+You can use both `Lua setup function` and `Json config` to fit your needs.
+
+`Lua setup function` and `Json config` will eventually be merged together.
+
   
-You can use `ScratchEditConfig` to edit the config once some new type popup your mind and the config will take effect immediately
+You can use `ScratchEditConfig` to edit the JSON configuration whenever a new type comes to mind, and the changes will take effect immediately.
 
-Here's default config after you inited the plugin
+Following is a detailed `Lua setup configuration`
 
-NOTE: you can't have comment in your config, since only plain json supported right now
+```lua
+return {
+	"LintaoAmons/scratch.nvim",
+	config = function()
+        ---@type Scratch.SetupConfig
+        local cfg = {
+			json_config_path = vim.fn.stdpath("config") .. "/scratch.json",
+			scratch_config = {
+				scratch_file_dir = vim.fn.stdpath("cache") .. "/scratch.nvim", -- where your scratch files will be put
+				filetypes = { "lua", "sh" }, -- you can simply put filetype here
+				window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
+				use_telescope = true,
+				filetype_details = { -- or, you can have more control here
+					json = {}, -- empty table is fine
+					["k8s.yaml"] = { -- you can have different postfix
+						subdir = "learn-k8s", -- and all file with this postfix will be put into this specific sub-directory
+					},
+					go = {
+						requireDir = true, -- true if each scratch file requires a new directory
+						filename = "main", -- the filename of the scratch file in the new directory
+						content = { "package main", "", "func main() {", "  ", "}" },
+						cursor = {
+							location = { 4, 2 },
+							insert_mode = true,
+						},
+					},
+				},
+				localKeys = { -- you can have local shortcuts when a scratch file created
+					{
+						filenameContains = { "sh" },
+						LocalKeys = {
+							{
+								cmd = "<CMD>RunShellCurrentLine<CR>",
+								key = "<C-r>",
+								modes = { "n", "i", "v" },
+							},
+						},
+					},
+				},
+			},
+		}
 
-```jsonc
-{
-  "filetypes": ["xml", "go", "lua", "js", "py", "sh"], // you can simply put filetype here
-  "window_cmd": "edit", // 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'. Can use rightbelow or topleft etc. as modifier
-  "scratch_file_dir": "/you_home_path/.cache/nvim/scratch.nvim",
-  "filetype_details": {
-    "go": {
-      // or, you can have more control here
-      "filename": "main", // the filename of the scratch file in the new directory
-      "cursor": {
-        "location": [4, 2], // default location of cursor in the scratch file
-        "insert_mode": true // default mode
-      },
-      "requireDir": true, // true, if each scratch file requires a new directory
-      "content": ["package main", "", "func main() {", "  ", "}"] // default content in the scratch file
-    },
-    "yaml": {}, // for same filetype. you can have different postfix
-    "k8s.yaml": {
-      "subdir": "learn-k8s" // and put this type into a specific subdir
-    },
-    "json": {}, // empty object is fine
-    "gp.md": {
-      // create `gp.nvim` chat file
-      "cursor": {
-        "location": [12, 2],
-        "insert_mode": true
-      },
-      "content": [
-        "# topic: ?",
-        "",
-        "- model: {\"top_p\":1,\"temperature\":0.7,\"model\":\"gpt-3.5-turbo-16k\"}",
-        "- file: placeholder",
-        "- role: You are a general AI assistant.",
-        "",
-        "Write your queries after 🗨:. Run :GpChatRespond to generate response.",
-        "",
-        "---",
-        "",
-        "🗨:",
-        ""
-      ]
-    }
-  },
-  "localKeys": [
-    // local keymapping for specific type of file
-    {
-      "filenameContains": ["gp"],
-      "LocalKeys": [
-        {
-          "cmd": "<CMD>GpChatRespond<CR>",
-          "key": "<C-k>k",
-          "modes": ["n", "i", "v"]
-        }
-      ]
-    }
-  ]
+		require("scratch").setup(cfg)
+	end,
+	event = "VeryLazy",
 }
 ```
 
-### Init Configuration
-
-- This is triggered automaticlly at the first time you try to use Scrach's commands, and can be manually called to change the configuration file path, and this allows you:
-  - Put your configuration anywhere you want and can be tracked along with your other configuration with git
-  - Have multiple configuration, and switch the configuration by change the configuration filepath with this command
-
-```lua
-:ScratchInitConfig
-```
-
-### Check current Configuration
-
-```lua
-:ScratchCheckConfig
-```
-
-### Edit Configuration
-
-```lua
-:ScratchEditConfig
-```
-
-**Note**: Don't need require restart nvim after change the config.
-
-![show](https://github.com/LintaoAmons/scratch.nvim/assets/95092244/8e3fe968-91a5-4e86-a34e-84f9274b3355)
+> NOTE: if there're options both setted in `Lua setup function` and `Json config`, then the `Lua setup function` have higher priority and will sync to Json config once the setup function been called again (like restart neovim).
 
 </details>
 
 ## Commands | Keymappings | Functions
 
-No default keymappings, here's functions you can mapping to.
-
-All commands are started with `Scratch`, here is one example to add your keybinding to the commands.
+All commands are started with `Scratch`, and no default Keymappings. Here is one example to add your keybinding to the commands.
 
 ```lua
 vim.keymap.set("n", "<M-C-n>", "<cmd>Scratch<cr>")
@@ -155,21 +111,7 @@ vim.keymap.set("n", "<M-C-o>", "<cmd>ScratchOpen<cr>")
 | `ScratchWithName`  | Allows the creation of a new scratch file with a user-specified filename, including the file extension.               |
 | `ScratchOpen`      | Opens an existing scratch file from the `scratch_file_dir`.                                                           |
 | `ScratchOpenFzf`   | Uses fuzzy finding to search through the contents of scratch files and open a selected file.                          |
-| `ScratchCheckConfig` | Prints the current configuration to confirm that custom settings are active.                                         |
 | `ScratchEditConfig` | Opens the configuration file for editing, with changes taking effect without needing to restart Neovim.              |
-| `ScratchPad`       | A specific file designed for continuous information recording, likely acting as an ongoing note-taking or log file.   |
-
-### Functions
-
-functions can be required from scratch, check `./lua/scratch/init.lua` to get the functions you can use
-
-## Jump to scratch file from terminal
-
-```sh
-nvim -c 'lua require("scratch").scratchByType("md")'
-```
-
-> NOTE: you can't lazyload the plugin if you want make the `scratch` plugin accessible at the init of nvim
 
 ## CONTRIBUTING
 
