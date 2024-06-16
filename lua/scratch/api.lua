@@ -4,12 +4,16 @@ local utils = require("scratch.utils")
 local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
 local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 
----@alias Scratch.Action fun(ft: string): nil
+---@class Scratch.ActionOpts
+---@field window_cmd Scratch.WindowCmd
 
----@type Scratch.Action
-local function create_and_edit_file(ft)
+---@alias Scratch.Action fun(ft: string, opts?: Scratch.ActionOpts): nil
+
+---@param ft string
+---@param opts? Scratch.ActionOpts
+local function create_and_edit_file(ft, opts)
   local abs_path = config.get_abs_path(ft)
-  local cmd = vim.g.scratch_config.window_cmd or "edit"
+  local cmd = (opts and opts.window_cmd) or vim.g.config.window_cmd or "edit"
   vim.api.nvim_command(cmd .. " " .. abs_path)
 end
 
@@ -70,8 +74,9 @@ local function put_cursor(ft)
 end
 
 ---@param ft string
-local function createScratchFileByType(ft)
-  create_and_edit_file(ft)
+---@param opts? Scratch.ActionOpts
+local function createScratchFileByType(ft, opts)
+  create_and_edit_file(ft, opts)
   write_default_content(ft)
   put_cursor(ft)
   register_local_key()
@@ -97,7 +102,9 @@ local function get_all_filetypes()
   return combined_filetypes
 end
 
-local function select_filetype_then_do(func)
+---@param func Scratch.Action
+---@param opts? Scratch.ActionOpts
+local function select_filetype_then_do(func, opts)
   local filetypes = get_all_filetypes()
 
   vim.ui.select(filetypes, {
@@ -109,10 +116,10 @@ local function select_filetype_then_do(func)
     if choosedFt then
       if choosedFt == MANUAL_INPUT_OPTION then
         vim.ui.input({ prompt = "Input filetype: " }, function(ft)
-          func(ft)
+          func(ft, opts)
         end)
       else
-        func(choosedFt)
+        func(choosedFt, opts)
       end
     end
   end)
@@ -129,8 +136,9 @@ local function get_scratch_files()
   return res
 end
 
-local function scratch()
-  select_filetype_then_do(createScratchFileByType)
+---@param opts? Scratch.ActionOpts
+local function scratch(opts)
+  select_filetype_then_do(createScratchFileByType, opts)
 end
 
 local function scratchWithName()

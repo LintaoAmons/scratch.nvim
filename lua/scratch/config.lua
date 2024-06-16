@@ -5,6 +5,13 @@ local utils = require("scratch.utils")
 ---| '"n"'
 ---| '"i"'
 ---| '"v"'
+---
+---@alias Scratch.WindowCmd
+---| '"popup"'
+---| '"vsplit"'
+---| '"edit"'
+---| '"tabedit"'
+---| '"rightbelow vsplit"'
 
 ---@class Scratch.LocalKey
 ---@field cmd string
