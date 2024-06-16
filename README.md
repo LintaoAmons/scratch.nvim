@@ -50,7 +50,7 @@ return {
                 },
             },
         },
-        window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
+        window_cmd = "popup", -- 'popup' | 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit' 
         use_telescope = true,
         localKeys = {
             {

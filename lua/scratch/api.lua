@@ -5,7 +5,8 @@ local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
 local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 
 ---@class Scratch.ActionOpts
----@field window_cmd Scratch.WindowCmd
+---@field window_cmd? Scratch.WindowCmd
+---@field content? string[] content will be put into the scratch file
 
 ---@alias Scratch.Action fun(ft: string, opts?: Scratch.ActionOpts): nil
 
@@ -13,8 +14,13 @@ local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 ---@param opts? Scratch.ActionOpts
 local function create_and_edit_file(ft, opts)
   local abs_path = config.get_abs_path(ft)
-  local cmd = (opts and opts.window_cmd) or vim.g.config.window_cmd or "edit"
-  vim.api.nvim_command(cmd .. " " .. abs_path)
+  local cmd = (opts and opts.window_cmd) or vim.g.scratch_config.window_cmd or "edit"
+  if cmd == "popup" then
+    utils.new_popup_window(abs_path)
+    vim.cmd("w " .. abs_path)
+  else
+    vim.api.nvim_command(cmd .. " " .. abs_path)
+  end
 end
 
 local function write_lines_to_buffer(lines)
@@ -45,16 +51,21 @@ local function register_local_key()
   end
 end
 
----@type Scratch.Action
-local function write_default_content(ft)
-  local config_data = vim.g.scratch_config
+---@param ft string
+---@param opts? Scratch.ActionOpts
+local function write_default_content(ft, opts)
+  if opts and opts.content then
+    write_lines_to_buffer(opts.content)
+  else
+    local config_data = vim.g.scratch_config
 
-  local has_default_content = config_data.filetype_details[ft]
-    and config_data.filetype_details[ft].content
-    and #config_data.filetype_details[ft].content > 0
+    local has_default_content = config_data.filetype_details[ft]
+      and config_data.filetype_details[ft].content
+      and #config_data.filetype_details[ft].content > 0
 
-  if has_default_content then
-    write_lines_to_buffer(vim.g.scratch_config.filetype_details[ft].content)
+    if has_default_content then
+      write_lines_to_buffer(vim.g.scratch_config.filetype_details[ft].content)
+    end
   end
 end
 
@@ -77,7 +88,7 @@ end
 ---@param opts? Scratch.ActionOpts
 local function createScratchFileByType(ft, opts)
   create_and_edit_file(ft, opts)
-  write_default_content(ft)
+  write_default_content(ft, opts)
   put_cursor(ft)
   register_local_key()
 end
