@@ -64,11 +64,9 @@ return {
 
 ### Modify config at runtime, no need to restart nvim
 
-To check your current configuration, simply run `lua = vim.g.scratch_config`
+To check your current configuration, simply type `:lua = vim.g.scratch_config`
 
-And if you want to modify the config, for example add a new filetype. just run the `setup` function with your updated config again.
-
-I normally change the config firstly then selecte the setup function, then run `:'<,'>source` to call the function
+And if you want to modify the config, for example add a new filetype, just call the `setup` function with your updated config again.
 
 Or you can change the `vim.g.scratch_config` global veriable directly
 
