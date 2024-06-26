@@ -1,9 +1,17 @@
 local slash = require("scratch.utils").Slash()
+local utils = require("scratch.utils")
 
 ---@alias mode
 ---| '"n"'
 ---| '"i"'
 ---| '"v"'
+---
+---@alias Scratch.WindowCmd
+---| '"popup"'
+---| '"vsplit"'
+---| '"edit"'
+---| '"tabedit"'
+---| '"rightbelow vsplit"'
 
 ---@class Scratch.LocalKey
 ---@field cmd string
@@ -54,6 +62,29 @@ local function setup(user_config)
     or default_config
 end
 
+---@param ft string
+---@return string
+local function get_abs_path(ft)
+  local config_data = vim.g.scratch_config
+
+  local filename = config_data.filetype_details[ft] and config_data.filetype_details[ft].filename
+    or tostring(os.date("%y-%m-%d_%H-%M-%S")) .. "." .. ft
+
+  local parentDir = config_data.scratch_file_dir
+  local subdir = config_data.filetype_details[ft] and config_data.filetype_details[ft].subdir
+  if subdir ~= nil then
+    parentDir = parentDir .. slash .. subdir
+  end
+  vim.fn.mkdir(parentDir, "p")
+
+  local require_dir = config_data.filetype_details[ft]
+      and config_data.filetype_details[ft].requireDir
+    or false
+
+  return utils.genFilepath(filename, parentDir, require_dir)
+end
+
 return {
   setup = setup,
+  get_abs_path = get_abs_path,
 }

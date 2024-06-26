@@ -11,6 +11,7 @@ end
 local slash = Slash()
 
 -- Initialize the scratch file directory if it does not exist
+-- TODO: remove this function
 local function initDir(scratch_file_dir)
   if vim.fn.filereadable(scratch_file_dir) == 0 then
     vim.fn.mkdir(scratch_file_dir, "p")
@@ -107,6 +108,29 @@ local function log_err(msg)
   vim.notify(msg, vim.log.levels.ERROR, { title = "easy-commands.nvim" })
 end
 
+---@param title string
+---@return {buf: integer, win: integer}
+local function new_popup_window(title)
+  local popup_buf = vim.api.nvim_create_buf(false, false)
+
+  local opts = {
+    relative = "editor", -- Assuming you want the floating window relative to the editor
+    row = 2,
+    col = 5,
+    width = vim.api.nvim_get_option("columns") - 10, -- Get the screen width
+    height = vim.api.nvim_get_option("lines") - 5, -- Get the screen height
+    style = "minimal",
+    border = "single",
+    title = ""
+  }
+
+  local win = vim.api.nvim_open_win(popup_buf, true, opts)
+  return {
+    buf = popup_buf,
+    win = win,
+  }
+end
+
 return {
   Slash = Slash,
   initDir = initDir,
@@ -116,4 +140,5 @@ return {
   filenameContains = filenameContains,
   getSelectedText = getSelectedText,
   log_err = log_err,
+  new_popup_window = new_popup_window,
 }

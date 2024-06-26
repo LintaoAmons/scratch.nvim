@@ -1,30 +1,31 @@
+local config = require("scratch.config")
 local slash = require("scratch.utils").Slash()
 local utils = require("scratch.utils")
 local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
 local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 
-local function editFile(fullpath)
-  local cmd = vim.g.scratch_config.window_cmd or "edit"
-  vim.api.nvim_command(cmd .. " " .. fullpath)
+---@class Scratch.ActionOpts
+---@field window_cmd? Scratch.WindowCmd
+---@field content? string[] content will be put into the scratch file
+
+---@alias Scratch.Action fun(ft: string, opts?: Scratch.ActionOpts): nil
+
+---@param ft string
+---@param opts? Scratch.ActionOpts
+local function create_and_edit_file(ft, opts)
+  local abs_path = config.get_abs_path(ft)
+  local cmd = (opts and opts.window_cmd) or vim.g.scratch_config.window_cmd or "edit"
+  if cmd == "popup" then
+    utils.new_popup_window(abs_path)
+    vim.cmd("w " .. abs_path)
+  else
+    vim.api.nvim_command(cmd .. " " .. abs_path)
+  end
 end
 
 local function write_lines_to_buffer(lines)
   local bufnr = vim.api.nvim_get_current_buf()
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-end
-
-local function hasDefaultContent(ft)
-  local config_data = vim.g.scratch_config
-  return config_data.filetype_details[ft]
-    and config_data.filetype_details[ft].content
-    and #config_data.filetype_details[ft].content > 0
-end
-
-local function hasCursorPosition(ft)
-  local config_data = vim.g.scratch_config
-  return config_data.filetype_details[ft]
-    and config_data.filetype_details[ft].cursor
-    and #config_data.filetype_details[ft].cursor.location > 0
 end
 
 ---@param filename string
@@ -34,10 +35,10 @@ local function createScratchFileByName(filename)
   utils.initDir(scratch_file_dir)
 
   local fullpath = scratch_file_dir .. slash .. filename
-  editFile(fullpath)
+  create_and_edit_file(fullpath)
 end
 
-local function registerLocalKey()
+local function register_local_key()
   local localKeys = vim.g.scratch_config.localKeys
   if localKeys and #localKeys > 0 then
     for _, key in ipairs(localKeys) do
@@ -51,47 +52,45 @@ local function registerLocalKey()
 end
 
 ---@param ft string
----@return string
-local function getConfigFilename(ft)
-  local config_data = vim.g.scratch_config
-  return config_data.filetype_details[ft] and config_data.filetype_details[ft].filename
-    or tostring(os.date("%y-%m-%d_%H-%M-%S")) .. "." .. ft
+---@param opts? Scratch.ActionOpts
+local function write_default_content(ft, opts)
+  if opts and opts.content then
+    write_lines_to_buffer(opts.content)
+  else
+    local config_data = vim.g.scratch_config
+
+    local has_default_content = config_data.filetype_details[ft]
+      and config_data.filetype_details[ft].content
+      and #config_data.filetype_details[ft].content > 0
+
+    if has_default_content then
+      write_lines_to_buffer(vim.g.scratch_config.filetype_details[ft].content)
+    end
+  end
 end
 
----@param ft string
----@return boolean
-local function does_require_dir(ft)
+---@type Scratch.Action
+local function put_cursor(ft)
   local config_data = vim.g.scratch_config
-  return config_data.filetype_details[ft] and config_data.filetype_details[ft].requireDir or false
-end
+  local has_cursor_position = config_data.filetype_details[ft]
+    and config_data.filetype_details[ft].cursor
+    and #config_data.filetype_details[ft].cursor.location > 0
 
----@param ft string
-local function createScratchFileByType(ft)
-  local config_data = vim.g.scratch_config
-  local parentDir = config_data.scratch_file_dir
-  utils.initDir(parentDir)
-
-  local subdir = config_data.filetype_details[ft] and config_data.filetype_details[ft].subdir
-  if subdir ~= nil then
-    parentDir = parentDir .. slash .. subdir
-    utils.initDir(parentDir)
-  end
-
-  local fullpath = utils.genFilepath(getConfigFilename(ft), parentDir, does_require_dir(ft))
-  editFile(fullpath)
-
-  registerLocalKey()
-
-  if hasDefaultContent(ft) then
-    write_lines_to_buffer(config_data.filetype_details[ft].content)
-  end
-
-  if hasCursorPosition(ft) then
+  if has_cursor_position then
     vim.api.nvim_win_set_cursor(0, config_data.filetype_details[ft].cursor.location)
     if config_data.filetype_details[ft].cursor.insert_mode then
       vim.api.nvim_feedkeys("a", "n", true)
     end
   end
+end
+
+---@param ft string
+---@param opts? Scratch.ActionOpts
+local function createScratchFileByType(ft, opts)
+  create_and_edit_file(ft, opts)
+  write_default_content(ft, opts)
+  put_cursor(ft)
+  register_local_key()
 end
 
 ---@return string[]
@@ -114,7 +113,9 @@ local function get_all_filetypes()
   return combined_filetypes
 end
 
-local function select_filetype_then_do(func)
+---@param func Scratch.Action
+---@param opts? Scratch.ActionOpts
+local function select_filetype_then_do(func, opts)
   local filetypes = get_all_filetypes()
 
   vim.ui.select(filetypes, {
@@ -126,10 +127,10 @@ local function select_filetype_then_do(func)
     if choosedFt then
       if choosedFt == MANUAL_INPUT_OPTION then
         vim.ui.input({ prompt = "Input filetype: " }, function(ft)
-          func(ft)
+          func(ft, opts)
         end)
       else
-        func(choosedFt)
+        func(choosedFt, opts)
       end
     end
   end)
@@ -146,8 +147,9 @@ local function get_scratch_files()
   return res
 end
 
-local function scratch()
-  select_filetype_then_do(createScratchFileByType)
+---@param opts? Scratch.ActionOpts
+local function scratch(opts)
+  select_filetype_then_do(createScratchFileByType, opts)
 end
 
 local function scratchWithName()
@@ -202,8 +204,8 @@ local function open_scratch_vim_ui()
     end,
   }, function(chosenFile)
     if chosenFile then
-      editFile(scratch_file_dir .. slash .. chosenFile)
-      registerLocalKey()
+      create_and_edit_file(scratch_file_dir .. slash .. chosenFile)
+      register_local_key()
     end
   end)
 end
