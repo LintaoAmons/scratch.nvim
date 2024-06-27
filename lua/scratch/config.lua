@@ -40,18 +40,19 @@ local utils = require("scratch.utils")
 ---@field scratch_file_dir string
 ---@field filetypes string[]
 ---@field window_cmd  string
----@field use_telescope boolean
+---@field file_picker? "fzflua" | "telescope" | nil
 ---@field filetype_details Scratch.FiletypeDetails
 ---@field localKeys Scratch.LocalKeyConfig[]
 local default_config = {
   scratch_file_dir = vim.fn.stdpath("cache") .. slash .. "scratch.nvim", -- where your scratch files will be put
   filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
   window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
-  use_telescope = true,
+  file_picker = "fzflua",
   filetype_details = {},
   localKeys = {},
 }
 
+---@type Scratch.Config
 vim.g.scratch_config = default_config
 
 ---@param user_config? Scratch.Config
