@@ -161,6 +161,7 @@ local function scratchWithName()
     end
   end)
 end
+
 local function open_scratch_fzflua()
   local ok, fzf_lua = pcall(require, "fzf-lua")
   if not ok then
@@ -170,7 +171,7 @@ local function open_scratch_fzflua()
   if vim.fn.executable("rg") ~= 1 then
     utils.log_err("Can't find rg executable, please check your configuration")
   end
-  fzf_lua.files({ cmd = "rg --files --sort modified" })
+  fzf_lua.files({ cmd = "rg --files --sortr modified " .. vim.g.scratch_config.scratch_file_dir })
 end
 
 local function open_scratch_telescope()
