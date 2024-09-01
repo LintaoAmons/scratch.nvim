@@ -81,22 +81,24 @@ function M.filenameContains(substr)
   end
 end
 
-local table_length = function(T)
-  local count = 0
-  for _ in pairs(T) do
-    count = count + 1
-  end
-  return count
-end
+-- local table_length = function(T)
+--   local count = 0
+--   for _ in pairs(T) do
+--     count = count + 1
+--   end
+--   return count
+-- end
 
 ---@return string[]
 function M.getSelectedText()
   local _, csrow, cscol, _ = unpack(vim.fn.getpos("'<"))
   local _, cerow, cecol, _ = unpack(vim.fn.getpos("'>"))
-
+  --NOTE: perfomance eq but this always string[]
+  -- local lines = vim.api.nvim_buf_get_lines(0, csrow, cerow, false)
   local lines = vim.fn.getline(csrow, cerow)
-  local n = table_length(lines)
-  if n <= 0 then
+  ---@cast lines string[]
+  local n = #lines
+  if n == 0 then
     return {}
   end
   lines[n] = string.sub(lines[n], 1, cecol)
@@ -114,16 +116,18 @@ end
 function M.new_popup_window(title)
   local popup_buf = vim.api.nvim_create_buf(false, false)
   -- NOTE: vim.api.nvim_get_option -- depracated
-  local api_get_option = vim.api.nvim_get_option or vim.api.nvim_get_option_value
+  -- local api_get_option = vim.api.nvim_get_option or vim.api.nvim_get_option_value
   local opts = {
     relative = "editor", -- Assuming you want the floating window relative to the editor
     row = 2,
     col = 5,
-    width = api_get_option("columns") - 10, -- Get the screen width
-    height = api_get_option("lines") - 5, -- Get the screen height
+    --api_get_option("columns") - 10, (row * col?)
+    width = vim.api.nvim_win_get_width(0) - 10, -- Get the screen width
+    --api_get_option("lines") - 5,
+    height = vim.api.nvim_win_get_height(0) - 5, -- Get the screen height
     style = "minimal",
     border = "single",
-    title = "",
+    title = title,
   }
 
   local win = vim.api.nvim_open_win(popup_buf, true, opts)
