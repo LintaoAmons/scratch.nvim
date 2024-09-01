@@ -1,5 +1,4 @@
 local config = require("scratch.config")
-local slash = require("scratch.utils").Slash()
 local utils = require("scratch.utils")
 local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
 local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
@@ -34,7 +33,7 @@ local function createScratchFileByName(filename)
   local scratch_file_dir = config_data.scratch_file_dir
   utils.initDir(scratch_file_dir)
 
-  local fullpath = scratch_file_dir .. slash .. filename
+  local fullpath = scratch_file_dir .. utils.slash .. filename
   create_and_edit_file(fullpath)
 end
 
@@ -205,8 +204,8 @@ local function open_scratch_vim_ui()
 
   -- sort the files by their last modified time in descending order
   table.sort(files, function(a, b)
-    return vim.fn.getftime(scratch_file_dir .. slash .. a)
-      > vim.fn.getftime(scratch_file_dir .. slash .. b)
+    return vim.fn.getftime(scratch_file_dir .. utils.slash .. a)
+      > vim.fn.getftime(scratch_file_dir .. utils.slash .. b)
   end)
 
   vim.ui.select(files, {
@@ -216,7 +215,7 @@ local function open_scratch_vim_ui()
     end,
   }, function(chosenFile)
     if chosenFile then
-      create_and_edit_file(scratch_file_dir .. slash .. chosenFile)
+      create_and_edit_file(scratch_file_dir .. utils.slash .. chosenFile)
       register_local_key()
     end
   end)

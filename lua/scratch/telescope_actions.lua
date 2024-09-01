@@ -32,7 +32,7 @@ function M.delete_item(prompt_bufnr)
     end
     local config_data = config.getConfig()
     local scratch_file_dir = config_data.scratch_file_dir
-    local p = Path:new({ scratch_file_dir, file_name, sep = utils.Slash() })
+    local p = Path:new({ scratch_file_dir, file_name, sep = utils.slash })
     return _delelte(p)
   end)
 end

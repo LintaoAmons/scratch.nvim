@@ -1,4 +1,3 @@
-local slash = require("scratch.utils").Slash()
 local utils = require("scratch.utils")
 
 ---@alias mode
@@ -44,7 +43,7 @@ local utils = require("scratch.utils")
 ---@field filetype_details Scratch.FiletypeDetails
 ---@field localKeys Scratch.LocalKeyConfig[]
 local default_config = {
-  scratch_file_dir = vim.fn.stdpath("cache") .. slash .. "scratch.nvim", -- where your scratch files will be put
+  scratch_file_dir = vim.fn.stdpath("cache") .. utils.slash .. "scratch.nvim", -- where your scratch files will be put
   filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
   window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
   file_picker = "fzflua",
@@ -74,7 +73,7 @@ local function get_abs_path(ft)
   local parentDir = config_data.scratch_file_dir
   local subdir = config_data.filetype_details[ft] and config_data.filetype_details[ft].subdir
   if subdir ~= nil then
-    parentDir = parentDir .. slash .. subdir
+    parentDir = parentDir .. utils.slash .. subdir
   end
   vim.fn.mkdir(parentDir, "p")
 

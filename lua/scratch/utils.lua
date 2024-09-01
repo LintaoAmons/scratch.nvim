@@ -1,18 +1,19 @@
 local M = {}
 
-local function Slash()
-  local slash = "/"
-  if vim.fn.has("win32") == 1 then
-    slash = "\\"
-  end
-  return slash
-end
+-- NOTE: no need
+-- local function Slash()
+--   local slash = "/"
+--   if vim.fn.has("win32") == 1 then
+--     slash = "\\"
+--   end
+--   return slash
+-- end
 
-local slash = Slash()
+M.slash = vim.fn.has("win32") and "\\" or "/"
 
 -- Initialize the scratch file directory if it does not exist
 -- TODO: remove this function
-local function initDir(scratch_file_dir)
+function M.initDir(scratch_file_dir)
   if vim.fn.filereadable(scratch_file_dir) == 0 then
     vim.fn.mkdir(scratch_file_dir, "p")
   else
@@ -23,14 +24,14 @@ local function initDir(scratch_file_dir)
 end
 
 -- Recursively list all files in the specified directory
-local function listDirectoryRecursive(directory)
+function M.listDirectoryRecursive(directory)
   local files = {}
   local dir_list = vim.fn.readdir(directory)
 
   for _, file in ipairs(dir_list) do
-    local path = directory .. slash .. file
+    local path = directory .. M.slash .. file
     if vim.fn.isdirectory(path) == 1 and file ~= "." and file ~= ".." then
-      local subfiles = listDirectoryRecursive(path)
+      local subfiles = M.listDirectoryRecursive(path)
       for _, subfile in ipairs(subfiles) do
         files[#files + 1] = subfile
       end
@@ -47,18 +48,18 @@ end
 ---@param parentDir string
 ---@param requiresDir boolean
 ---@return string
-local function genFilepath(filename, parentDir, requiresDir)
+function M.genFilepath(filename, parentDir, requiresDir)
   if requiresDir then
     local dirName = vim.trim(vim.fn.system("uuidgen"))
-    vim.fn.mkdir(parentDir .. slash .. dirName, "p")
-    return parentDir .. slash .. dirName .. slash .. filename
+    vim.fn.mkdir(parentDir .. M.slash .. dirName, "p")
+    return parentDir .. M.slash .. dirName .. M.slash .. filename
   else
-    return parentDir .. slash .. filename
+    return parentDir .. M.slash .. filename
   end
 end
 
 ---@param localKeys Scratch.LocalKey[]
-local function setLocalKeybindings(localKeys)
+function M.setLocalKeybindings(localKeys)
   for _, localKey in ipairs(localKeys) do
     vim.keymap.set(localKey.modes, localKey.key, localKey.cmd, {
       noremap = true,
@@ -71,7 +72,7 @@ end
 
 ---@param substr string
 ---@return boolean
-local function filenameContains(substr)
+function M.filenameContains(substr)
   local s = vim.fn.expand("%:t")
   if string.find(s, substr) then
     return true
@@ -89,7 +90,7 @@ local table_length = function(T)
 end
 
 ---@return string[]
-local function getSelectedText()
+function M.getSelectedText()
   local _, csrow, cscol, _ = unpack(vim.fn.getpos("'<"))
   local _, cerow, cecol, _ = unpack(vim.fn.getpos("'>"))
 
@@ -104,13 +105,13 @@ local function getSelectedText()
 end
 
 ---@param msg string
-local function log_err(msg)
+function M.log_err(msg)
   vim.notify(msg, vim.log.levels.ERROR, { title = "easy-commands.nvim" })
 end
 
 ---@param title string
 ---@return {buf: integer, win: integer}
-local function new_popup_window(title)
+function M.new_popup_window(title)
   local popup_buf = vim.api.nvim_create_buf(false, false)
 
   local opts = {
@@ -121,7 +122,7 @@ local function new_popup_window(title)
     height = vim.api.nvim_get_option("lines") - 5, -- Get the screen height
     style = "minimal",
     border = "single",
-    title = ""
+    title = "",
   }
 
   local win = vim.api.nvim_open_win(popup_buf, true, opts)
@@ -130,15 +131,15 @@ local function new_popup_window(title)
     win = win,
   }
 end
-
-return {
-  Slash = Slash,
-  initDir = initDir,
-  listDirectoryRecursive = listDirectoryRecursive,
-  genFilepath = genFilepath,
-  setLocalKeybindings = setLocalKeybindings,
-  filenameContains = filenameContains,
-  getSelectedText = getSelectedText,
-  log_err = log_err,
-  new_popup_window = new_popup_window,
-}
+return M
+-- return {
+--   Slash = Slash,
+--   initDir = initDir,
+--   listDirectoryRecursive = listDirectoryRecursive,
+--   genFilepath = genFilepath,
+--   setLocalKeybindings = setLocalKeybindings,
+--   filenameContains = filenameContains,
+--   getSelectedText = getSelectedText,
+--   log_err = log_err,
+--   new_popup_window = new_popup_window,
+-- }
