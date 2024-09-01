@@ -10,13 +10,14 @@ vim.g.loaded_scratch = 1
 -- Be careful to not overuse this file!
 
 -- TODO: remove those requires
+
+local base_path = vim.fn.stdpath("cache") .. (vim.fn.has("win32") and "\\" or "/") .. "scratch.nvim"
+
 local Actor = require("scratch.actor")
 ---@type Scratch.Actor
 vim.g.scratch_actor = vim.g.scratch_actor
   or setmetatable({
-    scratch_file_dir = vim.fn.stdpath("cache")
-      .. (vim.fn.has("win32") and "\\" or "/")
-      .. "scratch.nvim", -- where your scratch files will be put
+    scratch_file_dir = base_path, -- where your scratch files will be put
     filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
     window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
     file_picker = "fzflua",

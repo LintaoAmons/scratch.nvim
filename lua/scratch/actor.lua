@@ -61,7 +61,6 @@ end
 ---@param filename string
 function M:scratchByName(filename)
   local scratch_file_dir = self.scratch_file_dir
-  utils.initDir(scratch_file_dir)
 
   local fullpath = scratch_file_dir .. utils.slash .. filename
   self:create_and_edit_file(fullpath)
