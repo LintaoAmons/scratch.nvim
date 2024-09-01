@@ -74,11 +74,7 @@ end
 ---@return boolean
 function M.filenameContains(substr)
   local s = vim.fn.expand("%:t")
-  if string.find(s, substr) then
-    return true
-  else
-    return false
-  end
+  return string.find(s, substr) ~= nil
 end
 
 -- local table_length = function(T)
