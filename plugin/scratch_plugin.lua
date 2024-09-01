@@ -10,19 +10,35 @@ vim.g.loaded_scratch = 1
 -- Be careful to not overuse this file!
 
 -- TODO: remove those requires
-local scratch_api = require("scratch.api")
-
-local scratch_main = require("scratch")
-scratch_main.setup()
+local Actor = require("scratch.actor")
+---@type Scratch.Actor
+vim.g.scratch_actor = vim.g.scratch_actor
+  or setmetatable({
+    scratch_file_dir = vim.fn.stdpath("cache")
+      .. (vim.fn.has("win32") and "\\" or "/")
+      .. "scratch.nvim", -- where your scratch files will be put
+    filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
+    window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
+    file_picker = "fzflua",
+    filetype_details = {},
+    localKeys = {},
+    manual_text = "MANUAL_INPUT",
+  }, Actor)
 
 vim.api.nvim_create_user_command("Scratch", function(args)
   if args.range > 0 then
-    scratch_api.scratch({ content = utils.getSelectedText() })
+    vim.g.scratch_actor:scratch({ content = utils.getSelectedText() })
   else
-    scratch_api.scratch()
+    vim.g.scratch_actor:scratch({})
   end
 end, { range = true })
 
-vim.api.nvim_create_user_command("ScratchOpen", scratch_api.openScratch, {})
-vim.api.nvim_create_user_command("ScratchOpenFzf", scratch_api.fzfScratch, {})
-vim.api.nvim_create_user_command("ScratchWithName", scratch_api.scratchWithName, {})
+vim.api.nvim_create_user_command("ScratchOpen", function()
+  vim.g.scratch_actor:scratchOpen({})
+end, {})
+vim.api.nvim_create_user_command("ScratchOpenFzf", function()
+  vim.g.scratch_actor:fzfScratch()
+end, {})
+vim.api.nvim_create_user_command("ScratchWithName", function()
+  vim.g.scratch_actor:scratchWithName()
+end, {})

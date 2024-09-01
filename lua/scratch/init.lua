@@ -1,4 +1,18 @@
 local M = {}
+local Actor = require("scratch.actor")
+---@type Scratch.Actor
+vim.g.scratch_actor = vim.g.scratch_actor
+  or setmetatable({
+    scratch_file_dir = vim.fn.stdpath("cache")
+      .. (vim.fn.has("win32") and "\\" or "/")
+      .. "scratch.nvim", -- where your scratch files will be put
+    filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
+    window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
+    file_picker = "fzflua",
+    filetype_details = {},
+    localKeys = {},
+    manual_text = "MANUAL_INPUT",
+  }, Actor)
 
 ---@alias mode
 ---| '"n"'
@@ -53,21 +67,9 @@ local M = {}
 ---@param user_config? Scratch.Config
 ---@return Scratch.Actor
 function M.setup(user_config)
-  local Actor = require("scratch.actor")
   user_config = user_config or {}
-  ---@type Scratch.Actor
-  local default_config = {
-    scratch_file_dir = vim.fn.stdpath("cache")
-      .. (vim.fn.has("win32") and "\\" or "/")
-      .. "scratch.nvim", -- where your scratch files will be put
-    filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
-    window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
-    file_picker = "fzflua",
-    filetype_details = {},
-    localKeys = {},
-    manual_text = "MANUAL_INPUT",
-  }
-  return setmetatable(vim.tbl_deep_extend("force", default_config, user_config), Actor)
+  vim.g.scratch_actor = vim.tbl_deep_extend("force", vim.g.scratch_actor, user_config)
+  return vim.g.scratch_actor
   -- vim.g.scratch_config = vim.tbl_deep_extend("force", default_config, user_config or {})
   --   or default_config
 end
