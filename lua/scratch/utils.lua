@@ -113,13 +113,14 @@ end
 ---@return {buf: integer, win: integer}
 function M.new_popup_window(title)
   local popup_buf = vim.api.nvim_create_buf(false, false)
-
+  -- NOTE: vim.api.nvim_get_option -- depracated
+  local api_get_option = vim.api.nvim_get_option or vim.api.nvim_get_option_value
   local opts = {
     relative = "editor", -- Assuming you want the floating window relative to the editor
     row = 2,
     col = 5,
-    width = vim.api.nvim_get_option("columns") - 10, -- Get the screen width
-    height = vim.api.nvim_get_option("lines") - 5, -- Get the screen height
+    width = api_get_option("columns") - 10, -- Get the screen width
+    height = api_get_option("lines") - 5, -- Get the screen height
     style = "minimal",
     border = "single",
     title = "",
