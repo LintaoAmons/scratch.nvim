@@ -24,34 +24,65 @@ function M.initDir(scratch_file_dir)
 end
 
 -- Recursively list all files in the specified directory
+-- function M.listDirectoryRecursive(directory)
+--   local files = {}
+--   local dir_list = vim.fn.readdir(directory)
+--
+--   for _, file in ipairs(dir_list) do
+--     local path = directory .. M.slash .. file
+--     if vim.fn.isdirectory(path) == 1 and file ~= "." and file ~= ".." then
+--       local subfiles = M.listDirectoryRecursive(path)
+--       for _, subfile in ipairs(subfiles) do
+--         files[#files + 1] = subfile
+--       end
+--     elseif vim.fn.isdirectory(path) == 0 then
+--       files[#files + 1] = path
+--     end
+--   end
+--
+--   return files
+-- end
+
+-- Recursively list all files in the specified directory
 function M.listDirectoryRecursive(directory)
   local files = {}
-  local dir_list = vim.fn.readdir(directory)
-
-  for _, file in ipairs(dir_list) do
-    local path = directory .. M.slash .. file
-    if vim.fn.isdirectory(path) == 1 and file ~= "." and file ~= ".." then
-      local subfiles = M.listDirectoryRecursive(path)
-      for _, subfile in ipairs(subfiles) do
-        files[#files + 1] = subfile
+  local next_dir = { directory }
+  repeat
+    local current_dir = table.remove(next_dir, 1)
+    local fd = vim.uv.fs_scandir(current_dir)
+    if fd then
+      while true do
+        local name, typ = vim.uv.fs_scandir_next(fd)
+        if name == nil then
+          break
+        end
+        local entry = current_dir .. M.slash .. name
+        if typ == "directory" then
+          table.insert(next_dir, entry)
+        elseif typ == "file" then
+          table.insert(files, entry)
+        end
       end
-    elseif vim.fn.isdirectory(path) == 0 then
-      files[#files + 1] = path
     end
-  end
-
+  until #next_dir == 0
   return files
 end
 
 --- generate abs filepath
 ---@param filename string
 ---@param parentDir string
----@param requiresDir boolean
----@return string
+---@param requiresDir boolean?
+---@return string?
 function M.genFilepath(filename, parentDir, requiresDir)
   if requiresDir then
-    local dirName = vim.trim(vim.fn.system("uuidgen"))
-    vim.fn.mkdir(parentDir .. M.slash .. dirName, "p")
+    -- local dirName = vim.trim(vim.fn.system("uuidgen")) -- win not support i dont know reason u can actualy use timestamp
+    local dirName = parentDir .. M.slash .. os.time()
+
+    local suc, err_n, err_m = vim.uv.fs_mkdir(parentDir, 777) -- linux rwxrwxrwx
+    if not suc then
+      return vim.notify(err_n .. ": appear " .. err_m, vim.log.levels.ERROR)
+    end
+    -- vim.fn.mkdir(parentDir .. M.slash .. dirName, "p")
     return parentDir .. M.slash .. dirName .. M.slash .. filename
   else
     return parentDir .. M.slash .. filename
@@ -131,6 +162,10 @@ function M.new_popup_window(title)
     buf = popup_buf,
     win = win,
   }
+end
+function M.write_lines_to_buffer(lines)
+  local bufnr = vim.api.nvim_get_current_buf()
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
 end
 return M
 -- return {
