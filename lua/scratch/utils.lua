@@ -168,17 +168,6 @@ function M.write_lines_to_buffer(lines)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
 end
 
-function open_scratch_fzflua()
-  local ok, fzf_lua = pcall(require, "fzf-lua")
-  if not ok then
-    utils.log_err("Can't find fzf-lua, please check your configuration")
-  end
-
-  if vim.fn.executable("rg") ~= 1 then
-    utils.log_err("Can't find rg executable, please check your configuration")
-  end
-  fzf_lua.files({ cmd = "rg --files --sortr modified " .. vim.g.scratch_config.scratch_file_dir })
-end
 return M
 -- return {
 --   Slash = Slash,
