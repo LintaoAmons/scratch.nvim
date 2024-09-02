@@ -133,7 +133,7 @@ function M:get_all_filetypes()
     end
   end
 
-  table.insert(combined_filetypes, MANUAL_INPUT_OPTION)
+  table.insert(combined_filetypes, self.manual_text)
   return combined_filetypes
 end
 
@@ -149,7 +149,7 @@ function M:select_filetype_then_do(func, opts)
     end,
   }, function(choosedFt)
     if choosedFt then
-      if choosedFt == MANUAL_INPUT_OPTION then
+      if choosedFt == self.manual_text then
         vim.ui.input({ prompt = "Input filetype: " }, function(ft)
           func(ft, opts)
         end)
