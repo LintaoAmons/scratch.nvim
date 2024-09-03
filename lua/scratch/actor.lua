@@ -3,7 +3,7 @@ local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
 -- local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 
 ---@class Scratch.Actor
----@field base_dir string
+---@field scratch_file_dir string
 ---@field win_config vim.api.keyset.win_config @see: nvim_open_win() {config}
 ---@field filetypes string[]
 ---@field manual_text string
@@ -45,14 +45,14 @@ end
 ---@param ft string
 ---@param config? vim.api.keyset.win_config
 function M:create_and_edit_file(ft, config)
-	local abs_path = self.base_dir .. utils.gen_filename(ft)
-	local buf = vim.api.nvim_create_buf(true, false)
-	vim.api.nvim_buf_set_name(buf, abs_path)
-	if config == nil then
-		vim.api.nvim_set_current_buf(buf)
-	else
-		vim.api.nvim_open_win(buf, true, vim.tbl_extend("force", self.win_config, config))
-	end
+  local abs_path = self.scratch_file_dir .. utils.gen_filename(ft)
+  local buf = vim.api.nvim_create_buf(true, false)
+  vim.api.nvim_buf_set_name(buf, abs_path)
+  if config == nil then
+    vim.api.nvim_set_current_buf(buf)
+  else
+    vim.api.nvim_open_win(buf, true, vim.tbl_extend("force", self.win_config, config))
+  end
 end
 
 ---@param filename string
