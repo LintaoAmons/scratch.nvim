@@ -3,11 +3,11 @@ local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
 -- local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 
 ---@class Scratch.Actor
----@field scratch_file_dir string
+---@field base_dir string
+---@field win_config vim.api.keyset.win_config @see: nvim_open_win() {config}
 ---@field filetypes string[]
 ---@field manual_text string
----@field window_cmd  string
----@field file_picker "fzflua" | "telescope" | nil
+---@field file_picker? "fzflua" | "telescope"
 ---@field filetype_details Scratch.FiletypeDetails
 ---@field localKeys Scratch.LocalKeyConfig[]
 local M = {}
@@ -43,19 +43,16 @@ end
 ---@alias Scratch.Action fun(ft: string, opts?: Scratch.ActionOpts): nil
 
 ---@param ft string
----@param opts? Scratch.ActionOpts
-function M:create_and_edit_file(ft, opts)
-  local abs_path = self:get_abs_path(ft)
-  if not abs_path then
-    return
-  end
-  local cmd = (opts and opts.window_cmd) or self.window_cmd
-  if cmd == "popup" then
-    utils.new_popup_window(abs_path)
-    vim.cmd("w " .. abs_path)
-  else
-    vim.api.nvim_command(cmd .. " " .. abs_path)
-  end
+---@param config? vim.api.keyset.win_config
+function M:create_and_edit_file(ft, config)
+	local abs_path = self.base_dir .. utils.gen_filename(ft)
+	local buf = vim.api.nvim_create_buf(true, false)
+	vim.api.nvim_buf_set_name(buf, abs_path)
+	if config == nil then
+		vim.api.nvim_set_current_buf(buf)
+	else
+		vim.api.nvim_open_win(buf, true, vim.tbl_extend("force", self.win_config, config))
+	end
 end
 
 ---@param filename string
