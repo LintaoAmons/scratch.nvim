@@ -4,6 +4,7 @@ if vim.g.loaded_scratch == 1 then
   return
 end
 vim.g.loaded_scratch = 1
+vim.g.os_sep = vim.g.os_sep or vim.fn.has("win32") and "\\" or "/"
 
 -- create any global command that does not depend on user setup
 -- usually it is better to define most commands/mappings in the setup function
@@ -11,15 +12,25 @@ vim.g.loaded_scratch = 1
 
 -- TODO: remove those requires
 
-local base_path = vim.fn.stdpath("cache") .. (vim.fn.has("win32") and "\\" or "/") .. "scratch.nvim"
+local base_path = vim.fn.stdpath("cache") .. vim.g.os_sep .. "scratch.nvim" .. vim.g.os_sep
 
 local Actor = require("scratch.actor")
 ---@type Scratch.Actor
 vim.g.scratch_actor = vim.g.scratch_actor
   or setmetatable({
-    scratch_file_dir = base_path, -- where your scratch files will be put
+    base_dir = base_path, -- where your scratch files will be put
     filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
-    window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
+    window = {
+      relative = "editor", -- Assuming you want the floating window relative to the editor
+      row = 2,
+      col = 5,
+      width = vim.api.nvim_win_get_width(0) - 10, -- Get the screen width - row * col
+      --api_get_option("lines") - 5,
+      height = vim.api.nvim_win_get_height(0) - 5, -- Get the screen height - col
+      style = "minimal",
+      border = "single",
+      title = "",
+    },
     file_picker = "fzflua",
     filetype_details = {},
     localKeys = {},
