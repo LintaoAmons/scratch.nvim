@@ -41,8 +41,10 @@ function M:scratchByName(filename, win_conf, content, local_keys, cursor)
     table.insert(fto, i)
   end
   local ft = fto[#fto]
-  content = content or self.filetype_details[ft] and self.filetype_details[ft].content
-  cursor = cursor or self.filetype_details[ft] and self.filetype_details[ft].cursor
+  if self.filetype_details[ft] then
+    content = content or self.filetype_details[ft].content
+    cursor = cursor or self.filetype_details[ft].cursor
+  end
   utils.scratch(abs_path, win_conf or self.win_config, content, local_keys, cursor)
 end
 
@@ -51,8 +53,10 @@ end
 ---@param content? string[]
 function M:scratchByType(ft, win_conf, content, local_keys, cursor)
   local abs_path = self.base_dir .. utils.get_abs_path(ft)
-  content = content or self.filetype_details[ft] and self.filetype_details[ft].content
-  cursor = cursor or self.filetype_details[ft] and self.filetype_details[ft].cursor
+  if self.filetype_details[ft] then
+    content = content or self.filetype_details[ft].content
+    cursor = cursor or self.filetype_details[ft].cursor
+  end
   utils.scratch(abs_path, win_conf or self.win_config, content, local_keys, cursor)
 end
 
