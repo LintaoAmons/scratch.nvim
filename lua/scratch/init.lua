@@ -1,15 +1,10 @@
 local M = {}
 
----@alias mode
----| '"n"'
----| '"i"'
----| '"v"'
----
-
----@class Scratch.LocalKey
----@field cmd string
----@field key string
----@field modes mode[]
+---@class Scratch.LocalKey |:h keymap |
+---@field mode string|string[]
+---@field rhs string | function
+---@field lhs string
+---@field opts? vim.keymap.set.Opts
 
 ---@class Scratch.LocalKeyConfig
 ---@field filenameContains string[] as long as the filename contains any one of the string in the list
@@ -20,8 +15,8 @@ local M = {}
 ---@field insert_mode boolean
 
 ---@class Scratch.FiletypeDetail
----@field content? string[]
----@field cursor? Scratch.Cursor
+---@field content string[]
+---@field cursor Scratch.Cursor
 --
 ---@alias Scratch.FiletypeDetails { [string]:Scratch.FiletypeDetail }
 
@@ -29,7 +24,6 @@ local M = {}
 ---@field base_dir? string
 ---@field filetypes? string[]
 ---@field window? vim.api.keyset.win_config @see nvim_open_window
----@field file_picker? "fzflua" | "telescope"
 ---@field filetype_details? Scratch.FiletypeDetails
 ---@field localKeys? Scratch.LocalKeyConfig[]
 ---@field manual_text? string

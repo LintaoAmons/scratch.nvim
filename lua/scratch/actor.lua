@@ -1,20 +1,13 @@
 local utils = require("scratch.utils")
--- local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 
 ---@class Scratch.Actor
 ---@field base_dir string
 ---@field win_config vim.api.keyset.win_config @see: nvim_open_win() {config}
 ---@field filetypes string[]
 ---@field manual_text string
----@field file_picker? "fzflua" | "telescope"
 ---@field filetype_details Scratch.FiletypeDetails
 ---@field localKeys Scratch.LocalKeyConfig[]
 local M = {}
-
----@class Scratch.ActionOpts
----@field content? string[] content will be put into the scratch file
-
----@alias Scratch.Action fun(ft: string, opts?: Scratch.ActionOpts): nil
 
 ---@param filename string
 ---@param win_conf? vim.api.keyset.win_config
@@ -64,16 +57,6 @@ function M:get_all_filetypes()
   return combined_filetypes
 end
 
-function M.get_scratch_files(base_dir)
-  local scratch_file_dir = base_dir
-  local res = {}
-  res = utils.scandir(scratch_file_dir)
-  for i, str in ipairs(res) do
-    res[i] = string.sub(str, #scratch_file_dir + 2)
-  end
-  return res
-end
-
 ---choose ft by using selector function
 ---@param selector_filetype fun(filetypes:string[]):string think about last element like about MANUAL or like u prefers
 ---@param win_conf? vim.api.keyset.win_config
@@ -81,7 +64,7 @@ end
 ---@param local_keys? Scratch.LocalKeyConfig
 ---@param cursor? Scratch.Cursor
 function M:scratchWithSelectorFT(selector_filetype, win_conf, content, local_keys, cursor)
-  local filetypes = M:get_all_filetypes()
+  local filetypes = self:get_all_filetypes()
   coroutine.wrap(function()
     local ft = selector_filetype(filetypes)
     self:scratchByType(ft, win_conf, content, local_keys, cursor)
