@@ -1,4 +1,3 @@
-local utils = require("scratch.utils")
 local M = {}
 
 --- NOTE: if u want using async choicer inside your own functions with non ( :h api-fast )

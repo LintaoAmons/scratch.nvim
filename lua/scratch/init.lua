@@ -4,7 +4,6 @@ local M = {}
 ---@field mode string|string[]
 ---@field rhs string | function
 ---@field lhs string
----@field opts? vim.keymap.set.Opts
 
 ---@class Scratch.LocalKeyConfig
 ---@field filenameContains string[] as long as the filename contains any one of the string in the list

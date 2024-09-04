@@ -15,7 +15,27 @@ local M = {}
 ---@param local_keys? Scratch.LocalKeyConfig
 ---@param cursor? Scratch.Cursor
 function M:scratchByName(filename, win_conf, content, local_keys, cursor)
-  local abs_path = self.base_dir .. filename
+  local paths = {}
+  for sub_path in filename:gmatch("([^" .. vim.g.os_sep .. "]+)") do
+    table.insert(paths, sub_path)
+  end
+  local abs_path = self.base_dir
+  local p_len = #paths
+  for i = 1, p_len - 1 do
+    abs_path = abs_path .. paths[i]
+    local stat, err_m = vim.uv.fs_stat(abs_path)
+    if err_m then
+      return vim.notify(err_m, vim.log.levels.ERROR)
+    end
+    if not stat or stat.type ~= "directory" then
+      local suc, err_me = vim.uv.fs_mkdir(abs_path, 666)
+      if not suc then
+        return vim.notify(err_me or "", vim.log.levels.ERROR)
+      end
+      abs_path = abs_path .. vim.g.os_sep
+    end
+  end
+  abs_path = abs_path .. paths[p_len]
   local fto = {}
   for i in filename:gmatch("([^%.]+)") do
     table.insert(fto, i)
