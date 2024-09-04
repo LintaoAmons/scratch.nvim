@@ -99,12 +99,13 @@ end
 
 ---@param localKeys Scratch.LocalKeyConfig[]
 function M.register_local_key(localKeys)
+  local filename = vim.fn.expand("%:t")
   for _, key in ipairs(localKeys) do
     for _, namePattern in ipairs(key.filenameContains) do
-      if string.find(vim.fn.expand("%:t"), namePattern) ~= nil then
+      if string.find(filename, namePattern) ~= nil then
         local buf = vim.api.nvim_get_current_buf()
         for _, localKey in ipairs(key.LocalKeys) do
-          vim.keymap.set(localKey.modes, localKey.key, localKey.cmd, {
+          vim.keymap.set(localKey.mode, localKey.lhs, localKey.rhs, {
             noremap = true,
             silent = true,
             nowait = true,
