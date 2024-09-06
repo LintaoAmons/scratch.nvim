@@ -55,7 +55,7 @@ function M.findByFzf(base_dir)
 end
 
 ---@param base_dir string path to scandir
----@param local_keys Scratch.LocalKey[]
+---@param local_keys? Scratch.LocalKey[]
 function M.findByTelescope(base_dir, local_keys)
   local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
   if not telescope_status then
@@ -71,9 +71,8 @@ function M.findByTelescope(base_dir, local_keys)
       map("n", "dd", function()
         require("scratch.telescope_actions").delete_item(prompt_bufnr)
       end)
-      -- TODO: user can customise keybinding
       for _, key in ipairs(local_keys) do
-        map(key.modes, key.key, key.cmd)
+        map(key.mode, key.lhs, key.rhs)
       end
       return true
     end,
