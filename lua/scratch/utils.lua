@@ -1,6 +1,7 @@
 local M = {}
 
 ---@param ft string
+---@param base_dir string
 ---@return string
 function M.get_abs_path(base_dir, ft)
   local filename = os.date("%y-%m-%d_%H-%M-%S") .. "." .. ft
