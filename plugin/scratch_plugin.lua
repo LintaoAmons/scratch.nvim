@@ -15,7 +15,7 @@ vim.g.os_sep = vim.g.os_sep or vim.fn.has("win32") and "\\" or "/"
 local base_path = vim.fn.stdpath("cache") .. vim.g.os_sep .. "scratch.nvim" .. vim.g.os_sep
 ---@type Scratch.Actor
 local default_config = {
-  base_dir = base_path, -- where your scratch files will be put
+  scratch_file_dir = base_path, -- where your scratch files will be put
   filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
   win_config = {
     relative = "editor", -- Assuming you want the floating window relative to the editor
@@ -46,10 +46,10 @@ vim.api.nvim_create_user_command("Scratch", function(args)
 end, { range = true })
 
 vim.api.nvim_create_user_command("ScratchOpen", function()
-  require("scratch.default_finder").findByNative(vim.g.scratch_actor.base_dir)
+  require("scratch.default_finder").findByNative(vim.g.scratch_actor.scratch_file_dir)
 end, {})
 vim.api.nvim_create_user_command("ScratchOpenFzf", function()
-  require("scratch.default_finder").findByTelescope(vim.g.scratch_actor.base_dir)
+  require("scratch.default_finder").findByTelescope(vim.g.scratch_actor.scratch_file_dir)
 end, {})
 vim.api.nvim_create_user_command("ScratchWithName", function()
   vim.g.scratch_actor:scratchWithName()

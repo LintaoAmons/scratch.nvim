@@ -2,9 +2,9 @@ local M = {}
 
 ---@param ft string
 ---@return string
-function M.get_abs_path(ft)
+function M.get_abs_path(base_dir, ft)
   local filename = os.date("%y-%m-%d_%H-%M-%S") .. "." .. ft
-  return filename
+  return base_dir .. filename
 end
 
 -- Recursively list all files in the specified directory
@@ -79,12 +79,12 @@ end
 
 ---Make scratch file
 ---@param abs_path string
----@param win_conf vim.api.keyset.win_config
+---@param win_config vim.api.keyset.win_config
 ---@param content? string[]
 ---@param local_keys? Scratch.LocalKeyConfig
 ---@param cursor? Scratch.Cursor
-function M.scratch(abs_path, win_conf, content, local_keys, cursor)
-  M.create_and_edit_file(abs_path, win_conf)
+function M.scratch(abs_path, win_config, content, local_keys, cursor)
+  M.create_and_edit_file(abs_path, win_config)
   if content then
     local bufnr = vim.api.nvim_get_current_buf()
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, content)

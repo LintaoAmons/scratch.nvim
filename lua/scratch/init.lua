@@ -16,13 +16,14 @@ local M = {}
 ---@class Scratch.FiletypeDetail
 ---@field content string[]
 ---@field cursor Scratch.Cursor
+---@field generator fun(scratch_file_dir:string, ft:string): string
 --
 ---@alias Scratch.FiletypeDetails { [string]:Scratch.FiletypeDetail }
 
 ---@class Scratch.Config
----@field base_dir? string
+---@field scratch_file_dir? string
 ---@field filetypes? string[]
----@field window? vim.api.keyset.win_config @see nvim_open_window
+---@field win_config? vim.api.keyset.win_config @see nvim_open_window
 ---@field filetype_details? Scratch.FiletypeDetails
 ---@field localKeys? Scratch.LocalKeyConfig[]
 ---@field manual_text? string
@@ -31,8 +32,11 @@ local M = {}
 ---@return Scratch.Actor
 function M.setup(user_config)
   user_config = user_config or {}
-  if user_config.base_dir and not vim.uv.fs_stat(user_config.base_dir).type == "directory" then
-    vim.uv.fs_mkdir(user_config.base_dir, 666)
+  if
+    user_config.scratch_file_dir
+    and not vim.uv.fs_stat(user_config.scratch_file_dir).type == "directory"
+  then
+    vim.uv.fs_mkdir(user_config.scratch_file_dir, 666)
   end
   vim.g.scratch_actor = vim.tbl_deep_extend("force", vim.g.scratch_actor, user_config)
   return vim.g.scratch_actor

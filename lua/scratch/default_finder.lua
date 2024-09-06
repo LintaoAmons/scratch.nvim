@@ -2,9 +2,9 @@ local M = {}
 
 ---@param base_dir string path to scandir
 ---@param sorter? fun(file_a:string, file_b:string):boolean @see: table.sort
----@param win_conf? vim.api.keyset.win_config
+---@param win_config? vim.api.keyset.win_config
 ---@param local_keys? Scratch.LocalKeyConfig
-function M.findByNative(base_dir, sorter, win_conf, local_keys)
+function M.findByNative(base_dir, sorter, win_config, local_keys)
   local utils = require("scratch.utils")
   local scratch_file_dir = base_dir
   local abs_filenames = utils.scandir(scratch_file_dir)
@@ -25,7 +25,7 @@ function M.findByNative(base_dir, sorter, win_conf, local_keys)
     end,
   }, function(chosenFile)
     if chosenFile then
-      utils.open_(chosenFile, win_conf)
+      utils.open_(chosenFile, win_config)
       if local_keys then
         utils.register_local_key(local_keys)
       end
@@ -71,8 +71,10 @@ function M.findByTelescope(base_dir, local_keys)
       map("n", "dd", function()
         require("scratch.telescope_actions").delete_item(prompt_bufnr)
       end)
-      for _, key in ipairs(local_keys) do
-        map(key.mode, key.lhs, key.rhs)
+      if local_keys then
+        for _, key in ipairs(local_keys) do
+          map(key.mode, key.lhs, key.rhs)
+        end
       end
       return true
     end,
