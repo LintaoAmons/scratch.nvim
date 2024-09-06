@@ -66,36 +66,17 @@ function M.getSelectedText()
 end
 
 ---Open window or set current window to new buffer
----@param abs_path string if win32 MUST <DISK>:\\path\to\file i dont know why
+---@param abs_path string
 ---@param config? vim.api.keyset.win_config
 function M.open_(abs_path, config)
   local buf = vim.api.nvim_create_buf(true, false)
-  --- BUG: if buffer exist throw error, so need find existed buffer with that name
-  --- TODO: REFACTOR THAT
-  local suc = pcall(vim.api.nvim_buf_set_name, buf, abs_path)
-  if not suc then
-    vim.api.nvim_buf_delete(buf, { force = true })
-    local bufrs = vim.api.nvim_list_bufs()
-    for _, bufer in ipairs(bufrs) do -- pathetic way
-      if vim.api.nvim_buf_get_name(bufer) then
-        buf = bufer
-        break
-      end
-    end
-  end
+  vim.api.nvim_buf_set_name(buf, abs_path)
   if config == nil then
     vim.api.nvim_set_current_buf(buf)
   else
     vim.api.nvim_open_win(buf, true, config)
   end
 end
--- function M.open_(abs_path, config)
---   if config == nil then
---     vim.cmd.edit(abs_path)
---   else
---     -- vim.api.nvim_open_win(buffer, enter, config)
---   end
--- end
 
 ---Make scratch file
 ---@param abs_path string
