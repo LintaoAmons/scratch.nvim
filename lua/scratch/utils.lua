@@ -65,27 +65,33 @@ function M.getSelectedText()
   return lines
 end
 
----Open window or set current window to new buffer
----@param abs_path string
----@param config? vim.api.keyset.win_config
-function M.open_(abs_path, config)
-  local buf = vim.api.nvim_create_buf(true, false)
-  vim.api.nvim_buf_set_name(buf, abs_path)
-  if config == nil then
-    vim.api.nvim_set_current_buf(buf)
-  else
-    vim.api.nvim_open_win(buf, true, config)
-  end
-end
+-- ---Open window or set current window to new buffer
+-- ---@param abs_path string
+-- ---@param config? vim.api.keyset.win_config
+-- function M.open_(abs_path, config)
+--   local buf = vim.api.nvim_create_buf(true, false)
+--   vim.api.nvim_buf_set_name(buf, abs_path)
+--   if config == nil then
+--     vim.api.nvim_set_current_buf(buf)
+--   else
+--     vim.api.nvim_open_win(buf, true, config)
+--   end
+-- end
 
 ---Make scratch file
 ---@param abs_path string
----@param win_config vim.api.keyset.win_config
+---@param win_config? vim.api.keyset.win_config
 ---@param content? string[]
 ---@param local_keys? Scratch.LocalKeyConfig
 ---@param cursor? Scratch.Cursor
 function M.scratch(abs_path, win_config, content, local_keys, cursor)
-  M.create_and_edit_file(abs_path, win_config)
+  local buf = vim.api.nvim_create_buf(true, false)
+  vim.api.nvim_buf_set_name(buf, abs_path)
+  if win_config == nil then
+    vim.api.nvim_set_current_buf(buf)
+  else
+    vim.api.nvim_open_win(buf, true, win_config)
+  end
   if content then
     local bufnr = vim.api.nvim_get_current_buf()
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, content)

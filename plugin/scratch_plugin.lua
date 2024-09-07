@@ -1,8 +1,8 @@
 local utils = require("scratch.utils")
 -- make sure this file is loaded only once
-if vim.g.loaded_scratch == 1 then
-  return
-end
+-- if vim.g.loaded_scratch == 1 then
+--   return
+-- end
 vim.g.loaded_scratch = 1
 vim.g.os_sep = vim.g.os_sep or vim.fn.has("win32") and "\\" or "/"
 
@@ -12,34 +12,13 @@ vim.g.os_sep = vim.g.os_sep or vim.fn.has("win32") and "\\" or "/"
 
 -- TODO: remove those requires
 
-local base_path = vim.fn.stdpath("cache") .. vim.g.os_sep .. "scratch.nvim" .. vim.g.os_sep
+local Scratch = require("scratch")
 ---@type Scratch.Actor
-local default_config = {
-  scratch_file_dir = base_path, -- where your scratch files will be put
-  filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
-  win_config = {
-    relative = "editor", -- Assuming you want the floating window relative to the editor
-    row = 2,
-    col = 5,
-    width = vim.api.nvim_win_get_width(0) - 10, -- Get the screen width - row * col
-    --api_get_option("lines") - 5,
-    height = vim.api.nvim_win_get_height(0) - 5, -- Get the screen height - col
-    style = "minimal",
-    border = "single",
-    title = "",
-  },
-  file_picker = "fzflua",
-  filetype_details = {},
-  localKeys = {},
-  manual_text = "MANUAL_INPUT",
-}
-local Actor = require("scratch.actor")
----@type Scratch.Actor
-vim.g.scratch_actor = vim.g.scratch_actor or setmetatable(default_config, Actor)
-
+local config = Scratch.setup({})
+vim.print(config)
 vim.api.nvim_create_user_command("Scratch", function(args)
   if args.range > 0 then
-    vim.g.scratch_actor:scratch({ content = utils.getSelectedText() })
+    config:scratch({ content = utils.getSelectedText() })
   else
     vim.g.scratch_actor:scratch({})
   end
