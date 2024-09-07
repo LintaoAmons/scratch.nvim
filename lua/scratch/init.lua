@@ -20,7 +20,7 @@ local default_config = {
   manual_text = "MANUAL_INPUT",
 }
 ---@class Scratch.Opts
----@field win_config vim.api.keyset.win_config
+---@field win_config? vim.api.keyset.win_config
 ---@field content? string[]
 ---@field local_keys? Scratch.LocalKeyConfig
 ---@field cursor? Scratch.Cursor
