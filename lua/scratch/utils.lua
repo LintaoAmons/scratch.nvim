@@ -21,7 +21,7 @@ function M.scandir(directory)
         if name == nil then
           break
         end
-        local entry = current_dir .. vim.g.os_sep .. name
+        local entry = current_dir .. name
         if typ == "directory" then
           table.insert(next_dir, entry)
         elseif typ == "file" then
