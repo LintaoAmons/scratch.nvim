@@ -1,4 +1,28 @@
 local M = {}
+
+vim.g.os_sep = vim.g.os_sep or vim.fn.has("win32") and "\\" or "/"
+local base_path = vim.fn.stdpath("cache") .. vim.g.os_sep .. "scratch.nvim" .. vim.g.os_sep
+---@type Scratch.ActorConfig
+vim.g.scratch_config = vim.g.scratch_config
+  or {
+    scratch_file_dir = base_path, -- where your scratch files will be put
+    filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
+    win_config = {
+      relative = "editor", -- Assuming you want the floating window relative to the editor
+      row = 2,
+      col = 5,
+      width = vim.api.nvim_win_get_width(0) - 10, -- Get the screen width - row * col
+      --api_get_option("lines") - 5,
+      height = vim.api.nvim_win_get_height(0) - 5, -- Get the screen height - col
+      style = "minimal",
+      border = "single",
+      title = "",
+    },
+    filetype_details = {},
+    localKeys = {},
+    manual_text = "MANUAL_INPUT",
+  }
+
 ---@class Scratch.FiletypeDetail
 ---@field win_config? vim.api.keyset.win_config
 ---@field content? string[]
@@ -36,6 +60,9 @@ local M = {}
 ---@param user_config Scratch.ActorConfig
 ---@return Scratch.Actor
 function M.setup_actor(user_config)
+  vim.print(vim.g.scratch_config)
+  user_config = user_config or {}
+  vim.print(user_config)
   vim.g.scratch_config = vim.tbl_deep_extend("force", vim.g.scratch_config, user_config)
   if
     vim.g.scratch_config.scratch_file_dir
@@ -46,11 +73,11 @@ function M.setup_actor(user_config)
   return vim.g.scratch_config
 end
 
----@param user_config? Scratch.Config
+---@param user_config Scratch.Config
 ---@return Scratch.Actor
 function M.setup(user_config)
-  user_config = user_config or { actor_config = {} }
-  local config = setmetatable(M.setup_actor(user_config.actor_config), require("scratch.actor"))
+  local junk = { __index = require("scratch.actor") }
+  local config = setmetatable(M.setup_actor(user_config.actor_config), junk)
   vim.print(config)
   local utils = require("scratch.utils")
   vim.api.nvim_create_user_command("Scratch", function(args)
