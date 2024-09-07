@@ -10,7 +10,7 @@ local utils = require("scratch.utils")
 local M = {}
 
 ---@param filename string
----@param opts? Scratch.Opts
+---@param opts? Scratch.FiletypeDetail
 function M:scratchByName(filename, opts)
   local paths = {}
   opts = opts or {}
@@ -59,7 +59,7 @@ function M:scratchByName(filename, opts)
 end
 
 ---@param ft string
----@param opts? Scratch.Opts
+---@param opts? Scratch.FiletypeDetail
 function M:scratchByType(ft, opts)
   opts = opts or {}
   local generator
@@ -102,7 +102,7 @@ end
 
 ---choose ft by using selector function
 ---@param selector_filetype fun(filetypes:string[]):string? think about last element like about MANUAL or like u prefers
----@param opts? Scratch.Opts
+---@param opts? Scratch.FiletypeDetail
 function M:scratchWithSelectorFT(selector_filetype, opts)
   local filetypes = self:get_all_filetypes()
   coroutine.wrap(function()
@@ -116,7 +116,7 @@ end
 
 ---choose ft by using selector function
 ---@param input_filename fun():string input filename
----@param opts? Scratch.Opts
+---@param opts? Scratch.FiletypeDetail
 function M:scratchWithInputFN(input_filename, opts)
   coroutine.wrap(function()
     local filename = input_filename()
@@ -129,7 +129,7 @@ function M:scratchWithInputFN(input_filename, opts)
 end
 
 ---simple input name
----@param opts? Scratch.Opts
+---@param opts? Scratch.FiletypeDetail
 function M:scratchWithName(opts)
   vim.ui.input({
     prompt = "Enter the file name: ",
@@ -142,7 +142,7 @@ function M:scratchWithName(opts)
 end
 
 ---simple input name
----@param opts? Scratch.Opts
+---@param opts? Scratch.FiletypeDetail
 function M:scratchWithFt(opts)
   local fts = self:get_all_filetypes()
   vim.ui.select(fts, {
