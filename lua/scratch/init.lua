@@ -39,17 +39,19 @@ function M.setup_actor(user_config)
   vim.g.scratch_config = vim.tbl_deep_extend("force", vim.g.scratch_config, user_config)
   if
     vim.g.scratch_config.scratch_file_dir
-    and not vim.uv.fs_stat(user_config.scratch_file_dir).type == "directory"
+    and not vim.uv.fs_stat(vim.g.scratch_config.scratch_file_dir).type == "directory"
   then
-    vim.uv.fs_mkdir(user_config.scratch_file_dir, 666)
+    vim.uv.fs_mkdir(vim.g.scratch_config.scratch_file_dir, 666)
   end
   return vim.g.scratch_config
 end
 
----@param user_config Scratch.Config
+---@param user_config? Scratch.Config
 ---@return Scratch.Actor
 function M.setup(user_config)
+  user_config = user_config or { actor_config = {} }
   local config = setmetatable(M.setup_actor(user_config.actor_config), require("scratch.actor"))
+  vim.print(config)
   local utils = require("scratch.utils")
   vim.api.nvim_create_user_command("Scratch", function(args)
     if args.range > 0 then
