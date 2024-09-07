@@ -45,7 +45,7 @@ local default_config = {
 ---@field location number[]
 ---@field insert_mode boolean
 
----@class Scratch.Config
+---@class Scratch.ActorConfig
 ---@field scratch_file_dir? string
 ---@field filetypes? string[]
 ---@field win_config? vim.api.keyset.win_config @see nvim_open_window
@@ -53,9 +53,13 @@ local default_config = {
 ---@field localKeys? Scratch.LocalKeyConfig[]
 ---@field manual_text? string
 
----@param user_config? Scratch.Config
+---@class Scratch.Config
+---@field actor_config? Scratch.ActorConfig
+---@field default_cmd? boolean
+
+---@param user_config? Scratch.ActorConfig
 ---@return Scratch.Actor
-function M.setup(user_config)
+function M.setup_actor(user_config)
   user_config = user_config or {}
   if
     user_config.scratch_file_dir
@@ -63,8 +67,37 @@ function M.setup(user_config)
   then
     vim.uv.fs_mkdir(user_config.scratch_file_dir, 666)
   end
-  local actor = vim.tbl_deep_extend("force", default_config, user_config)
+  local actor =
+    setmetatable(vim.tbl_deep_extend("force", default_config, user_config), require("scratch.api"))
   return actor
 end
 
+---@param user_config Scratch.Config
+---@return Scratch.Actor
+function M.setup(user_config)
+  local config = M.setup_actor(user_config.actor_config)
+  local utils = require("scratch.utils")
+  vim.api.nvim_create_user_command("Scratch", function(args)
+    if args.range > 0 then
+      config:scratchWithFt({ content = utils.getSelectedText() })
+    else
+      config:scratchWithFt()
+    end
+  end, { range = true })
+  if user_config.default_cmd ~= false then
+    vim.api.nvim_create_user_command("ScratchOpen", function()
+      require("scratch.default_finder").findByNative(config.scratch_file_dir)
+    end, {})
+    vim.api.nvim_create_user_command("ScratchOpenTelescope", function()
+      require("scratch.default_finder").findByTelescope(config.scratch_file_dir)
+    end, {})
+    vim.api.nvim_create_user_command("ScratchOpenTelescopeGrep", function()
+      require("scratch.default_finder").findByTelescopeGrep(config.scratch_file_dir)
+    end, {})
+    vim.api.nvim_create_user_command("ScratchWithName", function()
+      config:scratchWithName()
+    end, {})
+  end
+  return config
+end
 return M
