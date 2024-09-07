@@ -44,12 +44,12 @@ vim.g.scratch_config = {
 ---@field insert_mode boolean
 
 ---@class Scratch.ActorConfig
----@field scratch_file_dir string
----@field filetypes string[]
----@field win_config vim.api.keyset.win_config @see nvim_open_window
----@field filetype_details Scratch.FiletypeDetails
----@field localKeys Scratch.LocalKeyConfig[]
----@field manual_text string
+---@field scratch_file_dir? string
+---@field filetypes? string[]
+---@field win_config? vim.api.keyset.win_config @see nvim_open_window
+---@field filetype_details? Scratch.FiletypeDetails
+---@field localKeys? Scratch.LocalKeyConfig[]
+---@field manual_text? string
 
 ---@class Scratch.Config
 ---@field actor_config? Scratch.ActorConfig
