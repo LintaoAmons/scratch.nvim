@@ -58,9 +58,7 @@ vim.g.scratch_config = {
 ---@param user_config Scratch.ActorConfig
 ---@return Scratch.Actor
 function M.setup_actor(user_config)
-  vim.print(vim.g.scratch_config)
   user_config = user_config or {}
-  vim.print(user_config)
   vim.g.scratch_config = vim.tbl_deep_extend("force", vim.g.scratch_config, user_config)
   if
     vim.g.scratch_config.scratch_file_dir
@@ -76,7 +74,6 @@ end
 function M.setup(user_config)
   local config =
     setmetatable(M.setup_actor(user_config.actor_config), { __index = require("scratch.actor") })
-  vim.print(config)
   local utils = require("scratch.utils")
   vim.api.nvim_create_user_command("Scratch", function(args)
     if args.range > 0 then
