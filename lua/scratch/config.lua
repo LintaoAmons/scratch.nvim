@@ -47,6 +47,7 @@ return {
     border = "single",
     title = "",
   },
+  -- file_picker = require("scratch.default_finder").findByNative, -- Maybe will be used for compilation
   filetype_details = {},
   localKeys = {},
   manual_text = "MANUAL_INPUT",

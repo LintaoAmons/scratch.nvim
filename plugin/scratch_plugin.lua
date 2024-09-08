@@ -18,7 +18,9 @@ vim.api.nvim_create_user_command("Scratch", function(args)
     api.scratchWithFt(scratch_file_dir, fts)
   end
 end, { range = true })
-
+--- TODO: maybe compile finder using
+--- 1. string.dump(vim.scratch_config.file_picker) > current_finder.out
+--- 2. dofile("current_finder.out")
 vim.api.nvim_create_user_command("ScratchOpen", function()
   require("scratch.default_finder").findByNative(vim.g.scratch_config.scratch_file_dir)
 end, {})

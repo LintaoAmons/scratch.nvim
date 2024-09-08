@@ -1,15 +1,16 @@
 local M = {}
+--@param sorter? fun(file_a:string, file_b:string):boolean @see: table.sort
+--@param win_config? vim.api.keyset.win_config
+--@param local_keys? Scratch.LocalKeyConfig
 
 ---@param base_dir string path to scandir
----@param sorter? fun(file_a:string, file_b:string):boolean @see: table.sort
----@param win_config? vim.api.keyset.win_config
----@param local_keys? Scratch.LocalKeyConfig
-function M.findByNative(base_dir, sorter, win_config, local_keys)
+---@param opts? table User prefered options -- maybe useful to make all finder function specified
+function M.findByNative(base_dir, opts)
   local utils = require("scratch.utils")
   local scratch_file_dir = base_dir
   local abs_filenames = utils.scandir(scratch_file_dir)
-  if sorter then
-    table.sort(abs_filenames, sorter)
+  if opts and opts.sorter then
+    table.sort(abs_filenames, opts.sorter)
   end
   -- sort the files by their last modified time in descending order
   -- Why?
@@ -25,9 +26,9 @@ function M.findByNative(base_dir, sorter, win_config, local_keys)
     end,
   }, function(chosenFile)
     if chosenFile then
-      utils.open_(chosenFile, win_config)
-      if local_keys then
-        utils.register_local_key(local_keys)
+      utils.open_(chosenFile, opts and opts.win_config or {})
+      if opts and opts.local_keys then
+        utils.register_local_key(opts.local_keys)
       end
     end
   end)
