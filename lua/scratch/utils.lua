@@ -80,17 +80,17 @@ end
 
 ---Make scratch file
 ---@param abs_path string
----@param win_config? vim.api.keyset.win_config
+---@param win_config vim.api.keyset.win_config
 ---@param content? string[]
 ---@param local_keys? Scratch.LocalKeyConfig
 ---@param cursor? Scratch.Cursor
 function M.scratch(abs_path, win_config, content, local_keys, cursor)
   local buf = vim.api.nvim_create_buf(true, false)
   vim.api.nvim_buf_set_name(buf, abs_path)
-  if win_config == nil then
+  if next(win_config) == nil then
     vim.api.nvim_set_current_buf(buf)
   else
-    vim.api.nvim_open_win(buf, true, win_config)
+    vim.api.nvim_open_win(buf, true, win_config --[[@as vim.api.keyset.win_config]])
   end
   if content then
     local bufnr = vim.api.nvim_get_current_buf()
