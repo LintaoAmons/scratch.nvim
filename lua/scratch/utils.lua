@@ -97,7 +97,10 @@ function M.scratch(abs_path, win_config, content, local_keys, cursor)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, content)
   end
   if cursor then
-    M.put_cursor(cursor)
+    vim.api.nvim_win_set_cursor(0, cursor.location)
+    if cursor.insert_mode then
+      vim.api.nvim_feedkeys("a", "n", true)
+    end
   end
   if local_keys then
     M.register_local_key(local_keys)
