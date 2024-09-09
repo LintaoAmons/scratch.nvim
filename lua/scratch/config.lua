@@ -1,22 +1,16 @@
-local slash = require("scratch.utils").Slash()
-local utils = require("scratch.utils")
+---@class Scratch.FiletypeDetail
+---@field win_config? vim.api.keyset.win_config
+---@field content? string[]
+---@field local_keys? Scratch.LocalKeyConfig
+---@field cursor? Scratch.Cursor
+---@field generator? fun(scratch_file_dir:string, ft:string): string
 
----@alias mode
----| '"n"'
----| '"i"'
----| '"v"'
----
----@alias Scratch.WindowCmd
----| '"popup"'
----| '"vsplit"'
----| '"edit"'
----| '"tabedit"'
----| '"rightbelow vsplit"'
+---@alias Scratch.FiletypeDetails { [string]:Scratch.FiletypeDetail }
 
----@class Scratch.LocalKey
----@field cmd string
----@field key string
----@field modes mode[]
+---@class Scratch.LocalKey |:h keymap |
+---@field mode string|string[]
+---@field rhs string | function
+---@field lhs string
 
 ---@class Scratch.LocalKeyConfig
 ---@field filenameContains string[] as long as the filename contains any one of the string in the list
@@ -26,66 +20,35 @@ local utils = require("scratch.utils")
 ---@field location number[]
 ---@field insert_mode boolean
 
----@class Scratch.FiletypeDetail
----@field filename? string
----@field requireDir? boolean -- TODO: conbine requireDir and subdir into one table
----@field subdir? string
----@field content? string[]
----@field cursor? Scratch.Cursor
---
----@class Scratch.FiletypeDetails
----@field [string] Scratch.FiletypeDetail
-
----@class Scratch.Config
+---@class Scratch.ActorConfig
 ---@field scratch_file_dir string
 ---@field filetypes string[]
----@field window_cmd  string
----@field file_picker? "fzflua" | "telescope" | nil
----@field filetype_details Scratch.FiletypeDetails
----@field localKeys Scratch.LocalKeyConfig[]
-local default_config = {
-  scratch_file_dir = vim.fn.stdpath("cache") .. slash .. "scratch.nvim", -- where your scratch files will be put
+---@field win_config? vim.api.keyset.win_config @see nvim_open_window
+---@field filetype_details? Scratch.FiletypeDetails
+---@field localKeys? Scratch.LocalKeyConfig[]
+---@field manual_text? string
+
+---@class Scratch.Config
+---@field actor_config? Scratch.ActorConfig
+---@field default_cmd? boolean
+
+local base_path = vim.fn.stdpath("cache") .. vim.g.os_sep .. "scratch.nvim" .. vim.g.os_sep
+return {
+  scratch_file_dir = base_path, -- where your scratch files will be put
   filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
-  window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
-  file_picker = "fzflua",
+  win_config = {
+    relative = "editor", -- Assuming you want the floating window relative to the editor
+    row = 2,
+    col = 5,
+    width = vim.api.nvim_win_get_width(0) - 10, -- Get the screen width - row * col
+    --api_get_option("lines") - 5,
+    height = vim.api.nvim_win_get_height(0) - 5, -- Get the screen height - col
+    style = "minimal",
+    border = "single",
+    title = "",
+  },
+  -- file_picker = require("scratch.default_finder").findByNative, -- Maybe will be used for compilation
   filetype_details = {},
   localKeys = {},
-}
-
----@type Scratch.Config
-vim.g.scratch_config = default_config
-
----@param user_config? Scratch.Config
-local function setup(user_config)
-  user_config = user_config or {}
-
-  vim.g.scratch_config = vim.tbl_deep_extend("force", default_config, user_config or {})
-    or default_config
-end
-
----@param ft string
----@return string
-local function get_abs_path(ft)
-  local config_data = vim.g.scratch_config
-
-  local filename = config_data.filetype_details[ft] and config_data.filetype_details[ft].filename
-    or tostring(os.date("%y-%m-%d_%H-%M-%S")) .. "." .. ft
-
-  local parentDir = config_data.scratch_file_dir
-  local subdir = config_data.filetype_details[ft] and config_data.filetype_details[ft].subdir
-  if subdir ~= nil then
-    parentDir = parentDir .. slash .. subdir
-  end
-  vim.fn.mkdir(parentDir, "p")
-
-  local require_dir = config_data.filetype_details[ft]
-      and config_data.filetype_details[ft].requireDir
-    or false
-
-  return utils.genFilepath(filename, parentDir, require_dir)
-end
-
-return {
-  setup = setup,
-  get_abs_path = get_abs_path,
+  manual_text = "MANUAL_INPUT",
 }

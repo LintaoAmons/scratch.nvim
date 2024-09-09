@@ -1,256 +1,107 @@
-local config = require("scratch.config")
-local slash = require("scratch.utils").Slash()
 local utils = require("scratch.utils")
-local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
-local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 
----@class Scratch.ActionOpts
----@field window_cmd? Scratch.WindowCmd
----@field content? string[] content will be put into the scratch file
+local M = {}
 
----@alias Scratch.Action fun(ft: string, opts?: Scratch.ActionOpts): nil
-
----@param ft string
----@param opts? Scratch.ActionOpts
-local function create_and_edit_file(ft, opts)
-  local abs_path = config.get_abs_path(ft)
-  local cmd = (opts and opts.window_cmd) or vim.g.scratch_config.window_cmd or "edit"
-  if cmd == "popup" then
-    utils.new_popup_window(abs_path)
-    vim.cmd("w " .. abs_path)
-  else
-    vim.api.nvim_command(cmd .. " " .. abs_path)
-  end
-end
-
-local function write_lines_to_buffer(lines)
-  local bufnr = vim.api.nvim_get_current_buf()
-  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-end
-
+---@param scratch_file_dir string
 ---@param filename string
-local function createScratchFileByName(filename)
-  local config_data = vim.g.scratch_config
-  local scratch_file_dir = config_data.scratch_file_dir
-  utils.initDir(scratch_file_dir)
+---@param opts? Scratch.FiletypeDetail
+function M.scratchByName(scratch_file_dir, filename, opts)
+  ---@type string[]
+  local paths = {}
+  opts = opts or {}
 
-  local fullpath = scratch_file_dir .. slash .. filename
-  create_and_edit_file(fullpath)
-end
+  -- Split filename to dirs
+  for sub_path in filename:gmatch("([^" .. vim.g.os_sep .. "]+)") do
+    table.insert(paths, sub_path)
+  end
+  local p_len = #paths
 
-local function register_local_key()
-  local localKeys = vim.g.scratch_config.localKeys
-  if localKeys and #localKeys > 0 then
-    for _, key in ipairs(localKeys) do
-      for _, namePattern in ipairs(key.filenameContains) do
-        if utils.filenameContains(namePattern) then
-          utils.setLocalKeybindings(key.LocalKeys)
-        end
+  -- Create all subdir
+  for i = 1, p_len - 1 do
+    scratch_file_dir = scratch_file_dir .. paths[i] ---@as string
+    local stat, err_m = vim.uv.fs_stat(scratch_file_dir)
+    if err_m then
+      return vim.notify(err_m, vim.log.levels.ERROR)
+    end
+    if not stat or stat.type ~= "directory" then
+      local suc, err_me = vim.uv.fs_mkdir(scratch_file_dir, 666)
+      if not suc then
+        return vim.notify(err_me or "", vim.log.levels.ERROR)
       end
+      scratch_file_dir = scratch_file_dir .. vim.g.os_sep
     end
   end
+  scratch_file_dir = scratch_file_dir .. paths[p_len]
+
+  utils.scratch(scratch_file_dir, opts.win_config, opts.content, opts.local_keys, opts.cursor)
 end
 
+---@param scratch_file_dir string
 ---@param ft string
----@param opts? Scratch.ActionOpts
-local function write_default_content(ft, opts)
-  if opts and opts.content then
-    write_lines_to_buffer(opts.content)
-  else
-    local config_data = vim.g.scratch_config
+---@param opts? Scratch.FiletypeDetail
+function M.scratchByType(scratch_file_dir, ft, opts)
+  opts = opts or {}
+  local abs_path = (opts.generator or utils.get_abs_path)(scratch_file_dir, ft)
+  utils.scratch(abs_path, opts.win_config, opts.content, opts.local_keys, opts.cursor)
+end
 
-    local has_default_content = config_data.filetype_details[ft]
-      and config_data.filetype_details[ft].content
-      and #config_data.filetype_details[ft].content > 0
-
-    if has_default_content then
-      write_lines_to_buffer(vim.g.scratch_config.filetype_details[ft].content)
+---choose ft by using selector function
+---@param scratch_file_dir string
+---@param filetypes string[]
+---@param selector_filetype fun(filetypes:string[]):string? think about last element like about MANUAL or like u prefers
+---@param opts? Scratch.FiletypeDetail
+function M.scratchWithSelectorFT(scratch_file_dir, filetypes, selector_filetype, opts)
+  coroutine.wrap(function()
+    local ft = selector_filetype(filetypes)
+    if ft ~= nil and ft ~= "" then
+      return M.scratchByType(scratch_file_dir, ft, opts)
     end
-  end
+    vim.notify("No filetype")
+  end)()
 end
 
----@type Scratch.Action
-local function put_cursor(ft)
-  local config_data = vim.g.scratch_config
-  local has_cursor_position = config_data.filetype_details[ft]
-    and config_data.filetype_details[ft].cursor
-    and #config_data.filetype_details[ft].cursor.location > 0
+---choose ft by using selector function
+---@param scratch_file_dir string
+---@param input_filename fun():string input filename
+---@param opts? Scratch.FiletypeDetail
+function M.scratchWithInputFN(scratch_file_dir, input_filename, opts)
+  coroutine.wrap(function()
+    local filename = input_filename()
 
-  if has_cursor_position then
-    vim.api.nvim_win_set_cursor(0, config_data.filetype_details[ft].cursor.location)
-    if config_data.filetype_details[ft].cursor.insert_mode then
-      vim.api.nvim_feedkeys("a", "n", true)
+    if filename ~= nil and filename ~= "" then
+      return M.scratchByName(scratch_file_dir, filename, opts)
     end
-  end
+    vim.notify("No file")
+  end)()
 end
 
----@param ft string
----@param opts? Scratch.ActionOpts
-local function createScratchFileByType(ft, opts)
-  create_and_edit_file(ft, opts)
-  write_default_content(ft, opts)
-  put_cursor(ft)
-  register_local_key()
-end
-
----@return string[]
-local function get_all_filetypes()
-  local config_data = vim.g.scratch_config
-  local combined_filetypes = {}
-  for _, ft in ipairs(config_data.filetypes or {}) do
-    if not vim.tbl_contains(combined_filetypes, ft) then
-      table.insert(combined_filetypes, ft)
-    end
-  end
-
-  for ft, _ in pairs(config_data.filetype_details or {}) do
-    if not vim.tbl_contains(combined_filetypes, ft) then
-      table.insert(combined_filetypes, ft)
-    end
-  end
-
-  table.insert(combined_filetypes, MANUAL_INPUT_OPTION)
-  return combined_filetypes
-end
-
----@param func Scratch.Action
----@param opts? Scratch.ActionOpts
-local function select_filetype_then_do(func, opts)
-  local filetypes = get_all_filetypes()
-
-  vim.ui.select(filetypes, {
-    prompt = "Select filetype",
-    format_item = function(item)
-      return item
-    end,
-  }, function(choosedFt)
-    if choosedFt then
-      if choosedFt == MANUAL_INPUT_OPTION then
-        vim.ui.input({ prompt = "Input filetype: " }, function(ft)
-          func(ft, opts)
-        end)
-      else
-        func(choosedFt, opts)
-      end
-    end
-  end)
-end
-
-local function get_scratch_files()
-  local config_data = vim.g.scratch_config
-  local scratch_file_dir = config_data.scratch_file_dir
-  local res = {}
-  res = utils.listDirectoryRecursive(scratch_file_dir)
-  for i, str in ipairs(res) do
-    res[i] = string.sub(str, string.len(scratch_file_dir) + 2)
-  end
-  return res
-end
-
----@param opts? Scratch.ActionOpts
-local function scratch(opts)
-  select_filetype_then_do(createScratchFileByType, opts)
-end
-
-local function scratchWithName()
+---simple input name
+---@param scratch_file_dir string
+---@param opts? Scratch.FiletypeDetail
+function M.scratchWithName(scratch_file_dir, opts)
   vim.ui.input({
     prompt = "Enter the file name: ",
   }, function(filename)
     if filename ~= nil and filename ~= "" then
-      createScratchFileByName(filename)
+      return M.scratchByName(scratch_file_dir, filename, opts)
     end
+    vim.notify("No file")
   end)
 end
 
-local function open_scratch_fzflua()
-  local ok, fzf_lua = pcall(require, "fzf-lua")
-  if not ok then
-    utils.log_err("Can't find fzf-lua, please check your configuration")
-  end
-
-  if vim.fn.executable("rg") ~= 1 then
-    utils.log_err("Can't find rg executable, please check your configuration")
-  end
-  fzf_lua.files({ cmd = "rg --files --sortr modified " .. vim.g.scratch_config.scratch_file_dir })
-end
-
-local function open_scratch_telescope()
-  local config_data = vim.g.scratch_config
-
-  if not telescope_status then
-    vim.notify(
-      'ScrachOpen needs telescope.nvim or you can just add `"use_telescope: false"` into your config file ot use native select ui'
-    )
-    return
-  end
-
-  telescope_builtin.find_files({
-    cwd = config_data.scratch_file_dir,
-    attach_mappings = function(prompt_bufnr, map)
-      -- TODO: user can customise keybinding
-      map("n", "dd", function()
-        require("scratch.telescope_actions").delete_item(prompt_bufnr)
-      end)
-
-      return true
-    end,
-  })
-end
-
-local function open_scratch_vim_ui()
-  local files = get_scratch_files()
-  local config_data = vim.g.scratch_config
-
-  local scratch_file_dir = config_data.scratch_file_dir
-
-  -- sort the files by their last modified time in descending order
-  table.sort(files, function(a, b)
-    return vim.fn.getftime(scratch_file_dir .. slash .. a)
-      > vim.fn.getftime(scratch_file_dir .. slash .. b)
-  end)
-
-  vim.ui.select(files, {
-    prompt = "Select old scratch files",
-    format_item = function(item)
-      return item
-    end,
-  }, function(chosenFile)
-    if chosenFile then
-      create_and_edit_file(scratch_file_dir .. slash .. chosenFile)
-      register_local_key()
+---simple input name
+---@param scratch_file_dir string
+---@param filetypes string[]
+---@param opts? Scratch.FiletypeDetail
+function M.scratchWithFt(scratch_file_dir, filetypes, opts)
+  vim.ui.select(filetypes, {
+    prompt = "Enter the file type: ",
+  }, function(ft)
+    if ft ~= nil and ft ~= "" then
+      return M.scratchByType(scratch_file_dir, ft, opts)
     end
+    vim.notify("No file")
   end)
 end
 
-local function openScratch()
-  local config_data = vim.g.scratch_config
-
-  if config_data.file_picker == "telescope" then
-    open_scratch_telescope()
-  elseif config_data.file_picker == "fzflua" then
-    open_scratch_fzflua()
-  else
-    open_scratch_vim_ui()
-  end
-end
-
-local function fzfScratch()
-  local config_data = vim.g.scratch_config
-  if not telescope_status then
-    vim.notify("ScrachOpenFzf needs telescope.nvim")
-    return
-  end
-
-  telescope_builtin.live_grep({
-    cwd = config_data.scratch_file_dir,
-  })
-end
-
-return {
-  createScratchFileByName = createScratchFileByName,
-  createScratchFileByType = createScratchFileByType,
-  scratch = scratch,
-  scratchWithName = scratchWithName,
-  openScratch = openScratch,
-  fzfScratch = fzfScratch,
-}
+return M

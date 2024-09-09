@@ -1,28 +1,38 @@
-local utils = require("scratch.utils")
--- make sure this file is loaded only once
-if vim.g.loaded_scratch == 1 then
+if vim.g.scratch_load then
   return
 end
-vim.g.loaded_scratch = 1
+vim.g.scratch_load = true
+vim.g.os_sep = vim.g.os_sep or vim.uv.os_uname().sysname == "Windows_NT" and "\\" or "/"
 
--- create any global command that does not depend on user setup
--- usually it is better to define most commands/mappings in the setup function
--- Be careful to not overuse this file!
+vim.g.scratch_config = require("scratch.config") ---@type Scratch.ActorConfig
 
--- TODO: remove those requires
-local scratch_api = require("scratch.api")
-
-local scratch_main = require("scratch")
-scratch_main.setup()
+local api = require("scratch.api")
+local utils = require("scratch.utils")
 
 vim.api.nvim_create_user_command("Scratch", function(args)
+  local fts = vim.g.scratch_config.filetypes
+  local scratch_file_dir = vim.g.scratch_config.scratch_file_dir
   if args.range > 0 then
-    scratch_api.scratch({ content = utils.getSelectedText() })
+    api.scratchWithFt(scratch_file_dir, fts, { content = utils.getSelectedText() })
   else
-    scratch_api.scratch()
+    api.scratchWithFt(scratch_file_dir, fts)
   end
 end, { range = true })
+--- TODO: maybe compile finder using
+--- 1. string.dump(vim.scratch_config.file_picker) > current_finder.out
+--- 2. dofile("current_finder.out")
+vim.api.nvim_create_user_command("ScratchOpen", function()
+  require("scratch.default_finder").findByNative(vim.g.scratch_config.scratch_file_dir)
+end, {})
 
-vim.api.nvim_create_user_command("ScratchOpen", scratch_api.openScratch, {})
-vim.api.nvim_create_user_command("ScratchOpenFzf", scratch_api.fzfScratch, {})
-vim.api.nvim_create_user_command("ScratchWithName", scratch_api.scratchWithName, {})
+vim.api.nvim_create_user_command("ScratchOpenTelescope", function()
+  require("scratch.default_finder").findByTelescope(vim.g.scratch_config.scratch_file_dir)
+end, {})
+
+vim.api.nvim_create_user_command("ScratchOpenTelescopeGrep", function()
+  require("scratch.default_finder").findByTelescopeGrep(vim.g.scratch_config.scratch_file_dir)
+end, {})
+
+vim.api.nvim_create_user_command("ScratchWithName", function()
+  api.scratchWithName(vim.g.scratch_config.scratch_file_dir)
+end, {})
