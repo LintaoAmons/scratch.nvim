@@ -13,12 +13,9 @@ local slash = Slash()
 -- Initialize the scratch file directory if it does not exist
 -- TODO: remove this function
 local function initDir(scratch_file_dir)
-  if vim.fn.filereadable(scratch_file_dir) == 0 then
+  local fs = (vim.uv or vim.loop).fs_stat(scratch_file_dir)
+  if not fs or fs.type ~= "directory" then
     vim.fn.mkdir(scratch_file_dir, "p")
-  else
-    if vim.fn.isdirectory(scratch_file_dir) ~= 0 then
-      vim.notify("Exiting file with the same name: " .. scratch_file_dir)
-    end
   end
 end
 
@@ -121,7 +118,7 @@ local function new_popup_window(title)
     height = vim.api.nvim_get_option("lines") - 5, -- Get the screen height
     style = "minimal",
     border = "single",
-    title = ""
+    title = "",
   }
 
   local win = vim.api.nvim_open_win(popup_buf, true, opts)
