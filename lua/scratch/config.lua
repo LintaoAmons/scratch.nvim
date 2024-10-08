@@ -43,6 +43,7 @@ local utils = require("scratch.utils")
 ---@field file_picker? "fzflua" | "telescope" | nil
 ---@field filetype_details Scratch.FiletypeDetails
 ---@field localKeys Scratch.LocalKeyConfig[]
+---@field hooks Scratch.Hook[]
 local default_config = {
   scratch_file_dir = vim.fn.stdpath("cache") .. slash .. "scratch.nvim", -- where your scratch files will be put
   filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
@@ -50,6 +51,7 @@ local default_config = {
   file_picker = "fzflua",
   filetype_details = {},
   localKeys = {},
+  hooks = {},
 }
 
 ---@type Scratch.Config

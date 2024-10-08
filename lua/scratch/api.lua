@@ -2,6 +2,7 @@ local config = require("scratch.config")
 local slash = require("scratch.utils").Slash()
 local utils = require("scratch.utils")
 local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
+local Hooks = require("scratch.hooks")
 local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 
 ---@class Scratch.ActionOpts
@@ -23,6 +24,11 @@ local function create_and_edit_file(abs_path, opts)
     vim.cmd("w " .. abs_path)
   else
     vim.api.nvim_command(cmd .. " " .. abs_path)
+  end
+
+  local hooks = Hooks.get_hooks(vim.g.scratch_config.hooks, Hooks.trigger_points.AFTER)
+  for _, hook in ipairs(hooks) do
+    hook.callback()
   end
 end
 
