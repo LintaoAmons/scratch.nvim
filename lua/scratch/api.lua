@@ -91,7 +91,7 @@ local function put_cursor(ft)
       if
         config_data.filetype_details[ft].content
         and #config_data.filetype_details[ft].content[config_data.filetype_details[ft].cursor.location[1]]
-          > config_data.filetype_details[ft].cursor.location[2]
+          >= config_data.filetype_details[ft].cursor.location[2]
       then
         vim.cmd("startinsert!")
       else
