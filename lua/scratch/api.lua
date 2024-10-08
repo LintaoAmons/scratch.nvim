@@ -8,12 +8,15 @@ local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 ---@field window_cmd? Scratch.WindowCmd
 ---@field content? string[] content will be put into the scratch file
 
----@alias Scratch.Action fun(ft: string, opts?: Scratch.ActionOpts): nil
-
----@param ft string
+---@param abs_path string
 ---@param opts? Scratch.ActionOpts
-local function create_and_edit_file(ft, opts)
-  local abs_path = config.get_abs_path(ft)
+local function create_and_edit_file(abs_path, opts)
+  -- Create parent directory if it doesn't exist
+  local parent_dir = vim.fn.fnamemodify(abs_path, ":h")
+  if vim.fn.isdirectory(parent_dir) == 0 then
+    vim.fn.mkdir(parent_dir, "p")
+  end
+
   local cmd = (opts and opts.window_cmd) or vim.g.scratch_config.window_cmd or "edit"
   if cmd == "popup" then
     utils.new_popup_window(abs_path)
@@ -32,7 +35,6 @@ end
 local function createScratchFileByName(filename)
   local config_data = vim.g.scratch_config
   local scratch_file_dir = config_data.scratch_file_dir
-  utils.initDir(scratch_file_dir)
 
   local fullpath = scratch_file_dir .. slash .. filename
   create_and_edit_file(fullpath)
@@ -87,7 +89,9 @@ end
 ---@param ft string
 ---@param opts? Scratch.ActionOpts
 local function createScratchFileByType(ft, opts)
-  create_and_edit_file(ft, opts)
+  local abs_path = config.get_abs_path(ft)
+
+  create_and_edit_file(abs_path, opts)
   write_default_content(ft, opts)
   put_cursor(ft)
   register_local_key()
@@ -152,7 +156,7 @@ local function scratch(opts)
   select_filetype_then_do(createScratchFileByType, opts)
 end
 
-local function scratchWithName()
+local function scratch_with_name()
   vim.ui.input({
     prompt = "Enter the file name: ",
   }, function(filename)
@@ -250,7 +254,7 @@ return {
   createScratchFileByName = createScratchFileByName,
   createScratchFileByType = createScratchFileByType,
   scratch = scratch,
-  scratchWithName = scratchWithName,
+  scratchWithName = scratch_with_name,
   openScratch = openScratch,
   fzfScratch = fzfScratch,
 }

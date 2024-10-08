@@ -10,15 +10,6 @@ end
 
 local slash = Slash()
 
--- Initialize the scratch file directory if it does not exist
--- TODO: remove this function
-local function initDir(scratch_file_dir)
-  local fs = (vim.uv or vim.loop).fs_stat(scratch_file_dir)
-  if not fs or fs.type ~= "directory" then
-    vim.fn.mkdir(scratch_file_dir, "p")
-  end
-end
-
 -- Recursively list all files in the specified directory
 local function listDirectoryRecursive(directory)
   local files = {}
@@ -130,7 +121,6 @@ end
 
 return {
   Slash = Slash,
-  initDir = initDir,
   listDirectoryRecursive = listDirectoryRecursive,
   genFilepath = genFilepath,
   setLocalKeybindings = setLocalKeybindings,
