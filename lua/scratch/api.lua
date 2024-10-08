@@ -87,7 +87,9 @@ local function put_cursor(ft)
   if has_cursor_position then
     vim.api.nvim_win_set_cursor(0, config_data.filetype_details[ft].cursor.location)
     if config_data.filetype_details[ft].cursor.insert_mode then
-      vim.api.nvim_feedkeys("a", "n", true)
+      --Hack: https://github.com/chrisgrieser/nvim-scissors/blob/ddbf5449910265dc352c8f8a677612b5b2d5300a/lua/scissors/edit-popup.lua#L276
+      -- vim.defer_fn(vim.cmd.startinsert, 1)
+      vim.cmd.startinsert()
     end
   end
 end
