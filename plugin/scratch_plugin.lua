@@ -4,35 +4,42 @@ end
 vim.g.scratch_load = true
 vim.g.os_sep = vim.g.os_sep or vim.uv.os_uname().sysname == "Windows_NT" and "\\" or "/"
 
-vim.g.scratch_config = require("scratch.config") ---@type Scratch.ActorConfig
-
-local api = require("scratch.api")
-local utils = require("scratch.utils")
+---@return string[]
+local function getSelectedText()
+  local sv = vim.fn.getpos("'<")
+  local ev = vim.fn.getpos("'>")
+  local lines = vim.api.nvim_buf_get_lines(0, sv[2] - 1, ev[2], false)
+  local n = #lines
+  if n == 0 then
+    return {}
+  end
+  lines[n] = string.sub(lines[n], 1, sv[3])
+  lines[1] = string.sub(lines[1], ev[3])
+  return lines
+end
+local actor = require("scratch.actor")
+vim.g.scratch_config = setmetatable(require("scratch.config"), actor)
 
 vim.api.nvim_create_user_command("Scratch", function(args)
-  local fts = vim.g.scratch_config.filetypes
-  local scratch_file_dir = vim.g.scratch_config.scratch_file_dir
   if args.range > 0 then
-    api.scratchWithFt(scratch_file_dir, fts, { content = utils.getSelectedText() })
+    vim.g.scratch_config:scratchWithFt({ content = getSelectedText() })
   else
-    api.scratchWithFt(scratch_file_dir, fts)
+    vim.g.scratch_config:scratchWithFt({})
   end
 end, { range = true })
---- TODO: maybe compile finder using
---- 1. string.dump(vim.scratch_config.file_picker) > current_finder.out
---- 2. dofile("current_finder.out")
+
 vim.api.nvim_create_user_command("ScratchOpen", function()
-  require("scratch.default_finder").findByNative(vim.g.scratch_config.scratch_file_dir)
+  vim.g.scratch_config:scratchOpen()
 end, {})
 
 vim.api.nvim_create_user_command("ScratchOpenTelescope", function()
-  require("scratch.default_finder").findByTelescope(vim.g.scratch_config.scratch_file_dir)
+  require("scratch.default_finder").findByTelescope(vim.g.scratch_config)
 end, {})
 
 vim.api.nvim_create_user_command("ScratchOpenTelescopeGrep", function()
-  require("scratch.default_finder").findByTelescopeGrep(vim.g.scratch_config.scratch_file_dir)
+  require("scratch.default_finder").findByTelescopeGrep(vim.g.scratch_config)
 end, {})
 
 vim.api.nvim_create_user_command("ScratchWithName", function()
-  api.scratchWithName(vim.g.scratch_config.scratch_file_dir)
+  vim.g.scratch_config:scratchWithName()
 end, {})

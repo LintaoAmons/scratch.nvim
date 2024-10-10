@@ -3,9 +3,10 @@ local M = {}
 ---@param ft string
 ---@param base_dir string
 ---@return string
+---@return string
 function M.get_abs_path(base_dir, ft)
   local filename = os.date("%y-%m-%d_%H-%M-%S") .. "." .. ft
-  return base_dir .. filename
+  return base_dir .. filename, filename
 end
 
 -- Recursively list all files in the specified directory
@@ -51,71 +52,62 @@ function M.genFilepath(filename, parentDir, requiresDir)
   end
 end
 
----@return string[]
-function M.getSelectedText()
-  local sv = vim.fn.getpos("'<")
-  local ev = vim.fn.getpos("'>")
-  local lines = vim.api.nvim_buf_get_lines(0, sv[2] - 1, ev[2], false)
-  local n = #lines
-  if n == 0 then
-    return {}
+---Open window or set current window to new buffer
+---@param abs_path string
+---@param config? vim.api.keyset.win_config
+function M.open_(abs_path, config)
+  local buf = vim.api.nvim_create_buf(true, false)
+  vim.api.nvim_buf_set_name(buf, abs_path)
+  if config == nil then
+    vim.api.nvim_set_current_buf(buf)
+  else
+    vim.api.nvim_open_win(buf, true, config)
   end
-  lines[n] = string.sub(lines[n], 1, sv[3])
-  lines[1] = string.sub(lines[1], ev[3])
-  return lines
 end
-
--- ---Open window or set current window to new buffer
--- ---@param abs_path string
--- ---@param config? vim.api.keyset.win_config
--- function M.open_(abs_path, config)
---   local buf = vim.api.nvim_create_buf(true, false)
---   vim.api.nvim_buf_set_name(buf, abs_path)
---   if config == nil then
---     vim.api.nvim_set_current_buf(buf)
---   else
---     vim.api.nvim_open_win(buf, true, config)
---   end
--- end
 
 ---Make scratch file
 ---@param abs_path string
----@param win_config vim.api.keyset.win_config
----@param content? string[]
----@param local_keys? Scratch.LocalKeyConfig
----@param cursor? Scratch.Cursor
-function M.scratch(abs_path, win_config, content, local_keys, cursor)
+---@param filename string
+---@param ft string
+---@param opts Scratch.FiletypeDetail
+---	win_config vim.api.keyset.win_config
+--- content? string[]
+--- local_keys? Scratch.LocalKeyConfig
+--- cursor? Scratch.Cursor
+function M.scratch(abs_path, filename, ft, opts)
+  local win_config, content, local_keys, cursor =
+    opts.win_config, opts.content, opts.local_keys, opts.cursor
+
   local buf = vim.api.nvim_create_buf(true, false)
   vim.api.nvim_buf_set_name(buf, abs_path)
-  if next(win_config) == nil then
+  vim.api.nvim_set_option_value("filename", ft, { buf = buf })
+
+  if win_config == nil then
     vim.api.nvim_set_current_buf(buf)
   else
-    vim.api.nvim_open_win(buf, true, win_config --[[@as vim.api.keyset.win_config]])
+    vim.api.nvim_open_win(buf, true, win_config)
   end
+
   if content then
     local bufnr = vim.api.nvim_get_current_buf()
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, content)
   end
+
   if cursor then
     vim.api.nvim_win_set_cursor(0, cursor.location)
     if cursor.insert_mode then
       vim.api.nvim_feedkeys("a", "n", true)
     end
   end
-  if local_keys then
-    M.register_local_key(local_keys)
-  end
-end
 
----@param localKeys Scratch.LocalKeyConfig[]
-function M.register_local_key(localKeys)
-  local filename = vim.fn.expand("%:t")
-  for _, key in ipairs(localKeys) do
-    for _, namePattern in ipairs(key.filenameContains) do
-      if string.find(filename, namePattern) ~= nil then
-        local buf = vim.api.nvim_get_current_buf()
-        for _, localKey in ipairs(key.LocalKeys) do
-          vim.keymap.set(localKey.mode, localKey.lhs, localKey.rhs, {
+  if local_keys then
+    local lkey = local_keys.LocalKeys
+    local lcon = local_keys.filenameContains
+    for i = 1, #lcon do
+      for j = 1, #lkey do
+        if filename:find(lcon[i]) then
+          local k = lkey[j]
+          vim.keymap.set(k.mode, k.lhs, k.rhs, {
             noremap = true,
             silent = true,
             nowait = true,
@@ -126,5 +118,25 @@ function M.register_local_key(localKeys)
     end
   end
 end
+
+-- ---@param localKeys Scratch.LocalKeyConfig[]
+-- function M.register_local_key(localKeys)
+--   local filename = vim.fn.expand("%:t")
+--   for _, key in ipairs(localKeys) do
+--     for _, namePattern in ipairs(key.filenameContains) do
+--       if string.find(filename, namePattern) ~= nil then
+--         local buf = vim.api.nvim_get_current_buf()
+--         for _, localKey in ipairs(key.LocalKeys) do
+--           vim.keymap.set(localKey.mode, localKey.lhs, localKey.rhs, {
+--             noremap = true,
+--             silent = true,
+--             nowait = true,
+--             buffer = buf,
+--           })
+--         end
+--       end
+--     end
+--   end
+-- end
 
 return M

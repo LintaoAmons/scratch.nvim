@@ -3,22 +3,20 @@ local M = {}
 --@param win_config? vim.api.keyset.win_config
 --@param local_keys? Scratch.LocalKeyConfig
 
----@param base_dir string path to scandir
----@param opts? table User prefered options -- maybe useful to make all finder function specified
-function M.findByNative(base_dir, opts)
+---@param self Scratch.ActorConfig
+function M.findByNative(self)
   local utils = require("scratch.utils")
-  local scratch_file_dir = base_dir
+  local scratch_file_dir = self.scratch_file_dir
   local abs_filenames = utils.scandir(scratch_file_dir)
-  if opts and opts.sorter then
-    table.sort(abs_filenames, opts.sorter)
-  end
+  -- if opts and opts.sorter then
+  --   table.sort(abs_filenames, opts.sorter)
+  -- end
   -- sort the files by their last modified time in descending order
   -- Why?
-  -- table.sort(files, function(a, b)
-  -- 	return vim.fn.getftime(scratch_file_dir .. vim.g.os_sep .. a)
-  -- 		> vim.fn.getftime(scratch_file_dir .. vim.g.os_sep .. b)
-  -- end)
-
+  table.sort(abs_filenames, function(a, b)
+    return vim.fn.getftime(scratch_file_dir .. vim.g.os_sep .. a)
+      > vim.fn.getftime(scratch_file_dir .. vim.g.os_sep .. b)
+  end)
   vim.ui.select(abs_filenames, {
     prompt = "Select old scratch files",
     format_item = function(item)
@@ -26,16 +24,17 @@ function M.findByNative(base_dir, opts)
     end,
   }, function(chosenFile)
     if chosenFile then
-      utils.open_(chosenFile, opts and opts.win_config or {})
-      if opts and opts.local_keys then
-        utils.register_local_key(opts.local_keys)
-      end
+      utils.open_(chosenFile, self.win_config)
+      -- if opts and opts.local_keys then
+      --   utils.register_local_key(opts.local_keys)
+      -- end
     end
   end)
 end
 
----@param base_dir string path to scandir
-function M.findByFzf(base_dir)
+---@param self Scratch.ActorConfig
+---@return nil
+function M.findByFzf(self)
   local ok, fzf_lua = pcall(require, "fzf-lua")
   if not ok then
     return vim.notify(
@@ -52,12 +51,11 @@ function M.findByFzf(base_dir)
       { title = "scratch.nvim" }
     )
   end
-  fzf_lua.files({ cmd = "rg --files --sortr modified " .. base_dir })
+  fzf_lua.files({ cmd = "rg --files --sortr modified " .. self.scratch_file_dir })
 end
 
----@param base_dir string path to scandir
----@param local_keys? Scratch.LocalKey[]
-function M.findByTelescope(base_dir, local_keys)
+---@param self Scratch.ActorConfig
+function M.findByTelescope(self)
   local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
   if not telescope_status then
     vim.notify(
@@ -67,14 +65,15 @@ function M.findByTelescope(base_dir, local_keys)
   end
 
   telescope_builtin.find_files({
-    cwd = base_dir,
+    cwd = self.scratch_file_dir,
     attach_mappings = function(prompt_bufnr, map)
       map("n", "dd", function()
         require("scratch.telescope_actions").delete_item(prompt_bufnr)
       end)
-      if local_keys then
-        for _, key in ipairs(local_keys) do
-          map(key.mode, key.lhs, key.rhs)
+      if self.localKeys then
+        local lkeys = self.localKeys.LocalKeys
+        for i = 1, #lkeys do
+          map(lkeys[i].mode, lkeys[i].lhs, lkeys[i].rhs)
         end
       end
       return true
@@ -82,14 +81,14 @@ function M.findByTelescope(base_dir, local_keys)
   })
 end
 
----@param base_dir string
-function M.findByTelescopeGrep(base_dir)
+---@param self Scratch.ActorConfig
+function M.findByTelescopeGrep(self)
   local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
   if not telescope_status then
     return vim.notify("ScrachOpenFzf needs telescope.nvim")
   end
   telescope_builtin.live_grep({
-    cwd = base_dir,
+    cwd = self.scratch_file_dir,
   })
 end
 
