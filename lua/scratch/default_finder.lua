@@ -3,8 +3,8 @@ local M = {}
 --@param win_config? vim.api.keyset.win_config
 --@param local_keys? Scratch.LocalKeyConfig
 
----@param self Scratch.ActorConfig
-function M.findByNative(self)
+---@param self Scratch.Actor
+function M.native(self)
   local utils = require("scratch.utils")
   local scratch_file_dir = self.scratch_file_dir
   local abs_filenames = utils.scandir(scratch_file_dir)
@@ -32,9 +32,8 @@ function M.findByNative(self)
   end)
 end
 
----@param self Scratch.ActorConfig
----@return nil
-function M.findByFzf(self)
+---@param self Scratch.Actor
+M["fzflua"] = function(self)
   local ok, fzf_lua = pcall(require, "fzf-lua")
   if not ok then
     return vim.notify(
@@ -55,7 +54,7 @@ function M.findByFzf(self)
 end
 
 ---@param self Scratch.ActorConfig
-function M.findByTelescope(self)
+function M.telescope(self)
   local telescope_status, telescope_builtin = pcall(require, "telescope.builtin")
   if not telescope_status then
     vim.notify(

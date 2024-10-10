@@ -4,9 +4,11 @@ local utils = require("scratch.utils")
 ---@field scratch_file_dir string
 ---@field win_config vim.api.keyset.win_config
 ---@field filetypes string[]
----@field manual_text string
 ---@field filetype_details Scratch.FiletypeDetails
+---@field manual_text string
 ---@field localKeys? Scratch.LocalKeyConfig
+---@field generator fun(scratch_file_dir:string, ft:string): string, string
+---@field scratchOpen fun(self:Scratch.ActorConfig)
 local M = {}
 M.__index = M
 

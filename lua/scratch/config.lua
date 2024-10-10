@@ -1,3 +1,11 @@
+---@alias Scratch.WindowCmd
+---| '"popup"'
+---| '"vsplit"'
+---| '"edit"'
+---| '"rightbelow vsplit"'
+
+--| '"tabedit"'
+
 ---@class Scratch.FiletypeDetail
 ---@field win_config? vim.api.keyset.win_config
 ---@field content? string[]
@@ -23,12 +31,12 @@
 ---@class Scratch.ActorConfig
 ---@field scratch_file_dir string
 ---@field filetypes string[]
----@field win_config? vim.api.keyset.win_config @see nvim_open_window `nil` open buffer at current win
+---@field win_cmd? vim.api.keyset.win_config | Scratch.WindowCmd @see nvim_open_window `nil` open buffer at current win
 ---@field generator fun(scratch_file_dir:string, ft:string): string, string
 ---@field filetype_details? Scratch.FiletypeDetails
 ---@field localKeys? Scratch.LocalKeyConfig
 ---@field manual_text? string
----@field scratchOpen fun(self:Scratch.ActorConfig)
+---@field file_picker fun(self:Scratch.ActorConfig) | 'fzflua' | 'telescope' | 'native'
 
 ---@class Scratch.Config
 ---@field actor_config? Scratch.ActorConfig
