@@ -78,17 +78,11 @@ end
 
 ---@return string[]
 local function getSelectedText()
-  local _, csrow, cscol, _ = unpack(vim.fn.getpos("'<"))
-  local _, cerow, cecol, _ = unpack(vim.fn.getpos("'>"))
-
-  local lines = vim.fn.getline(csrow, cerow)
-  local n = table_length(lines)
-  if n <= 0 then
-    return {}
-  end
-  lines[n] = string.sub(lines[n], 1, cecol)
-  lines[1] = string.sub(lines[1], cscol)
-  return lines
+  return vim.fn.getregion(
+    vim.fn.getpos("v"),
+    vim.fn.getpos("."),
+    { type = vim.api.nvim_get_mode().mode }
+  )
 end
 
 ---@param msg string
