@@ -6,16 +6,7 @@ vim.g.os_sep = vim.g.os_sep or vim.uv.os_uname().sysname == "Windows_NT" and "\\
 
 ---@return string[]
 local function getSelectedText()
-  local sv = vim.fn.getpos("'<")
-  local ev = vim.fn.getpos("'>")
-  local lines = vim.api.nvim_buf_get_lines(0, sv[2] - 1, ev[2], false)
-  local n = #lines
-  if n == 0 then
-    return {}
-  end
-  lines[n] = string.sub(lines[n], 1, sv[3])
-  lines[1] = string.sub(lines[1], ev[3])
-  return lines
+  return vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos("."), { type = "v" })
 end
 local actor = require("scratch.actor")
 vim.g.scratch_config = setmetatable(require("scratch.config"), actor)
