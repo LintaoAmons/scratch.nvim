@@ -1,13 +1,14 @@
 local M = {}
-
+---@enum Scratch.Trigger
+M.trigger_points = {
+  AFTER = 1,
+  ON_CHOICE = 2,
+}
+---@alias Scratch.Hooks table<Scratch.Trigger, Scratch.Hook>
 ---@class Scratch.Hook
 ---@field callback fun(param: table?)
 ---@field name? string
 ---@field trigger_point? string
-
-M.trigger_points = {
-  AFTER = "AFTER",
-}
 
 ---@param hooks Scratch.Hook[]
 ---@param target_trigger_point? string

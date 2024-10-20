@@ -8,6 +8,7 @@ local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 ---@class Scratch.ActionOpts
 ---@field window_cmd? Scratch.WindowCmd
 ---@field content? string[] content will be put into the scratch file
+---@field hooks? {[string]: Scratch.Hooks}
 
 ---@param abs_path string
 ---@param opts? Scratch.ActionOpts
@@ -135,13 +136,28 @@ local function select_filetype_then_do(func, opts)
     end,
   }, function(choosedFt)
     if choosedFt then
-      if choosedFt == MANUAL_INPUT_OPTION then
-        vim.ui.input({ prompt = "Input filetype: " }, function(ft)
+      if
+        opts
+        and opts.hooks
+        and opts.hooks[choosedFt]
+        and opts.hooks[choosedFt][Hooks.trigger_points.ON_CHOICE]
+      then
+        ---@see: https://github.com/mfussenegger/nvim-dap/blob/7ff6936010b7222fea2caea0f67ed77f1b7c60dd/lua/dap/session.lua#L1582C3-L1607C9
+        ---NOTICE: `ui.pick_one(..)` realisation
+        coroutine.wrap(function()
+          local ft = opts.hooks[choosedFt][Hooks.trigger_points.ON_CHOICE]
           func(ft, opts)
-        end)
+        end)()
       else
         func(choosedFt, opts)
       end
+      -- if choosedFt == MANUAL_INPUT_OPTION then
+      --   vim.ui.input({ prompt = "Input filetype: " }, function(ft)
+      --     func(ft, opts)
+      --   end)
+      -- else
+      --   func(choosedFt, opts)
+      -- end
     end
   end)
 end

@@ -32,6 +32,7 @@ local utils = require("scratch.utils")
 ---@field subdir? string
 ---@field content? string[]
 ---@field cursor? Scratch.Cursor
+---@field hooks? Scratch.Hooks
 --
 ---@class Scratch.FiletypeDetails
 ---@field [string] Scratch.FiletypeDetail
@@ -46,10 +47,30 @@ local utils = require("scratch.utils")
 ---@field hooks Scratch.Hook[]
 local default_config = {
   scratch_file_dir = vim.fn.stdpath("cache") .. slash .. "scratch.nvim", -- where your scratch files will be put
-  filetypes = { "lua", "js", "py", "sh" }, -- you can simply put filetype here
+  filetypes = { "lua", "js", "py", "sh", "MANUAL_INPUT" }, -- you can simply put filetype here
   window_cmd = "edit", -- 'vsplit' | 'split' | 'edit' | 'tabedit' | 'rightbelow vsplit'
   file_picker = "fzflua",
-  filetype_details = {},
+  filetype_details = {
+    ["MANUAL_INPUT"] = {
+      hooks = {
+        ---ATTENTION: need to reuire("scratch.hooks").trigger_points.ON_CHOICE
+        [2] = {
+
+          ---@see: https://github.com/mfussenegger/nvim-dap/blob/66d33b7585b42b7eac20559f1551524287ded353/lua/dap/ui.lua#L55
+
+          callback = function()
+            local co = coroutine.running()
+            local confirmer = function(input)
+              coroutine.resume(co, input)
+            end
+            confirmer = vim.schedule_wrap(confirmer)
+            vim.ui.input({ prompt = "Input filetype: " }, confirmer)
+            return coroutine.yield()
+          end,
+        },
+      },
+    },
+  },
   localKeys = {},
   hooks = {},
 }
