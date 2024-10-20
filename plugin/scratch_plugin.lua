@@ -16,11 +16,14 @@ local scratch_main = require("scratch")
 scratch_main.setup()
 
 vim.api.nvim_create_user_command("Scratch", function(args)
-  if args.range > 0 then
-    scratch_api.scratch({ content = utils.getSelectedText() })
-  else
-    scratch_api.scratch()
+  local mode = vim.api.nvim_get_mode().mode
+  local opts
+  if mode ~= "n" then
+    opts = { content = utils.getSelectedText(".", mode) }
+  elseif args.range > 0 then
+    opts = { content = utils.getSelectedText("'>", "v") }
   end
+  scratch_api.scratch(opts)
 end, { range = true })
 
 vim.api.nvim_create_user_command("ScratchOpen", scratch_api.openScratch, {})

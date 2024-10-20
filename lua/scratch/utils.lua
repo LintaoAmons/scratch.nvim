@@ -77,12 +77,8 @@ local table_length = function(T)
 end
 
 ---@return string[]
-local function getSelectedText()
-  return vim.fn.getregion(
-    vim.fn.getpos("v"),
-    vim.fn.getpos("."),
-    { type = vim.api.nvim_get_mode().mode }
-  )
+local function getSelectedText(mark, mode)
+  return vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos(mark), { type = mode })
 end
 
 ---@param msg string
