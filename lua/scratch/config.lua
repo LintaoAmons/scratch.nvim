@@ -1,5 +1,6 @@
 local slash = require("scratch.utils").Slash()
 local utils = require("scratch.utils")
+local triger = require("scratch.hooks").trigger_points
 
 ---@alias mode
 ---| '"n"'
@@ -53,11 +54,9 @@ local default_config = {
   filetype_details = {
     ["MANUAL_INPUT"] = {
       hooks = {
-        ---ATTENTION: need to reuire("scratch.hooks").trigger_points.ON_CHOICE
-        [2] = {
+        [triger.POST_CHOICE] = {
 
           ---@see: https://github.com/mfussenegger/nvim-dap/blob/66d33b7585b42b7eac20559f1551524287ded353/lua/dap/ui.lua#L55
-
           callback = function()
             local co = coroutine.running()
             local confirmer = function(input)
@@ -72,7 +71,22 @@ local default_config = {
     },
   },
   localKeys = {},
-  hooks = {},
+  hooks = {
+    [triger.PRE_CHOICE] = {
+      callback = function(filetypes)
+        local co = coroutine.running()
+        vim.ui.select(filetypes, {
+          prompt = "Select filetype",
+          format_item = function(item)
+            return item
+          end,
+        }, function(choosedFt)
+          coroutine.resume(co, choosedFt)
+        end)
+        return coroutine.yield()
+      end,
+    },
+  },
 }
 
 ---@type Scratch.Config

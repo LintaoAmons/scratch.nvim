@@ -8,7 +8,7 @@ local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 ---@class Scratch.ActionOpts
 ---@field window_cmd? Scratch.WindowCmd
 ---@field content? string[] content will be put into the scratch file
----@field hooks? {[string]: Scratch.Hooks}
+---@field hooks? {[string]: Scratch.Hooks, [Scratch.Trigger]:Scratch.Hook}
 
 ---@param abs_path string
 ---@param opts? Scratch.ActionOpts
@@ -127,39 +127,46 @@ end
 ---@param func Scratch.Action
 ---@param opts? Scratch.ActionOpts
 local function select_filetype_then_do(func, opts)
-  local filetypes = get_all_filetypes()
+  coroutine.wrap(function()
+    local filetypes = get_all_filetypes()
+    if opts and opts.hooks then
+      local choosedFt = opts.hooks[Hooks.trigger_points.PRE_CHOICE].callback(filetypes)
 
-  vim.ui.select(filetypes, {
-    prompt = "Select filetype",
-    format_item = function(item)
-      return item
-    end,
-  }, function(choosedFt)
-    if choosedFt then
-      if
-        opts
-        and opts.hooks
-        and opts.hooks[choosedFt]
-        and opts.hooks[choosedFt][Hooks.trigger_points.ON_CHOICE]
-      then
+      if opts.hooks[choosedFt] and opts.hooks[choosedFt][Hooks.trigger_points.POST_CHOICE] then
         ---@see: https://github.com/mfussenegger/nvim-dap/blob/7ff6936010b7222fea2caea0f67ed77f1b7c60dd/lua/dap/session.lua#L1582C3-L1607C9
         ---NOTICE: `ui.pick_one(..)` realisation
-        coroutine.wrap(function()
-          local ft = opts.hooks[choosedFt][Hooks.trigger_points.ON_CHOICE]
-          func(ft, opts)
-        end)()
+        local ft = opts.hooks[choosedFt][Hooks.trigger_points.POST_CHOICE]
+        func(ft, opts)
       else
         func(choosedFt, opts)
       end
-      -- if choosedFt == MANUAL_INPUT_OPTION then
-      --   vim.ui.input({ prompt = "Input filetype: " }, function(ft)
-      --     func(ft, opts)
-      --   end)
-      -- else
-      --   func(choosedFt, opts)
-      -- end
     end
-  end)
+  end)()
+
+  -- vim.ui.select(filetypes, {
+  --   prompt = "Select filetype",
+  --   format_item = function(item)
+  --     return item
+  --   end,
+  -- }, function(choosedFt)
+  --   if choosedFt then
+  --     if
+  --       opts
+  --       and opts.hooks
+  --       and opts.hooks[choosedFt]
+  --       and opts.hooks[choosedFt][Hooks.trigger_points.ON_CHOICE]
+  --     then
+  --       ---@see: https://github.com/mfussenegger/nvim-dap/blob/7ff6936010b7222fea2caea0f67ed77f1b7c60dd/lua/dap/session.lua#L1582C3-L1607C9
+  --       ---NOTICE: `ui.pick_one(..)` realisation
+  --       coroutine.wrap(function()
+  --         local ft = opts.hooks[choosedFt][Hooks.trigger_points.ON_CHOICE]
+  --         func(ft, opts)
+  --       end)()
+  --     else
+  --       func(choosedFt, opts)
+  --     end
+  --   end
+  -- end)
 end
 
 local function get_scratch_files()
