@@ -4,6 +4,8 @@ M.trigger_points = {
   AFTER = 1,
   PRE_CHOICE = 2,
   POST_CHOICE = 3,
+  PRE_OPEN = 4,
+  POST_OPEN = 5,
 }
 ---@alias Scratch.Hooks table<Scratch.Trigger, Scratch.Hook>
 ---@class Scratch.Hook
