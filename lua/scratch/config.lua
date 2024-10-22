@@ -33,7 +33,7 @@ local triger = require("scratch.hooks").trigger_points
 ---@field subdir? string
 ---@field content? string[]
 ---@field cursor? Scratch.Cursor
----@field hooks? Scratch.Hooks
+---@field hooks? table<Scratch.Trigger,Scratch.Hook>
 --
 ---@class Scratch.FiletypeDetails
 ---@field [string] Scratch.FiletypeDetail
@@ -54,26 +54,23 @@ local default_config = {
   filetype_details = {
     ["MANUAL_INPUT"] = {
       hooks = {
-        [triger.POST_CHOICE] = {
-
-          ---@see: https://github.com/mfussenegger/nvim-dap/blob/66d33b7585b42b7eac20559f1551524287ded353/lua/dap/ui.lua#L55
-          callback = function()
-            local co = coroutine.running()
-            local confirmer = function(input)
-              coroutine.resume(co, input)
-            end
-            confirmer = vim.schedule_wrap(confirmer)
-            vim.ui.input({ prompt = "Input filetype: " }, confirmer)
-            return coroutine.yield()
-          end,
-        },
+        ---@see: https://github.com/mfussenegger/nvim-dap/blob/66d33b7585b42b7eac20559f1551524287ded353/lua/dap/ui.lua#L55
+        [triger.POST_CHOICE] = function()
+          local co = coroutine.running()
+          local confirmer = function(input)
+            coroutine.resume(co, input)
+          end
+          confirmer = vim.schedule_wrap(confirmer)
+          vim.ui.input({ prompt = "Input filetype: " }, confirmer)
+          return coroutine.yield()
+        end,
       },
     },
   },
   localKeys = {},
   hooks = {
     [triger.PRE_CHOICE] = {
-      callback = function(filetypes)
+      function(filetypes)
         local co = coroutine.running()
         vim.ui.select(filetypes, {
           prompt = "Select filetype",
@@ -87,7 +84,7 @@ local default_config = {
       end,
     },
     [triger.PRE_OPEN] = {
-      callback = function(opts)
+      function(opts)
         local files, scratch_file_dir = opts.files, opts.scratch_file_dir
         local co = coroutine.running()
 

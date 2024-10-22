@@ -8,7 +8,8 @@ local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 ---@class Scratch.ActionOpts
 ---@field window_cmd? Scratch.WindowCmd
 ---@field content? string[] content will be put into the scratch file
----@field hooks? {[string]: Scratch.Hooks, [Scratch.Trigger]:Scratch.Hook}
+---@field hooks? table<Scratch.Trigger, Scratch.Hook|table<string, Scratch.Hook>>
+---{[string]: Scratch.Hooks, [Scratch.Trigger]:Scratch.Hook}
 
 ---@param abs_path string
 ---@param opts? Scratch.ActionOpts
@@ -27,9 +28,9 @@ local function create_and_edit_file(abs_path, opts)
     vim.api.nvim_command(cmd .. " " .. abs_path)
   end
 
-  local hooks = Hooks.get_hooks(vim.g.scratch_config.hooks, Hooks.trigger_points.AFTER)
-  for _, hook in ipairs(hooks) do
-    hook.callback()
+  local hooks = vim.g.scratch_config.hooks[Hooks.trigger_points.AFTER]
+  for i = 1, #hooks do
+    hooks[i]()
   end
 end
 
@@ -124,18 +125,21 @@ local function get_all_filetypes()
   return combined_filetypes
 end
 
----@param func Scratch.Action
+---@param func function
 ---@param opts? Scratch.ActionOpts
 local function select_filetype_then_do(func, opts)
   coroutine.wrap(function()
     local filetypes = get_all_filetypes()
     if opts and opts.hooks then
-      local choosedFt = opts.hooks[Hooks.trigger_points.PRE_CHOICE].callback(filetypes)
+      local choosedFt = opts.hooks[Hooks.trigger_points.PRE_CHOICE](filetypes)
 
-      if opts.hooks[choosedFt] and opts.hooks[choosedFt][Hooks.trigger_points.POST_CHOICE] then
+      if
+        opts.hooks[Hooks.trigger_points.POST_CHOICE]
+        and opts.hooks[Hooks.trigger_points.POST_CHOICE][choosedFt]
+      then
         ---@see: https://github.com/mfussenegger/nvim-dap/blob/7ff6936010b7222fea2caea0f67ed77f1b7c60dd/lua/dap/session.lua#L1582C3-L1607C9
         ---NOTICE: `ui.pick_one(..)` realisation
-        local ft = opts.hooks[choosedFt][Hooks.trigger_points.POST_CHOICE]
+        local ft = opts.hooks[Hooks.trigger_points.POST_CHOICE][choosedFt]()
         func(ft, opts)
       else
         func(choosedFt, opts)
@@ -211,8 +215,7 @@ local function open_scratch_vim_ui(opts)
     local config_data = vim.g.scratch_config
 
     local scratch_file_dir = config_data.scratch_file_dir
-    local chosenFile =
-      opts.hooks[Hooks.trigger_points.PRE_OPEN].callback({ files, scratch_file_dir })
+    local chosenFile = opts.hooks[Hooks.trigger_points.PRE_OPEN]({ files, scratch_file_dir })
     if opts.hooks[Hooks.trigger_points.POST_OPEN] then
       opts.hooks[Hooks.trigger_points.POST_OPEN].callback(chosenFile)
     end
