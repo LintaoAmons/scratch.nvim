@@ -1,33 +1,12 @@
-local M = {}
+-- Add current directory to 'runtimepath' to be able to use 'lua' files
+vim.cmd([[let &rtp.=','.getcwd()]])
 
-function M.root(root)
-  local f = debug.getinfo(1, "S").source:sub(2)
-  return vim.fn.fnamemodify(f, ":p:h:h") .. "/" .. (root or "")
+-- Set up 'mini.test' only when calling headless Neovim (like with `make test`)
+if #vim.api.nvim_list_uis() == 0 then
+  -- Add 'mini.nvim' to 'runtimepath' to be able to use 'mini.test'
+  -- Assumed that 'mini.nvim' is stored in 'deps/mini.nvim'
+  vim.cmd("set rtp+=deps/mini.nvim")
+
+  -- Set up 'mini.test'
+  require("mini.test").setup()
 end
-
----@param plugin string
-function M.load(plugin)
-  local name = plugin:match(".*/(.*)")
-  local package_root = M.root(".tests/site/pack/deps/start/")
-  if not vim.loop.fs_stat(package_root .. name) then
-    print("Installing " .. plugin)
-    vim.fn.mkdir(package_root, "p")
-    vim.fn.system({
-      "git",
-      "clone",
-      "--depth=1",
-      "https://github.com/" .. plugin .. ".git",
-      package_root .. "/" .. name,
-    })
-  end
-end
-
-function M.setup()
-  vim.cmd([[set runtimepath=$VIMRUNTIME]])
-  vim.opt.runtimepath:append(M.root())
-  vim.opt.packpath = { M.root(".tests/site") }
-
-  M.load("nvim-lua/plenary.nvim")
-end
-
-M.setup()
