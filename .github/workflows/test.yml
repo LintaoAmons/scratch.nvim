@@ -1,0 +1,27 @@
+name: default
+
+on: [push, pull_request]
+
+jobs:
+  run_tests:
+    name: unit tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        neovim_version: ['v0.8.3', 'v0.9.5', 'v0.10.2', 'nightly']
+        include:
+        - os: macos-latest
+          neovim_version: v0.10.1
+        - os: windows-latest
+          neovim_version: v0.10.1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: ${{ matrix.neovim_version }}
+      - name: Run tests
+        run: make test
