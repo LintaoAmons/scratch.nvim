@@ -121,5 +121,21 @@ T["param"]["new"]["workd"] = function(selection_mode, coord)
     child.lua_func(getSelectedText, ".", selection_mode)
   )
 end
+T["param"]["old"]["at_command"] = function(selection_mode, coord)
+  select_wise(coord, selection_mode)
+  child.type_keys(":")
+  MiniTest.expect.equality(
+    table_select(BUFFER_TEXT, coord, selection_mode),
+    child.lua_func(old_real)
+  )
+end
+T["param"]["new"]["at_command"] = function(selection_mode, coord)
+  select_wise(coord, selection_mode)
+  child.type_keys(":")
+  MiniTest.expect.equality(
+    table_select(BUFFER_TEXT, coord, selection_mode),
+    child.lua_func(getSelectedText, "'>", selection_mode)
+  )
+end
 
 return T
