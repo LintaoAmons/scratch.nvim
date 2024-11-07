@@ -83,7 +83,7 @@ local function getSelectedText(mark, mode)
     local lines = {}
     local start_row, start_col, end_row, end_col = pos1[2], pos1[3], pos2[2], pos2[3]
     local selection_mode = opts.type
-    local text = vim.api.nvim_buf_get_lines(0, start_row, end_row, true)
+    local text = vim.api.nvim_buf_get_lines(0, start_row - 1, end_row, true)
     end_row = end_row - start_row + 1
     start_row = 1
     if selection_mode == "v" then
