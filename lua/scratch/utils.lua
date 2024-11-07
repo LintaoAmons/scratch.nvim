@@ -76,8 +76,10 @@ local table_length = function(T)
   return count
 end
 
-local getregion = vim.fn.has("nvim-0.10") == 1 and vim.fn.getregion
-  or function(pos1, pos2, opts)
+---@return string[]
+local function getSelectedText(mark, mode)
+  mode = vim.api.nvim_replace_termcodes(mode, true, true, true)
+  return (vim.fn.has("nvim-0.10") == 1 and vim.fn.getregion or function(pos1, pos2, opts)
     local lines = {}
     local start_row, start_col, end_row, end_col = pos1[2], pos1[3], pos2[2], pos2[3]
     local selection_mode = opts.type
@@ -100,11 +102,7 @@ local getregion = vim.fn.has("nvim-0.10") == 1 and vim.fn.getregion
       end
     end
     return lines
-  end
----@return string[]
-local function getSelectedText(mark, mode)
-  mode = vim.api.nvim_replace_termcodes(mode, true, true, true)
-  return getregion(vim.fn.getpos("v"), vim.fn.getpos(mark), { type = mode })
+  end)(vim.fn.getpos("v"), vim.fn.getpos(mark), { type = mode })
 end
 
 ---@param msg string
