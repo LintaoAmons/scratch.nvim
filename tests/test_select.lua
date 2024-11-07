@@ -1,4 +1,5 @@
 local child = MiniTest.new_child_neovim()
+local getSelectedText
 local function table_select(text, coord, selection_mode)
   local lines = {}
   local start_row, start_col, end_row, end_col = coord[1], coord[2], coord[3], coord[4]
@@ -34,11 +35,11 @@ local select_wise = function(coord, selection_mode)
   vim.api.nvim_win_set_cursor(0, { end_row, end_col - 1 })
 end
 
-local function new_real(mark, mode)
-  mode = vim.api.nvim_replace_termcodes(mode, true, true, true)
-  local lines = vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos(mark), { type = mode })
-  return lines
-end
+-- local function new_real(mark, mode)
+--   mode = vim.api.nvim_replace_termcodes(mode, true, true, true)
+--   local lines = vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos(mark), { type = mode })
+--   return lines
+-- end
 local function old_real(mark, mode)
   local _, csrow, cscol, _ = unpack(vim.fn.getpos("'<"))
   local _, cerow, cecol, _ = unpack(vim.fn.getpos("'>"))
@@ -99,6 +100,7 @@ T["param"]["new"] = new_set({
     pre_case = function()
       child.restart({ "-u", "scripts/minimal_init.lua" })
       child.api.nvim_buf_set_lines(0, 0, -1, false, BUFFER_TEXT)
+      getSelectedText = require("scratch.utils").getSelectedText
     end,
     post_once = function()
       child.stop()
@@ -116,7 +118,7 @@ T["param"]["new"]["workd"] = function(selection_mode, coord)
   select_wise(coord, selection_mode)
   MiniTest.expect.equality(
     table_select(BUFFER_TEXT, coord, selection_mode),
-    child.lua_func(new_real, ".", selection_mode)
+    child.lua_func(getSelectedText, ".", selection_mode)
   )
 end
 
