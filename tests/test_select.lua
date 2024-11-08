@@ -14,7 +14,7 @@ local function table_select(text, coord, selection_mode)
     for i = start_row, end_row do
       table.insert(lines, text[i])
     end
-  elseif selection_mode == "<C-V>" then
+  elseif selection_mode == vim.api.nvim_replace_termcodes("<C-V>", true, true, true) then
     for i = start_row, end_row do
       table.insert(lines, text[i]:sub(start_col, end_col))
     end
