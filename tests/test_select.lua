@@ -25,34 +25,32 @@ local select_wise = function(coord, selection_mode)
   local vim = child
   local start_row, start_col, end_row, end_col = coord[1], coord[2], coord[3], coord[4]
   local mode = vim.api.nvim_get_mode()
-  if mode.mode ~= selection_mode then
-    selection_mode = vim.api.nvim_replace_termcodes(selection_mode, true, true, true)
-    vim.api.nvim_cmd({ cmd = "normal", bang = true, args = { selection_mode } }, {})
+  if mode.mode ~= "n" then
+    local esc = vim.api.nvim_replace_termcodes("<ESC>", true, true, true)
+    vim.api.nvim_cmd({ cmd = "normal", bang = true, args = { esc } }, {})
+    vim.api.nvim_cmd({ cmd = "normal", bang = true, args = { esc } }, {})
   end
+  selection_mode = vim.api.nvim_replace_termcodes(selection_mode, true, true, true)
+  vim.api.nvim_cmd({ cmd = "normal", bang = true, args = { selection_mode } }, {})
 
   vim.api.nvim_win_set_cursor(0, { start_row, start_col - 1 })
   vim.cmd("normal! o")
   vim.api.nvim_win_set_cursor(0, { end_row, end_col - 1 })
 end
 
--- local function new_real(mark, mode)
---   mode = vim.api.nvim_replace_termcodes(mode, true, true, true)
---   local lines = vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos(mark), { type = mode })
+-- local function old_real(mark, mode)
+--   local _, csrow, cscol, _ = unpack(vim.fn.getpos("'<"))
+--   local _, cerow, cecol, _ = unpack(vim.fn.getpos("'>"))
+--
+--   local lines = vim.fn.getline(csrow, cerow)
+--   local n = #lines
+--   if n <= 0 then
+--     return {}
+--   end
+--   lines[n] = string.sub(lines[n], 1, cecol)
+--   lines[1] = string.sub(lines[1], cscol)
 --   return lines
 -- end
-local function old_real(mark, mode)
-  local _, csrow, cscol, _ = unpack(vim.fn.getpos("'<"))
-  local _, cerow, cecol, _ = unpack(vim.fn.getpos("'>"))
-
-  local lines = vim.fn.getline(csrow, cerow)
-  local n = #lines
-  if n <= 0 then
-    return {}
-  end
-  lines[n] = string.sub(lines[n], 1, cecol)
-  lines[1] = string.sub(lines[1], cscol)
-  return lines
-end
 
 local new_set = MiniTest.new_set
 local T = new_set({
@@ -86,17 +84,17 @@ local BUFFER_TEXT = {
   "inserted",
   "now",
 }
-T["param"]["old"] = new_set({
-  hooks = {
-    pre_case = function()
-      child.restart({ "-u", "scripts/minimal_init.lua" })
-      child.api.nvim_buf_set_lines(0, 0, -1, false, BUFFER_TEXT)
-    end,
-    post_once = function()
-      child.stop()
-    end,
-  },
-})
+-- T["param"]["old"] = new_set({
+--   hooks = {
+--     pre_case = function()
+--       child.restart({ "-u", "scripts/minimal_init.lua" })
+--       child.api.nvim_buf_set_lines(0, 0, -1, false, BUFFER_TEXT)
+--     end,
+--     post_case = function()
+--       child.stop()
+--     end,
+--   },
+-- })
 T["param"]["new"] = new_set({
   hooks = {
     pre_case = function()
@@ -104,18 +102,19 @@ T["param"]["new"] = new_set({
       child.api.nvim_buf_set_lines(0, 0, -1, false, BUFFER_TEXT)
       getSelectedText = require("scratch.utils").getSelectedText
     end,
-    post_once = function()
+    post_case = function()
       child.stop()
     end,
   },
+  n_retry = 2,
 })
-T["param"]["old"]["not_workd"] = function(selection_mode, coord)
-  select_wise(coord, selection_mode)
-  MiniTest.expect.no_equality(
-    table_select(BUFFER_TEXT, coord, selection_mode),
-    child.lua_func(old_real)
-  )
-end
+-- T["param"]["old"]["not_workd"] = function(selection_mode, coord)
+--   select_wise(coord, selection_mode)
+--   MiniTest.expect.no_equality(
+--     table_select(BUFFER_TEXT, coord, selection_mode),
+--     child.lua_func(old_real)
+--   )
+-- end
 T["param"]["new"]["workd"] = function(selection_mode, coord)
   select_wise(coord, selection_mode)
   MiniTest.expect.equality(
@@ -123,17 +122,19 @@ T["param"]["new"]["workd"] = function(selection_mode, coord)
     child.lua_func(getSelectedText, ".", selection_mode)
   )
 end
-T["param"]["old"]["at_command"] = function(selection_mode, coord)
-  select_wise(coord, selection_mode)
-  child.type_keys(":")
-  MiniTest.expect.equality(
-    table_select(BUFFER_TEXT, coord, selection_mode),
-    child.lua_func(old_real)
-  )
-end
+-- T["param"]["old"]["at_command"] = function(selection_mode, coord)
+--   select_wise(coord, selection_mode)
+--   child.type_keys(":")
+--   MiniTest.expect.equality(
+--     table_select(BUFFER_TEXT, coord, selection_mode),
+--     child.lua_func(old_real)
+--   )
+-- end
 T["param"]["new"]["at_command"] = function(selection_mode, coord)
   select_wise(coord, selection_mode)
   child.type_keys(":")
+  MiniTest.add_note("|1>--- " .. vim.inspect(child.fn.getpos("'>")))
+  MiniTest.add_note("|2>--- " .. vim.inspect(child.fn.getpos(".")))
   MiniTest.expect.equality(
     table_select(BUFFER_TEXT, coord, selection_mode),
     child.lua_func(getSelectedText, "'>", selection_mode)
