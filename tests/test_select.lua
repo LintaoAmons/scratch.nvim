@@ -55,7 +55,9 @@ local function old_real(mark, mode)
 end
 
 local new_set = MiniTest.new_set
-local T = new_set({ parametrize = { { "v" }, { "V" }, { "<C-V>" } } })
+local T = new_set({
+  parametrize = { { "v" }, { "V" }, { vim.api.nvim_replace_termcodes("<C-V>", true, true, true) } },
+})
 T["param"] = new_set({
   parametrize = {
     {
