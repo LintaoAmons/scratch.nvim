@@ -154,12 +154,14 @@ T["new"] = new_set({
   parametrize = { { { 1, 1, 1, 1 } } },
 })
 T["new"]["empty_file"] = function(selection_mode, coord)
-  MiniTest.add_note("|1>" .. selection_mode)
-  MiniTest.add_note("|2> " .. vim.inspect(coord))
   select_wise(coord, selection_mode)
+  local pos1 = child.fn.getpos("v")
+  local pos2 = child.fn.getpos(".")
+  MiniTest.add_note("|1>--- " .. vim.inspect(pos1))
+  MiniTest.add_note("|2>--- " .. vim.inspect(pos2))
   MiniTest.expect.equality(
     table_select({ "" }, coord, selection_mode),
-    child.lua_func(getSelectedText, "'>", selection_mode)
+    child.lua_func(getSelectedText, ".", selection_mode)
   )
 end
 
