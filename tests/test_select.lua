@@ -151,9 +151,11 @@ T["new"] = new_set({
       child.stop()
     end,
   },
-  parametrize = { { 1, 1, 1, 1 } },
+  parametrize = { { { 1, 1, 1, 1 } } },
 })
 T["new"]["empty_file"] = function(selection_mode, coord)
+  MiniTest.add_note("|1>" .. selection_mode)
+  MiniTest.add_note("|2> " .. vim.inspect(coord))
   select_wise(coord, selection_mode)
   MiniTest.expect.equality(
     table_select({}, coord, selection_mode),
