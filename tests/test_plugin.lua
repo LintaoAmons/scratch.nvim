@@ -97,7 +97,7 @@ T["Scratch"]["select_branch"]["parameter"] = new_set({
 })
 T["Scratch"]["select_branch"]["parameter"]["some_text"] = function(selection_mode, coord)
   child.api.nvim_buf_set_lines(0, 0, -1, false, BUFFER_TEXT)
-  child.api.nvim_set_keymap("v", "  ", ":Scratch<CR>")
+  child.api.nvim_set_keymap("v", "  ", ":Scratch<CR>", {})
   select_wise(coord, selection_mode)
   child.type_keys("  ")
   MiniTest.expect.equality(
