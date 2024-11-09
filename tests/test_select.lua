@@ -140,5 +140,25 @@ T["param"]["new"]["at_command"] = function(selection_mode, coord)
     child.lua_func(getSelectedText, "'>", selection_mode)
   )
 end
+T["new"] = new_set({
+  hooks = {
+    pre_case = function()
+      child.restart({ "-u", "scripts/minimal_init.lua" })
+      child.api.nvim_buf_set_lines(0, 0, -1, false, {})
+      getSelectedText = require("scratch.utils").getSelectedText
+    end,
+    post_case = function()
+      child.stop()
+    end,
+  },
+  parametrize = { { 1, 1, 1, 1 } },
+})
+T["new"]["empty_file"] = function(selection_mode, coord)
+  select_wise(coord, selection_mode)
+  MiniTest.expect.equality(
+    table_select({}, coord, selection_mode),
+    child.lua_func(getSelectedText, "'>", selection_mode)
+  )
+end
 
 return T
