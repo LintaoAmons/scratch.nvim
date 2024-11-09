@@ -108,7 +108,6 @@ T["Scratch"]["select_branch"]["parameter"]["some_text"] = function(selection_mod
         )
       )
   )
-  MiniTest.add_note("|3>" .. vim.inspect(child.lua_get("_G.scratch_opts").content))
   child.type_keys("  ")
   MiniTest.expect.equality(
     table_select(BUFFER_TEXT, coord, selection_mode),
