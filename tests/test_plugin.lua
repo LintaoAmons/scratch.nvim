@@ -99,6 +99,15 @@ T["Scratch"]["select_branch"]["parameter"]["some_text"] = function(selection_mod
   child.api.nvim_buf_set_lines(0, 0, -1, false, BUFFER_TEXT)
   child.api.nvim_set_keymap("v", "  ", ":Scratch<CR>", {})
   select_wise(coord, selection_mode)
+  MiniTest.add_note("|1>" .. vim.inspect(child.api.nvim_get_mode()))
+  MiniTest.add_note(
+    "|2>"
+      .. vim.inspect(
+        child.lua_get(
+          [[require("scratch.utils").getSelectedText(".", vim.api.nvim_get_mode().mode)]]
+        )
+      )
+  )
   child.type_keys("  ")
   MiniTest.expect.equality(
     table_select(BUFFER_TEXT, coord, selection_mode),
