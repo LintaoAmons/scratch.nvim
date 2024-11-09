@@ -6,6 +6,12 @@ local function mock()
   mock_api.scratch = function(opts)
     _G.scratch_opts = opts
   end
+  mock_api.openScratch = function()
+    print("TODO")
+  end
+  mock_api.fzfScratch = mock_api.openScratch
+  mock_api.scratchWithName = mock_api.openScratch
+
   package.loaded["scratch.api"] = mock_api
   vim.g.loaded_scratch = 0
   dofile("plugin/scratch_plugin.lua")
@@ -91,7 +97,7 @@ T["Scratch"]["select_branch"]["parameter"] = new_set({
 })
 T["Scratch"]["select_branch"]["parameter"]["some_text"] = function(selection_mode, coord)
   child.api.nvim_buf_set_lines(0, 0, -1, false, BUFFER_TEXT)
-  child.api.nvim_set_keymap("v", "  ", ":Scratch<CR>", { replace_keycodes = true })
+  child.api.nvim_set_keymap("v", "  ", ":Scratch<CR>")
   select_wise(coord, selection_mode)
   child.type_keys("  ")
   MiniTest.expect.equality(
