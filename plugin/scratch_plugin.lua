@@ -21,7 +21,7 @@ vim.api.nvim_create_user_command("Scratch", function(args)
   if mode ~= "n" then
     opts = { content = utils.getSelectedText(".", mode) }
   elseif args.range > 0 then
-    opts = { content = vim.api.nvim_buf_get_lines(0, args.line1, args.line2, true) }
+    opts = { content = vim.api.nvim_buf_get_lines(0, args.line1 - 1, args.line2, true) }
   end
   scratch_api.scratch(opts)
 end, { range = true })
