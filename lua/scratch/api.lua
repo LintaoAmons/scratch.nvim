@@ -8,6 +8,8 @@ local MANUAL_INPUT_OPTION = "MANUAL_INPUT"
 ---@class Scratch.ActionOpts
 ---@field window_cmd? Scratch.WindowCmd
 ---@field content? string[] content will be put into the scratch file
+---@field hooks? table<Scratch.Trigger, Scratch.Hook|table<string, Scratch.Hook>>
+---{[string]: Scratch.Hooks, [Scratch.Trigger]:Scratch.Hook}
 
 ---@param abs_path string
 ---@param opts? Scratch.ActionOpts
@@ -26,9 +28,9 @@ local function create_and_edit_file(abs_path, opts)
     vim.api.nvim_command(cmd .. " " .. abs_path)
   end
 
-  local hooks = Hooks.get_hooks(vim.g.scratch_config.hooks, Hooks.trigger_points.AFTER)
-  for _, hook in ipairs(hooks) do
-    hook.callback()
+  local hooks = vim.g.scratch_config.hooks[Hooks.trigger_points.AFTER]
+  for i = 1, #hooks do
+    hooks[i]()
   end
 end
 
@@ -123,27 +125,27 @@ local function get_all_filetypes()
   return combined_filetypes
 end
 
----@param func Scratch.Action
+---@param func function
 ---@param opts? Scratch.ActionOpts
 local function select_filetype_then_do(func, opts)
-  local filetypes = get_all_filetypes()
+  coroutine.wrap(function()
+    local filetypes = get_all_filetypes()
+    if opts and opts.hooks then
+      local choosedFt = opts.hooks[Hooks.trigger_points.PRE_CHOICE](filetypes)
 
-  vim.ui.select(filetypes, {
-    prompt = "Select filetype",
-    format_item = function(item)
-      return item
-    end,
-  }, function(choosedFt)
-    if choosedFt then
-      if choosedFt == MANUAL_INPUT_OPTION then
-        vim.ui.input({ prompt = "Input filetype: " }, function(ft)
-          func(ft, opts)
-        end)
+      if
+        opts.hooks[Hooks.trigger_points.POST_CHOICE]
+        and opts.hooks[Hooks.trigger_points.POST_CHOICE][choosedFt]
+      then
+        ---@see: https://github.com/mfussenegger/nvim-dap/blob/7ff6936010b7222fea2caea0f67ed77f1b7c60dd/lua/dap/session.lua#L1582C3-L1607C9
+        ---NOTICE: `ui.pick_one(..)` realisation
+        local ft = opts.hooks[Hooks.trigger_points.POST_CHOICE][choosedFt]()
+        func(ft, opts)
       else
         func(choosedFt, opts)
       end
     end
-  end)
+  end)()
 end
 
 local function get_scratch_files()
@@ -206,33 +208,25 @@ local function open_scratch_telescope()
     end,
   })
 end
+---@param opts Scratch.ActionOpts
+local function open_scratch_vim_ui(opts)
+  coroutine.wrap(function()
+    local files = get_scratch_files()
+    local config_data = vim.g.scratch_config
 
-local function open_scratch_vim_ui()
-  local files = get_scratch_files()
-  local config_data = vim.g.scratch_config
-
-  local scratch_file_dir = config_data.scratch_file_dir
-
-  -- sort the files by their last modified time in descending order
-  table.sort(files, function(a, b)
-    return vim.fn.getftime(scratch_file_dir .. slash .. a)
-      > vim.fn.getftime(scratch_file_dir .. slash .. b)
-  end)
-
-  vim.ui.select(files, {
-    prompt = "Select old scratch files",
-    format_item = function(item)
-      return item
-    end,
-  }, function(chosenFile)
+    local scratch_file_dir = config_data.scratch_file_dir
+    local chosenFile = opts.hooks[Hooks.trigger_points.PRE_OPEN]({ files, scratch_file_dir })
+    if opts.hooks[Hooks.trigger_points.POST_OPEN] then
+      opts.hooks[Hooks.trigger_points.POST_OPEN].callback(chosenFile)
+    end
     if chosenFile then
       create_and_edit_file(scratch_file_dir .. slash .. chosenFile)
       register_local_key()
     end
-  end)
+  end)()
 end
 
-local function openScratch()
+local function openScratch(opts)
   local config_data = vim.g.scratch_config
 
   if config_data.file_picker == "telescope" then
@@ -240,7 +234,7 @@ local function openScratch()
   elseif config_data.file_picker == "fzflua" then
     open_scratch_fzflua()
   else
-    open_scratch_vim_ui()
+    open_scratch_vim_ui(opts)
   end
 end
 
