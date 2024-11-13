@@ -77,17 +77,29 @@ local table_length = function(T)
 end
 
 ---@return string[]
-local function getSelectedText()
-  local _, csrow, cscol, _ = unpack(vim.fn.getpos("'<"))
-  local _, cerow, cecol, _ = unpack(vim.fn.getpos("'>"))
-
-  local lines = vim.fn.getline(csrow, cerow)
-  local n = table_length(lines)
-  if n <= 0 then
-    return {}
+local function getSelectedText(mark, selection_mode)
+  local pos1 = vim.fn.getpos("v")
+  local pos2 = vim.fn.getpos(mark)
+  local lines = {}
+  local start_row, start_col, end_row, end_col = pos1[2], pos1[3], pos2[2], pos2[3]
+  local text = vim.api.nvim_buf_get_lines(0, start_row - 1, end_row, true)
+  end_row = end_row - start_row + 1
+  start_row = 1
+  if selection_mode == "v" then
+    table.insert(lines, text[1]:sub(start_col))
+    for i = start_row + 1, end_row do
+      table.insert(lines, text[i])
+    end
+    lines[end_row] = lines[end_row]:sub(1, end_col)
+  elseif selection_mode == "V" then
+    for i = start_row, end_row do
+      table.insert(lines, text[i])
+    end
+  elseif selection_mode == vim.api.nvim_replace_termcodes("<C-V>", true, true, true) then
+    for i = start_row, end_row do
+      table.insert(lines, text[i]:sub(start_col, end_col))
+    end
   end
-  lines[n] = string.sub(lines[n], 1, cecol)
-  lines[1] = string.sub(lines[1], cscol)
   return lines
 end
 

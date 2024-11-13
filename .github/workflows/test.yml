@@ -24,4 +24,5 @@ jobs:
           neovim: true
           version: ${{ matrix.neovim_version }}
       - name: Run tests
+        timeout-minutes: 3
         run: make test
